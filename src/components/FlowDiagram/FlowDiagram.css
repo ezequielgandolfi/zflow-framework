@@ -1,0 +1,22 @@
+.diagram-container {
+    width: 100%;
+    min-height: 600px;
+}
+
+.react-flow__node-default {
+    width: 100px;
+    font-size: 10px;
+    padding: 8px;
+}
+
+.react-flow__node-input {
+    width: 100px;
+    font-size: 10px;
+    padding: 8px;
+}
+
+.react-flow__node-output {
+    width: 100px;
+    font-size: 10px;
+    padding: 8px;
+}

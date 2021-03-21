@@ -1,0 +1,233 @@
+import React from 'react';
+import { Handle } from 'react-flow-renderer';
+import iconAlert from "../../assets/diagram/alert.svg";
+import iconCondition from "../../assets/diagram/condition.svg";
+import iconFunction from "../../assets/diagram/function.svg";
+import iconJoin from "../../assets/diagram/join.svg";
+import iconMath from "../../assets/diagram/math.svg";
+import iconMerge from "../../assets/diagram/merge.svg";
+import iconPause from "../../assets/diagram/pause.svg";
+import iconProcess from "../../assets/diagram/process.svg";
+import iconRequest from "../../assets/diagram/request.svg";
+import iconRepeat from "../../assets/diagram/repeat.svg";
+import iconStart from "../../assets/diagram/start.svg";
+import iconStop from "../../assets/diagram/stop.svg";
+import iconStorage from "../../assets/diagram/storage.svg";
+import iconTransform from "../../assets/diagram/transform.svg";
+
+
+const borderColor = {
+  ok: {
+    borderColor: 'green'
+  },
+  error: {
+    borderColor: 'red'
+  }
+};
+const backgroundColor = {
+  ok: {
+    backgroundColor: 'green'
+  },
+  error: {
+    backgroundColor: 'red'
+  },
+  alternative: {
+    backgroundColor: 'coral'
+  }
+};
+const position = {
+  single: {
+    center: {
+    }
+  },
+  double: {
+    top: {
+      top: '30%'
+    },
+    bottom: {
+      top: '70%'
+    }
+  }
+}
+
+const nodeStyle = {
+  padding: '8px',
+  borderRadius: '3px',
+  width: '60px',
+  minHeight: '50px',
+  fontSize: '10px',
+  color: '#222',
+  textAlign: 'center',
+  borderWidth: '1px',
+  borderStyle: 'solid'
+};
+const handleStyle = {
+  width: '8px',
+  height: '8px'
+};
+const iconStyle = {
+  width: '20px',
+  height: '20px',
+  margin: '2px'
+}
+const nodeLabelStyle = {
+  position: 'fixed',
+  top: '0px',
+  left: '3px',
+  fontSize: 'smaller',
+  fontFamily: 'monospace'
+}
+
+const NodeI1O2 = (data, icon, ports, colors) => {
+  const portI1 = ports?.input1 ? ports.input1 : 'single';
+  const portO1 = ports?.output1 ? ports.output1 : 'ok';
+  const portO2 = ports?.output2 ? ports.output2 : 'error';
+  const colorI1 = colors?.input1 ? colors.input1 : { };
+  const colorO1 = colors?.output1 ? colors.output1 : backgroundColor.ok;
+  const colorO2 = colors?.output2 ? colors.output2 : backgroundColor.error;
+  return (
+    <div style={nodeStyle}>
+      <Handle 
+        type="target" 
+        position="left" 
+        id={portI1}
+        style={{...handleStyle, ...colorI1}}
+      />
+      <div style={nodeLabelStyle}>{data.id}</div>
+      <div><img src={icon} style={iconStyle}/></div>
+      <div>{data.label}</div>
+      <Handle
+        type="source"
+        position="right"
+        id={portO1}
+        style={{...handleStyle, ...position.double.top, ...colorO1}}
+      />
+      <Handle
+        type="source"
+        position="right"
+        id={portO2}
+        style={{...handleStyle, ...position.double.bottom, ...colorO2}}
+      />
+    </div>
+  );
+};
+const NodeI1O1 = (data, icon, ports, colors) => {
+  const portI1 = ports?.input1 ? ports.input1 : 'single';
+  const portO1 = ports?.output1 ? ports.output1 : 'ok';
+  const colorI1 = colors?.input1 ? colors.input1 : { };
+  const colorO1 = colors?.output1 ? colors.output1 : backgroundColor.ok;
+  return (
+    <div style={nodeStyle}>
+      <div style={nodeLabelStyle}>{data.id}</div>
+      <Handle 
+        type="target" 
+        position="left" 
+        id={portI1}
+        style={{...handleStyle, ...colorI1}}
+      />
+      <div><img src={icon} style={iconStyle}/></div>
+      <div>{data.label}</div>
+      <Handle
+        type="source"
+        position="right"
+        id={portO1}
+        style={{...handleStyle, ...colorO1}}
+      />
+    </div>
+  );
+};
+
+export const AlertNode = ({ data }) => {
+  return NodeI1O1(data, iconAlert);
+};
+
+export const ConditionNode = ({ data }) => {
+  return NodeI1O2(data, iconCondition, { output1: 'true', output2: 'false' }, { output2: backgroundColor.alternative });
+};
+
+export const FunctionNode = ({ data }) => {
+  return NodeI1O2(data, iconFunction);
+};
+
+export const JoinNode = ({ data }) => {
+  return NodeI1O2(data, iconJoin, { input1: 'multi' });
+};
+
+export const MathNode = ({ data }) => {
+  return NodeI1O2(data, iconMath);
+};
+
+export const MergeNode = ({ data }) => {
+  return NodeI1O2(data, iconMerge);
+};
+
+export const PauseNode = ({ data }) => {
+  return NodeI1O1(data, iconPause);
+};
+
+export const ProcessNode = ({ data }) => {
+  return NodeI1O2(data, iconProcess);
+};
+
+export const RequestNode = ({ data }) => {
+  return NodeI1O2(data, iconRequest);
+};
+
+export const RepeatNode = ({ data }) => {
+  return NodeI1O2(data, iconRepeat, { output1: 'repeat', output2: 'end' }, { output2: backgroundColor.alternative });
+};
+
+export const StartNode = ({ data }) => {
+  return (
+    <div style={{...nodeStyle,...borderColor.ok}}>
+      <div><img src={iconStart} style={iconStyle}/></div>
+      <div>Start</div>
+      <Handle
+        type="source"
+        position="right"
+        id="ok"
+        style={{...handleStyle, ...backgroundColor.ok}}
+      />
+    </div>
+  );
+};
+
+export const StopNode = ({ data }) => {
+  return (
+    <div style={{...nodeStyle,...borderColor.error}}>
+      <Handle 
+        type="target" 
+        position="left" 
+        id="multi"
+        style={{...handleStyle, ...backgroundColor.error}} 
+      />
+      <div><img src={iconStop} style={iconStyle}/></div>
+      <div>Stop</div>
+    </div>
+  );
+};
+
+export const StorageNode = ({ data }) => {
+  return NodeI1O2(data, iconStorage);
+};
+
+export const TransformNode = ({ data }) => {
+  return NodeI1O2(data, iconTransform);
+};
+
+export const CustomNodes = {
+  alert: AlertNode,
+  condition: ConditionNode,
+  function: FunctionNode,
+  join: JoinNode,
+  math: MathNode,
+  merge: MergeNode,
+  pause: PauseNode,
+  process: ProcessNode,
+  request: RequestNode,
+  repeat: RepeatNode,
+  start: StartNode,
+  stop: StopNode,
+  storage: StorageNode,
+  transform: TransformNode
+}

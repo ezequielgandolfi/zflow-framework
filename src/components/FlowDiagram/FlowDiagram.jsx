@@ -1,17 +1,14 @@
 import React, { Component } from "react";
 import ReactFlow, { removeElements, addEdge } from "react-flow-renderer";
-import { CustomNodes } from "./CustomNodes";
+import { CustomNodes, NODE_HANDLE_TYPE } from "./CustomNodes";
 
 import "./FlowDiagram.css";
 
 const onLoad = (reactFlowInstance) => {}; //reactFlowInstance.fitView();
 
-const onNodeMouseEnter = (event, node) => {}; //console.log("mouse enter:", node);
-const onNodeMouseMove = (event, node) => {}; //console.log("mouse move:", node);
-const onNodeMouseLeave = (event, node) => {}; //console.log("mouse leave:", node);
 const onNodeContextMenu = (event, node) => {
   event.preventDefault();
-  console.log("context menu:", node);
+  // console.log("context menu:", node);
 };
 
 /*
@@ -77,6 +74,7 @@ Configuracao de componentes
 */
 
 class FlowDiagram extends Component {
+  //#region Styles
   flowEndStyle = {
     label: "End",
     labelBgPadding: [8, 4],
@@ -107,7 +105,7 @@ class FlowDiagram extends Component {
     labelBgBorderRadius: 4,
     labelBgStyle: { fill: 'red', color: '#fff', fillOpacity: 0.7 },
   };
-
+  //#endregion
 
   initialElements = [
     {
@@ -230,6 +228,12 @@ class FlowDiagram extends Component {
       data: { label: "request" },
       position: { x: 350, y: 300 },
     },
+    {
+      id: "horizontal-21",
+      type: "variable",
+      data: { label: "variable" },
+      position: { x: 450, y: 300 },
+    },
     /* ------------------------------------------------ */
     {
       id: "horizontal-e1-2",
@@ -289,12 +293,6 @@ class FlowDiagram extends Component {
 
   state = { elements: this.initialElements };
 
-  constructor(props) {
-    super(props);
-    // this.setState({ elements: this.initialElements });
-    // [this.elements, this.setElements] = useState(this.initialElements);
-  }
-
   onElementsRemove(elementsToRemove) {
     // this.setElements((els) => removeElements(elementsToRemove, els));
     const elements = removeElements(elementsToRemove, this.state.elements);
@@ -310,8 +308,12 @@ class FlowDiagram extends Component {
     this.setState({ elements: elements });
   }
 
+  onDelete(data) {
+    console.log(data);
+  }
+
   disconnectHandlers(elements, params) {
-    if (params.targetHandle != 'multi') {
+    if (params.targetHandle !== NODE_HANDLE_TYPE.input.multiple) {
       const remove = this.state.elements.filter(item => item.target === params.target);
       elements = removeElements(remove, elements);
     }
@@ -322,72 +324,78 @@ class FlowDiagram extends Component {
     params.animated = true;
     params.type = "smoothstep";
     switch(params.sourceHandle) {
-      case 'error':
+      case NODE_HANDLE_TYPE.output.error:
         params = {...params, ...this.flowErrorStyle};
         break;
-      case 'true':
+      case NODE_HANDLE_TYPE.output.true:
         params = {...params, ...this.flowTrueStyle};
         break;
-      case 'false':
+      case NODE_HANDLE_TYPE.output.false:
         params = {...params, ...this.flowFalseStyle};
         break;
-      case 'repeat':
+      case NODE_HANDLE_TYPE.output.repeat:
         params = {...params, ...this.flowRepeatStyle};
         break;
-      case 'end':
+      case NODE_HANDLE_TYPE.output.end:
         params = {...params, ...this.flowEndStyle};
+        break;
+      default:
         break;
     }
     return params;
   }
 
-  changeClassName() {
-    this.setElements((elms) =>
-      elms.map((el) => {
-        if (el.type === 'input') {
-          el.className = el.className ? '' : 'dark-node';
-        }
-
-        return { ...el };
-      })
-    );
-  };
+  onElementClick(event, element) { 
+    console.log(event, element); 
+  }
 
   render() {
     this.props.instanceController.setActiveMenu("/diagram");
 
     return (
-      <div style={{height:'100vh'}}>
-        {/* <ReactFlow
-          elements={this.state.elements}
-          onElementsRemove={this.onElementsRemove.bind(this)}
-          onConnect={this.onConnect.bind(this)}
-          onLoad={onLoad}
-          selectNodesOnDrag={false}
-          onNodeMouseEnter={onNodeMouseEnter}
-          onNodeMouseMove={onNodeMouseMove}
-          onNodeMouseLeave={onNodeMouseLeave}
-          onNodeContextMenu={onNodeContextMenu}
-        >
-        </ReactFlow> */}
-        <ReactFlow
-          elements={this.state.elements}
-          nodeTypes={CustomNodes}
-          zoomOnScroll="false"
-          zoomOnPinch="false"
-          panOnScroll="true"
-          zoomOnDoubleClick="false"
-          onElementsRemove={this.onElementsRemove.bind(this)}
-          onConnect={this.onConnect.bind(this)}
-          onLoad={onLoad}
-          selectNodesOnDrag={false}
-          onNodeMouseEnter={onNodeMouseEnter}
-          onNodeMouseMove={onNodeMouseMove}
-          onNodeMouseLeave={onNodeMouseLeave}
-          onNodeContextMenu={onNodeContextMenu}
-        >
-        </ReactFlow>
-      </div>
+      <section>
+        <div className="diagram-container">
+          <ReactFlow
+            elements={this.state.elements}
+            nodeTypes={CustomNodes}
+            zoomOnScroll={false}
+            zoomOnPinch={false}
+            panOnScroll={true}
+            zoomOnDoubleClick={false}
+            snapToGrid={true}
+            snapGrid={[5,5]}
+            onElementsRemove={this.onElementsRemove.bind(this)}
+            onConnect={this.onConnect.bind(this)}
+            onLoad={onLoad}
+            selectNodesOnDrag={true}
+            onElementClick={this.onElementClick.bind(this)}
+            onNodeContextMenu={onNodeContextMenu}
+          >
+          </ReactFlow>
+        </div>
+        <footer className="diagram-component-panel py-3 bg-light">
+        <div className="row px-3">
+          <div className="col-md">
+            <div className="form-label-group">
+              <select className="form-select w-100" id="diagramComponentType">
+                <option selected>Select one...</option>
+                <option value="1">ABCDEF</option>
+                <option value="2">Component Blabla</option>
+                <option value="3">T23 A1</option>
+              </select>
+              <label for="diagramComponentType">Component</label>
+            </div>
+          </div>
+          <div className="col-md">
+            <div className="form-label-group">
+              <input type="input" className="form-control" id="diagramComponentId" placeholder="Optional" />
+              <label for="diagramComponentId">ID</label>
+            </div>
+          </div>
+          
+        </div>
+        </footer>
+      </section>
     );
   }
 }

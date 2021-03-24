@@ -14,6 +14,7 @@ import iconStart from "../../assets/diagram/start.svg";
 import iconStop from "../../assets/diagram/stop.svg";
 import iconStorage from "../../assets/diagram/storage.svg";
 import iconTransform from "../../assets/diagram/transform.svg";
+import iconVariable from "../../assets/diagram/variable.svg";
 
 
 const borderColor = {
@@ -79,9 +80,9 @@ const nodeLabelStyle = {
 }
 
 const NodeI1O2 = (data, icon, ports, colors) => {
-  const portI1 = ports?.input1 ? ports.input1 : 'single';
-  const portO1 = ports?.output1 ? ports.output1 : 'ok';
-  const portO2 = ports?.output2 ? ports.output2 : 'error';
+  const portI1 = ports?.input1 ? ports.input1 : NODE_HANDLE_TYPE.input.single;
+  const portO1 = ports?.output1 ? ports.output1 : NODE_HANDLE_TYPE.output.default;
+  const portO2 = ports?.output2 ? ports.output2 : NODE_HANDLE_TYPE.output.error;
   const colorI1 = colors?.input1 ? colors.input1 : { };
   const colorO1 = colors?.output1 ? colors.output1 : backgroundColor.ok;
   const colorO2 = colors?.output2 ? colors.output2 : backgroundColor.error;
@@ -94,7 +95,7 @@ const NodeI1O2 = (data, icon, ports, colors) => {
         style={{...handleStyle, ...colorI1}}
       />
       <div style={nodeLabelStyle}>{data.id}</div>
-      <div><img src={icon} style={iconStyle}/></div>
+      <div><img src={icon} style={iconStyle} alt={data.label}/></div>
       <div>{data.label}</div>
       <Handle
         type="source"
@@ -112,8 +113,8 @@ const NodeI1O2 = (data, icon, ports, colors) => {
   );
 };
 const NodeI1O1 = (data, icon, ports, colors) => {
-  const portI1 = ports?.input1 ? ports.input1 : 'single';
-  const portO1 = ports?.output1 ? ports.output1 : 'ok';
+  const portI1 = ports?.input1 ? ports.input1 : NODE_HANDLE_TYPE.input.single;
+  const portO1 = ports?.output1 ? ports.output1 : NODE_HANDLE_TYPE.output.default;
   const colorI1 = colors?.input1 ? colors.input1 : { };
   const colorO1 = colors?.output1 ? colors.output1 : backgroundColor.ok;
   return (
@@ -125,7 +126,7 @@ const NodeI1O1 = (data, icon, ports, colors) => {
         id={portI1}
         style={{...handleStyle, ...colorI1}}
       />
-      <div><img src={icon} style={iconStyle}/></div>
+      <div><img src={icon} style={iconStyle} alt={data.label}/></div>
       <div>{data.label}</div>
       <Handle
         type="source"
@@ -137,82 +138,86 @@ const NodeI1O1 = (data, icon, ports, colors) => {
   );
 };
 
-export const AlertNode = ({ data }) => {
+const AlertNode = ({ data }) => {
   return NodeI1O1(data, iconAlert);
 };
 
-export const ConditionNode = ({ data }) => {
-  return NodeI1O2(data, iconCondition, { output1: 'true', output2: 'false' }, { output2: backgroundColor.alternative });
+const ConditionNode = ({ data }) => {
+  return NodeI1O2(data, iconCondition, { output1: NODE_HANDLE_TYPE.output.true, output2: NODE_HANDLE_TYPE.output.false }, { output2: backgroundColor.alternative });
 };
 
-export const FunctionNode = ({ data }) => {
+const FunctionNode = ({ data }) => {
   return NodeI1O2(data, iconFunction);
 };
 
-export const JoinNode = ({ data }) => {
-  return NodeI1O2(data, iconJoin, { input1: 'multi' });
+const JoinNode = ({ data }) => {
+  return NodeI1O2(data, iconJoin, { input1: NODE_HANDLE_TYPE.input.multiple });
 };
 
-export const MathNode = ({ data }) => {
+const MathNode = ({ data }) => {
   return NodeI1O2(data, iconMath);
 };
 
-export const MergeNode = ({ data }) => {
+const MergeNode = ({ data }) => {
   return NodeI1O2(data, iconMerge);
 };
 
-export const PauseNode = ({ data }) => {
+const PauseNode = ({ data }) => {
   return NodeI1O1(data, iconPause);
 };
 
-export const ProcessNode = ({ data }) => {
+const ProcessNode = ({ data }) => {
   return NodeI1O2(data, iconProcess);
 };
 
-export const RequestNode = ({ data }) => {
+const RequestNode = ({ data }) => {
   return NodeI1O2(data, iconRequest);
 };
 
-export const RepeatNode = ({ data }) => {
-  return NodeI1O2(data, iconRepeat, { output1: 'repeat', output2: 'end' }, { output2: backgroundColor.alternative });
+const RepeatNode = ({ data }) => {
+  return NodeI1O2(data, iconRepeat, { output1: NODE_HANDLE_TYPE.output.repeat, output2: NODE_HANDLE_TYPE.output.end }, { output2: backgroundColor.alternative });
 };
 
-export const StartNode = ({ data }) => {
+const StartNode = ({ data }) => {
   return (
     <div style={{...nodeStyle,...borderColor.ok}}>
-      <div><img src={iconStart} style={iconStyle}/></div>
+      <div><img src={iconStart} style={iconStyle} alt={data.label}/></div>
       <div>Start</div>
       <Handle
         type="source"
         position="right"
-        id="ok"
+        id={NODE_HANDLE_TYPE.output.default}
         style={{...handleStyle, ...backgroundColor.ok}}
       />
     </div>
   );
 };
 
-export const StopNode = ({ data }) => {
+const StopNode = ({ data }) => {
   return (
     <div style={{...nodeStyle,...borderColor.error}}>
       <Handle 
         type="target" 
         position="left" 
-        id="multi"
+        id={NODE_HANDLE_TYPE.input.multiple}
         style={{...handleStyle, ...backgroundColor.error}} 
       />
-      <div><img src={iconStop} style={iconStyle}/></div>
+      <div><img src={iconStop} style={iconStyle} alt={data.label}/></div>
       <div>Stop</div>
     </div>
   );
 };
 
-export const StorageNode = ({ data }) => {
+const StorageNode = ({ data }) => {
   return NodeI1O2(data, iconStorage);
 };
 
-export const TransformNode = ({ data }) => {
+const TransformNode = ({ data }) => {
   return NodeI1O2(data, iconTransform);
+};
+
+const VariableNode = ({ data }) => {
+  return NodeI1O1(data, iconVariable);
 };
 
 export const CustomNodes = {
@@ -229,5 +234,21 @@ export const CustomNodes = {
   start: StartNode,
   stop: StopNode,
   storage: StorageNode,
-  transform: TransformNode
+  transform: TransformNode,
+  variable: VariableNode
+}
+
+export const NODE_HANDLE_TYPE = {
+  input: {
+    single: 'single',
+    multiple: 'multi'
+  },
+  output: {
+    default: 'ok',
+    error: 'error',
+    repeat: 'repeat',
+    end: 'end',
+    true: 'true',
+    false: 'false'
+  }
 }

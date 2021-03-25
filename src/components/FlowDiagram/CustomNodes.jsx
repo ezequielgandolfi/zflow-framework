@@ -1,21 +1,5 @@
 import React from 'react';
 import { Handle } from 'react-flow-renderer';
-import iconAlert from "../../assets/diagram/alert.svg";
-import iconCondition from "../../assets/diagram/condition.svg";
-import iconFunction from "../../assets/diagram/function.svg";
-import iconJoin from "../../assets/diagram/join.svg";
-import iconMath from "../../assets/diagram/math.svg";
-import iconMerge from "../../assets/diagram/merge.svg";
-import iconPause from "../../assets/diagram/pause.svg";
-import iconProcess from "../../assets/diagram/process.svg";
-import iconRequest from "../../assets/diagram/request.svg";
-import iconRepeat from "../../assets/diagram/repeat.svg";
-import iconStart from "../../assets/diagram/start.svg";
-import iconStop from "../../assets/diagram/stop.svg";
-import iconStorage from "../../assets/diagram/storage.svg";
-import iconTransform from "../../assets/diagram/transform.svg";
-import iconVariable from "../../assets/diagram/variable.svg";
-
 
 const borderColor = {
   ok: {
@@ -34,6 +18,9 @@ const backgroundColor = {
   },
   alternative: {
     backgroundColor: 'coral'
+  },
+  multiple: {
+    backgroundColor: 'deepskyblue'
   }
 };
 const position = {
@@ -66,11 +53,7 @@ const handleStyle = {
   width: '8px',
   height: '8px'
 };
-const iconStyle = {
-  width: '20px',
-  height: '20px',
-  margin: '2px'
-}
+
 const nodeLabelStyle = {
   position: 'fixed',
   top: '0px',
@@ -86,6 +69,7 @@ const NodeI1O2 = (data, icon, ports, colors) => {
   const colorI1 = colors?.input1 ? colors.input1 : { };
   const colorO1 = colors?.output1 ? colors.output1 : backgroundColor.ok;
   const colorO2 = colors?.output2 ? colors.output2 : backgroundColor.error;
+  icon = `bi bi-${icon}`;
   return (
     <div style={nodeStyle}>
       <Handle 
@@ -95,8 +79,8 @@ const NodeI1O2 = (data, icon, ports, colors) => {
         style={{...handleStyle, ...colorI1}}
       />
       <div style={nodeLabelStyle}>{data.id}</div>
-      <div><img src={icon} style={iconStyle} alt={data.label}/></div>
-      <div>{data.label}</div>
+      <div><i className={icon}></i></div>
+      <div className="diagram-node-type">{data.label}</div>
       <Handle
         type="source"
         position="right"
@@ -117,6 +101,7 @@ const NodeI1O1 = (data, icon, ports, colors) => {
   const portO1 = ports?.output1 ? ports.output1 : NODE_HANDLE_TYPE.output.default;
   const colorI1 = colors?.input1 ? colors.input1 : { };
   const colorO1 = colors?.output1 ? colors.output1 : backgroundColor.ok;
+  icon = `bi bi-${icon}`;
   return (
     <div style={nodeStyle}>
       <div style={nodeLabelStyle}>{data.id}</div>
@@ -126,8 +111,8 @@ const NodeI1O1 = (data, icon, ports, colors) => {
         id={portI1}
         style={{...handleStyle, ...colorI1}}
       />
-      <div><img src={icon} style={iconStyle} alt={data.label}/></div>
-      <div>{data.label}</div>
+      <div><i className={icon}></i></div>
+      <div className="diagram-node-type">{data.label}</div>
       <Handle
         type="source"
         position="right"
@@ -138,105 +123,213 @@ const NodeI1O1 = (data, icon, ports, colors) => {
   );
 };
 
-const AlertNode = ({ data }) => {
-  return NodeI1O1(data, iconAlert);
-};
+class AlertComponent {
+  static diagramNode = ({ data }) => { return NodeI1O1(data, 'bell') };
 
-const ConditionNode = ({ data }) => {
-  return NodeI1O2(data, iconCondition, { output1: NODE_HANDLE_TYPE.output.true, output2: NODE_HANDLE_TYPE.output.false }, { output2: backgroundColor.alternative });
-};
+  static components = [
+  ];
 
-const FunctionNode = ({ data }) => {
-  return NodeI1O2(data, iconFunction);
-};
-
-const JoinNode = ({ data }) => {
-  return NodeI1O2(data, iconJoin, { input1: NODE_HANDLE_TYPE.input.multiple });
-};
-
-const MathNode = ({ data }) => {
-  return NodeI1O2(data, iconMath);
-};
-
-const MergeNode = ({ data }) => {
-  return NodeI1O2(data, iconMerge);
-};
-
-const PauseNode = ({ data }) => {
-  return NodeI1O1(data, iconPause);
-};
-
-const ProcessNode = ({ data }) => {
-  return NodeI1O2(data, iconProcess);
-};
-
-const RequestNode = ({ data }) => {
-  return NodeI1O2(data, iconRequest);
-};
-
-const RepeatNode = ({ data }) => {
-  return NodeI1O2(data, iconRepeat, { output1: NODE_HANDLE_TYPE.output.repeat, output2: NODE_HANDLE_TYPE.output.end }, { output2: backgroundColor.alternative });
-};
-
-const StartNode = ({ data }) => {
-  return (
-    <div style={{...nodeStyle,...borderColor.ok}}>
-      <div><img src={iconStart} style={iconStyle} alt={data.label}/></div>
-      <div>Start</div>
-      <Handle
-        type="source"
-        position="right"
-        id={NODE_HANDLE_TYPE.output.default}
-        style={{...handleStyle, ...backgroundColor.ok}}
-      />
-    </div>
-  );
-};
-
-const StopNode = ({ data }) => {
-  return (
-    <div style={{...nodeStyle,...borderColor.error}}>
-      <Handle 
-        type="target" 
-        position="left" 
-        id={NODE_HANDLE_TYPE.input.multiple}
-        style={{...handleStyle, ...backgroundColor.error}} 
-      />
-      <div><img src={iconStop} style={iconStyle} alt={data.label}/></div>
-      <div>Stop</div>
-    </div>
-  );
-};
-
-const StorageNode = ({ data }) => {
-  return NodeI1O2(data, iconStorage);
-};
-
-const TransformNode = ({ data }) => {
-  return NodeI1O2(data, iconTransform);
-};
-
-const VariableNode = ({ data }) => {
-  return NodeI1O1(data, iconVariable);
-};
-
-export const CustomNodes = {
-  alert: AlertNode,
-  condition: ConditionNode,
-  function: FunctionNode,
-  join: JoinNode,
-  math: MathNode,
-  merge: MergeNode,
-  pause: PauseNode,
-  process: ProcessNode,
-  request: RequestNode,
-  repeat: RepeatNode,
-  start: StartNode,
-  stop: StopNode,
-  storage: StorageNode,
-  transform: TransformNode,
-  variable: VariableNode
 }
+
+class ConditionComponent_All {
+  static key = 'all'
+  static description = 'All conditions must be valid';
+  static shortDescription = 'All';
+}
+
+class ConditionComponent_Any {
+  static key = 'any'
+  static description = 'Any condition must be valid';
+  static shortDescription = 'Any';
+}
+
+class ConditionComponent {
+  static diagramNode = ({ data }) => { return NodeI1O2(data, 'stoplights', { output1: NODE_HANDLE_TYPE.output.true, output2: NODE_HANDLE_TYPE.output.false }, { output2: backgroundColor.alternative }) };
+
+  static components = [
+    ConditionComponent_All,
+    ConditionComponent_Any
+  ];
+
+}
+
+class FunctionComponent {
+  static diagramNode = ({ data }) => { return NodeI1O2(data, 'tools') };
+
+  static components = [
+  ];
+
+}
+
+class JoinComponent {
+  static diagramNode = ({ data }) => { return NodeI1O2(data, 'stack', { input1: NODE_HANDLE_TYPE.input.multiple }, { input1: backgroundColor.multiple }) };
+
+  static components = [
+  ];
+
+}
+
+class MathComponent {
+  static diagramNode = ({ data }) => { return NodeI1O2(data, 'percent') };
+
+  static components = [
+  ];
+
+}
+
+class MergeComponent {
+  static diagramNode = ({ data }) => { return NodeI1O2(data, 'diagram-3') };
+
+  static components = [
+  ];
+
+}
+
+class PauseComponent {
+  static diagramNode = ({ data }) => { return NodeI1O1(data, 'clock') };
+
+  static components = [
+  ];
+
+}
+
+class ProcessComponent {
+  static diagramNode = ({ data }) => { return NodeI1O2(data, 'cpu') };
+
+  static components = [
+  ];
+
+}
+
+class RequestComponent {
+  static diagramNode = ({ data }) => { return NodeI1O2(data, 'cloud') };
+
+  static components = [
+  ];
+
+}
+
+class RepeatComponent {
+  static diagramNode = ({ data }) => { return NodeI1O2(data, 'arrow-repeat', { output1: NODE_HANDLE_TYPE.output.repeat, output2: NODE_HANDLE_TYPE.output.end }, { output2: backgroundColor.alternative }) };
+
+  static components = [
+  ];
+
+}
+
+class StartComponent {
+  static diagramNode = ({ data }) => { 
+    return (
+      <div style={{...nodeStyle,...borderColor.ok}}>
+        <div><i className="bi bi-play-circle"></i></div>
+        <div>Start</div>
+        <Handle
+          type="source"
+          position="right"
+          id={NODE_HANDLE_TYPE.output.default}
+          style={{...handleStyle, ...backgroundColor.ok}}
+        />
+      </div>
+    );
+  };
+
+  static components = [
+  ];
+
+}
+
+class StopComponent {
+  static diagramNode = ({ data }) => { 
+    return (
+      <div style={{...nodeStyle,...borderColor.error}}>
+        <Handle 
+          type="target" 
+          position="left" 
+          id={NODE_HANDLE_TYPE.input.multiple}
+          style={{...handleStyle, ...backgroundColor.error}} 
+        />
+        <div><i className="bi bi-exclamation-octagon"></i></div>
+        <div>Stop</div>
+      </div>
+    );
+  };
+
+  static components = [
+  ];
+
+}
+
+class StorageComponent {
+  static diagramNode = ({ data }) => { return NodeI1O2(data, 'hdd-stack') };
+
+  static components = [
+  ];
+
+}
+
+class TransformComponent {
+  static diagramNode = ({ data }) => { return NodeI1O2(data, 'shuffle') };
+
+  static components = [
+  ];
+
+}
+
+class VariableComponent {
+  static diagramNode = ({ data }) => { return NodeI1O1(data, 'braces') };
+
+  static components = [
+  ];
+
+}
+
+export class CustomComponents {
+  static components = {
+    alert: AlertComponent,
+    condition: ConditionComponent,
+    function: FunctionComponent,
+    join: JoinComponent,
+    math: MathComponent,
+    merge: MergeComponent,
+    pause: PauseComponent,
+    process: ProcessComponent,
+    request: RequestComponent,
+    repeat: RepeatComponent,
+    start: StartComponent,
+    stop: StopComponent,
+    storage: StorageComponent,
+    transform: TransformComponent,
+    variable: VariableComponent
+  }
+
+  static nodes() {
+    let result = { };
+    Object.keys(CustomComponents.components).forEach(key => { result[key] = CustomComponents.components[key].diagramNode });
+    return result;
+  }
+
+  static getComponent(node) {
+    return CustomComponents.components[node];
+  }
+}
+
+// export const CustomNodes = {
+//   alert: AlertComponent.diagramNode,
+//   condition: ConditionComponent.diagramNode,
+//   function: FunctionNode,
+//   join: JoinNode,
+//   math: MathNode,
+//   merge: MergeNode,
+//   pause: PauseNode,
+//   process: ProcessNode,
+//   request: RequestNode,
+//   repeat: RepeatNode,
+//   start: StartNode,
+//   stop: StopNode,
+//   storage: StorageNode,
+//   transform: TransformNode,
+//   variable: VariableNode
+// }
 
 export const NODE_HANDLE_TYPE = {
   input: {

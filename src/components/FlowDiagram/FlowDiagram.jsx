@@ -1,10 +1,8 @@
 import React, { Component } from "react";
 import ReactFlow, { removeElements, addEdge } from "react-flow-renderer";
-import { CustomNodes, NODE_HANDLE_TYPE } from "./CustomNodes";
+import { CustomComponents, NODE_HANDLE_TYPE } from "./CustomNodes";
 
 import "./FlowDiagram.css";
-
-const onLoad = (reactFlowInstance) => {}; //reactFlowInstance.fitView();
 
 const onNodeContextMenu = (event, node) => {
   event.preventDefault();
@@ -106,6 +104,8 @@ class FlowDiagram extends Component {
     labelBgStyle: { fill: 'red', color: '#fff', fillOpacity: 0.7 },
   };
   //#endregion
+
+  selectedElement;
 
   initialElements = [
     {
@@ -293,6 +293,10 @@ class FlowDiagram extends Component {
 
   state = { elements: this.initialElements };
 
+  onLoad() {
+    this.updateComponentPanel();
+  }
+
   onElementsRemove(elementsToRemove) {
     // this.setElements((els) => removeElements(elementsToRemove, els));
     const elements = removeElements(elementsToRemove, this.state.elements);
@@ -346,7 +350,62 @@ class FlowDiagram extends Component {
   }
 
   onElementClick(event, element) { 
-    console.log(event, element); 
+    this.selectedElement = element;
+    this.updateComponentPanel();
+  }
+
+  updateComponentPanel() {
+    const selectComponent = document.getElementById('diagramComponentType');
+    const inputId = document.getElementById('diagramComponentId');
+    const panel = document.getElementById('componentPanel');
+    
+    panel.classList.add('invisible');
+    if (this.selectedElement) {
+      const component = CustomComponents.getComponent(this.selectedElement.type);
+      if (component) {
+        inputId.value = this.selectedElement.data.id || '';
+        while (selectComponent.length > 0) {
+          selectComponent.remove(0);
+        }
+        component.components.forEach(subcomponent => {
+          let option = document.createElement('option');
+          option.value = subcomponent.key;
+          option.text = subcomponent.description;
+          selectComponent.add(option);
+        });
+        selectComponent.value = this.selectedElement.data.component;
+        panel.classList.remove('invisible');
+      }
+    }
+  }
+
+  onComponentTypeChange(event) {
+    if (this.selectedElement) {
+      const value = event.target?.value;
+      this.selectedElement.data.component = value;
+      this.updateComponentType();
+    }
+  }
+
+  onComponentIdChange(event) {
+    if (this.selectedElement) {
+      const value = event.target?.value;
+      this.selectedElement.data.id = value;
+      this.refresh();
+    }
+  }
+
+  updateComponentType() {
+    if (this.selectedElement) {
+      const component = CustomComponents.getComponent(this.selectedElement.type);
+      const componentType = component.components.find(item => item.key === this.selectedElement.data.component);
+      this.selectedElement.data.label = componentType.shortDescription;
+      this.refresh();
+    }
+  }
+
+  refresh() {
+    this.setState({ elements: this.state.elements });
   }
 
   render() {
@@ -357,7 +416,7 @@ class FlowDiagram extends Component {
         <div className="diagram-container">
           <ReactFlow
             elements={this.state.elements}
-            nodeTypes={CustomNodes}
+            nodeTypes={CustomComponents.nodes()}
             zoomOnScroll={false}
             zoomOnPinch={false}
             panOnScroll={true}
@@ -366,34 +425,33 @@ class FlowDiagram extends Component {
             snapGrid={[5,5]}
             onElementsRemove={this.onElementsRemove.bind(this)}
             onConnect={this.onConnect.bind(this)}
-            onLoad={onLoad}
+            onLoad={this.onLoad.bind(this)}
             selectNodesOnDrag={true}
             onElementClick={this.onElementClick.bind(this)}
             onNodeContextMenu={onNodeContextMenu}
           >
           </ReactFlow>
         </div>
-        <footer className="diagram-component-panel py-3 bg-light">
-        <div className="row px-3">
-          <div className="col-md">
-            <div className="form-label-group">
-              <select className="form-select w-100" id="diagramComponentType">
-                <option selected>Select one...</option>
-                <option value="1">ABCDEF</option>
-                <option value="2">Component Blabla</option>
-                <option value="3">T23 A1</option>
-              </select>
-              <label for="diagramComponentType">Component</label>
+        <footer className="diagram-component-panel py-3 bg-light" id="componentPanel">
+          <div className="row px-3">
+            <div className="col-md-4">
+              <div className="form-label-group">
+                <select className="form-select w-100" id="diagramComponentType" onChange={this.onComponentTypeChange.bind(this)}>
+                </select>
+                <label htmlFor="diagramComponentType">Component</label>
+              </div>
+            </div>
+            <div className="col-md-2">
+              <div className="form-label-group">
+                <input type="input" className="form-control" id="diagramComponentId" placeholder="Optional" onBlur={this.onComponentIdChange.bind(this)} />
+                <label htmlFor="diagramComponentId">ID (optional)</label>
+              </div>
+            </div>
+            <div className="col-md-6 text-right">
+              <button type="button" className="btn btn-info btn-lg">Properties</button>
+              <button type="button" className="ml-2 btn btn-danger btn-lg">Delete</button>
             </div>
           </div>
-          <div className="col-md">
-            <div className="form-label-group">
-              <input type="input" className="form-control" id="diagramComponentId" placeholder="Optional" />
-              <label for="diagramComponentId">ID</label>
-            </div>
-          </div>
-          
-        </div>
         </footer>
       </section>
     );

@@ -24,8 +24,14 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
 
-img {
+img,
+i {
   -webkit-user-drag: none;
+}
+
+i {
+  font-size: 1rem;
+  font-weight: bold;
 }
 
 .form-label-group {

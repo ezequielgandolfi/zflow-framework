@@ -1,13 +1,9 @@
 import React, { Component } from "react";
 import ReactFlow, { removeElements, addEdge } from "react-flow-renderer";
 import { CustomComponents, NODE_HANDLE_TYPE } from "./CustomNodes";
+import { v4 as uuidv4 } from 'uuid';
 
 import "./FlowDiagram.css";
-
-const onNodeContextMenu = (event, node) => {
-  event.preventDefault();
-  // console.log("context menu:", node);
-};
 
 /*
 Configuracao do diagrama
@@ -106,210 +102,121 @@ class FlowDiagram extends Component {
   //#endregion
 
   selectedElement;
+  contextElement;
+  contextPos = { x: 0, y: 0};
 
   initialElements = [
-    {
-      id: "horizontal-1",
-      type: "start",
-      data: { id: "start", label: "START" },
-      position: { x: 0, y: 80 },
-    },
-    {
-      id: "horizontal-2",
-      type: "process",
-      data: { id: "p1", label: "A Node" },
-      position: { x: 250, y: 0 },
-    },
-    {
-      id: "horizontal-3",
-      type: "process",
-      data: { id: "proc2", label: "Node 3" },
-      position: { x: 250, y: 160 },
-    },
-    {
-      id: "horizontal-4",
-      type: "process",
-      data: { label: "Node 4" },
-      position: { x: 500, y: 0 },
-    },
-    {
-      id: "horizontal-5",
-      type: "process",
-      data: { label: "Node 5" },
-      position: { x: 500, y: 100 },
-    },
-    {
-      id: "horizontal-6",
-      type: "process",
-      data: { label: "Node 6" },
-      position: { x: 500, y: 230 },
-    },
-    {
-      id: "horizontal-7",
-      type: "process",
-      data: { label: "Node 7" },
-      position: { x: 750, y: 50 },
-    },
-    {
-      id: "horizontal-8",
-      type: "process",
-      data: { label: "Node 8" },
-      position: { x: 750, y: 300 },
-    },
-    {
-      id: "horizontal-9",
-      type: "stop",
-      data: { label: "STOP" },
-      position: { x: 850, y: 100 },
-    },
-    {
-      id: "horizontal-10",
-      type: "alert",
-      data: { label: "alert" },
-      position: { x: 50, y: 400 },
-    },
-    {
-      id: "horizontal-11",
-      type: "condition",
-      data: { label: "condition" },
-      position: { x: 150, y: 400 },
-    },
-    {
-      id: "horizontal-12",
-      type: "join",
-      data: { label: "join" },
-      position: { x: 250, y: 400 },
-    },
-    {
-      id: "horizontal-13",
-      type: "math",
-      data: { label: "math" },
-      position: { x: 350, y: 400 },
-    },
-    {
-      id: "horizontal-14",
-      type: "pause",
-      data: { label: "pause" },
-      position: { x: 450, y: 400 },
-    },
-    {
-      id: "horizontal-15",
-      type: "repeat",
-      data: { label: "repeat" },
-      position: { x: 550, y: 400 },
-    },
-    {
-      id: "horizontal-16",
-      type: "storage",
-      data: { label: "storage" },
-      position: { x: 650, y: 400 },
-    },
-    {
-      id: "horizontal-17",
-      type: "function",
-      data: { label: "function" },
-      position: { x: 50, y: 300 },
-    },
-    {
-      id: "horizontal-18",
-      type: "merge",
-      data: { label: "merge" },
-      position: { x: 150, y: 300 },
-    },
-    {
-      id: "horizontal-19",
-      type: "transform",
-      data: { label: "transform" },
-      position: { x: 250, y: 300 },
-    },
-    {
-      id: "horizontal-20",
-      type: "request",
-      data: { label: "request" },
-      position: { x: 350, y: 300 },
-    },
-    {
-      id: "horizontal-21",
-      type: "variable",
-      data: { label: "variable" },
-      position: { x: 450, y: 300 },
-    },
-    /* ------------------------------------------------ */
-    {
-      id: "horizontal-e1-2",
-      source: "horizontal-1",
-      type: "smoothstep",
-      target: "horizontal-2",
-      animated: true,
-    },
-    {
-      id: "horizontal-e1-3",
-      source: "horizontal-1",
-      type: "smoothstep",
-      target: "horizontal-3",
-      animated: true,
-    },
-    {
-      id: "horizontal-e1-4",
-      source: "horizontal-2",
-      type: "smoothstep",
-      target: "horizontal-4",
-      animated: true,
-      label: "On Error",
-      labelBgPadding: [8, 4],
-      labelBgBorderRadius: 4,
-      labelBgStyle: { fill: '#FF0000', color: '#fff', fillOpacity: 0.7 },
-    },
-    {
-      id: "horizontal-e3-5",
-      source: "horizontal-3",
-      type: "smoothstep",
-      target: "horizontal-5",
-      animated: true,
-    },
-    {
-      id: "horizontal-e3-6",
-      source: "horizontal-3",
-      type: "smoothstep",
-      target: "horizontal-6",
-      animated: true,
-    },
-    {
-      id: "horizontal-e5-7",
-      source: "horizontal-5",
-      type: "smoothstep",
-      target: "horizontal-7",
-      animated: true,
-      style: {stroke:"red"},
-    },
-    {
-      id: "horizontal-e6-8",
-      source: "horizontal-6",
-      type: "smoothstep",
-      target: "horizontal-8",
-      animated: true,
-    },
+    this.createComponent('start', 40, 40)
   ];
 
   state = { elements: this.initialElements };
 
   onLoad() {
+    this.refreshComponentList();
     this.updateComponentPanel();
   }
 
+  refreshComponentList() {
+    const panel = document.getElementById('panelContextMenu');
+    panel.querySelectorAll('li.dropdown-item').forEach(item => item.remove());
+    
+    Object.keys(CustomComponents.components).forEach(key => { 
+      const component = CustomComponents.components[key];
+      if (!component.hideComponent) {
+        //<li className="dropdown-item" onClick={this.insertComponent.bind(this,'condition')}>Condition</li>
+        const eLi = document.createElement('li');
+        eLi.classList.add('dropdown-item');
+        eLi.onclick = (event) => { this.insertComponent(key, event) };
+        eLi.innerText = component.description;
+        panel.appendChild(eLi);
+      }
+    });
+  }
+
+  createComponent(componentType,left,top) {
+    const result = {
+      id: uuidv4(),
+      type: componentType,
+      data: {  },
+      position: { x: left || 20, y: top || 20 },
+    };
+    result.position.x = Math.round((result.position.x / 5) * 5);
+    result.position.y = Math.round((result.position.y / 5) * 5);
+
+    const component = CustomComponents.getComponent(componentType);
+    const defaultComponent = component.components.length > 0 ? component.components[0] : null;
+    if (defaultComponent) {
+      result.data.component = defaultComponent.key;
+      result.data.properties = defaultComponent.properties;
+    }
+
+    return result;
+  }
+
+  insertComponent(componentType,event) {
+    this.hideContextMenus();
+    const container = document.getElementById('diagramContainer').getBoundingClientRect();
+    const component = this.createComponent(componentType, this.contextPos.x, this.contextPos.y);
+    this.selectedElement = component;
+    this.updateComponentType();
+    this.updateComponentPanel();
+    this.refresh([...this.state.elements,component]);
+  }
+
+  onNodeContextMenu(event, node) {
+    event.preventDefault();
+    this.hideContextMenus();
+    this.contextElement = node;
+    const container = document.getElementById('diagramContainer').getBoundingClientRect();
+    this.showNodeContextMenu(event.clientX - container.left, event.clientY - container.top);
+  };
+
+  onPaneClick(event) {
+    this.hideContextMenus();
+  }
+
+  onPaneContextMenu(event) {
+    event.preventDefault();
+    this.hideContextMenus();
+    const container = document.getElementById('diagramContainer').getBoundingClientRect();
+    this.contextPos.x = event.clientX - container.left;
+    this.contextPos.y = event.clientY - container.top;
+    this.showPanelContextMenu(event.clientX - container.left, event.clientY - container.top);
+  }
+
+  showNodeContextMenu(left,top) {
+    const contextMenu = document.getElementById('nodeContextMenu');
+    contextMenu.style.left = `${left}px`;
+    contextMenu.style.top = `${top}px`;
+    contextMenu.style.display = 'block';
+  }
+
+  showPanelContextMenu(left,top) {
+    const contextMenu = document.getElementById('panelContextMenu');
+    contextMenu.style.left = `${left}px`;
+    contextMenu.style.top = `${top}px`;
+    contextMenu.style.display = 'block';
+  }
+
+  hideContextMenus() {
+    this.contextElement = null;
+    const nodeContextMenu = document.getElementById('nodeContextMenu');
+    nodeContextMenu.style.display = null;
+    const panelContextMenu = document.getElementById('panelContextMenu');
+    panelContextMenu.style.display = null;
+  }
+
   onElementsRemove(elementsToRemove) {
-    // this.setElements((els) => removeElements(elementsToRemove, els));
     const elements = removeElements(elementsToRemove, this.state.elements);
-    this.setState({ elements: elements });
+    this.refresh(elements);
   }
     
   onConnect(params) { 
-    // this.setElements((els) => addEdge(params, els));
     params = this.labelHandle(params);
     let elements = this.state.elements;
     elements = this.disconnectHandlers(elements, params);
     elements = addEdge(params, elements);
-    this.setState({ elements: elements });
+    this.refresh(elements);
   }
 
   onDelete(data) {
@@ -350,8 +257,16 @@ class FlowDiagram extends Component {
   }
 
   onElementClick(event, element) { 
+    this.hideContextMenus();
     this.selectedElement = element;
     this.updateComponentPanel();
+  }
+
+  onSelectionChange(elements) {
+    if (!elements) {
+      this.selectedElement = null;
+      this.updateComponentPanel();  
+    }
   }
 
   updateComponentPanel() {
@@ -384,6 +299,7 @@ class FlowDiagram extends Component {
       const value = event.target?.value;
       this.selectedElement.data.component = value;
       this.updateComponentType();
+      this.refresh();
     }
   }
 
@@ -400,12 +316,11 @@ class FlowDiagram extends Component {
       const component = CustomComponents.getComponent(this.selectedElement.type);
       const componentType = component.components.find(item => item.key === this.selectedElement.data.component);
       this.selectedElement.data.label = componentType.shortDescription;
-      this.refresh();
     }
   }
 
-  refresh() {
-    this.setState({ elements: this.state.elements });
+  refresh(elements) {
+    this.setState({ elements: elements || this.state.elements });
   }
 
   render() {
@@ -413,7 +328,7 @@ class FlowDiagram extends Component {
 
     return (
       <section>
-        <div className="diagram-container">
+        <div className="diagram-container" id="diagramContainer">
           <ReactFlow
             elements={this.state.elements}
             nodeTypes={CustomComponents.nodes()}
@@ -428,7 +343,10 @@ class FlowDiagram extends Component {
             onLoad={this.onLoad.bind(this)}
             selectNodesOnDrag={true}
             onElementClick={this.onElementClick.bind(this)}
-            onNodeContextMenu={onNodeContextMenu}
+            onSelectionChange={this.onSelectionChange.bind(this)}
+            onNodeContextMenu={this.onNodeContextMenu.bind(this)}
+            onPaneClick={this.onPaneClick.bind(this)}
+            onPaneContextMenu={this.onPaneContextMenu.bind(this)}
           >
           </ReactFlow>
         </div>
@@ -453,6 +371,19 @@ class FlowDiagram extends Component {
             </div>
           </div>
         </footer>
+        <div className="dropdown">
+          <ul className="dropdown-menu" id="nodeContextMenu">
+            <li><h6 className="dropdown-header">Selected component</h6></li>
+            <li><a className="dropdown-item" href=";">Action</a></li>
+            <li><a className="dropdown-item" href=";">Another action</a></li>
+          </ul>
+        </div>
+        <div className="dropdown">
+          <ul className="dropdown-menu" id="panelContextMenu" role="menu">
+            <li><h6 className="dropdown-header">Add component</h6></li>
+            {/* <li className="dropdown-item" onClick={this.insertComponent.bind(this,'xyz')}>Xyz</li> */}
+          </ul>
+        </div>
       </section>
     );
   }

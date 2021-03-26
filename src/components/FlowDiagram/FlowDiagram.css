@@ -1,6 +1,6 @@
 .diagram-container {
-    position: absolute;
-    top: 60px;
+    position: fixed;
+    top: 4rem;
     bottom: 0px;
     left: 0px;
     right: 0px;
@@ -34,4 +34,15 @@
     z-index: 16;
     left: 0px;
     right: 0px;
+}
+
+.diagram-node-action-delete {
+    color: #fff;
+    text-decoration: none;
+    background-color: firebrick;
+}
+
+.diagram-node-action-delete:hover {
+    color: #fff;
+    background-color: darkred;
 }

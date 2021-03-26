@@ -123,7 +123,6 @@ class FlowDiagram extends Component {
     Object.keys(CustomComponents.components).forEach(key => { 
       const component = CustomComponents.components[key];
       if (!component.hideComponent) {
-        //<li className="dropdown-item" onClick={this.insertComponent.bind(this,'condition')}>Condition</li>
         const eLi = document.createElement('li');
         eLi.classList.add('dropdown-item');
         eLi.onclick = (event) => { this.insertComponent(key, event) };
@@ -138,10 +137,10 @@ class FlowDiagram extends Component {
       id: uuidv4(),
       type: componentType,
       data: {  },
-      position: { x: left || 20, y: top || 20 },
+      position: { x: left, y: top },
     };
-    result.position.x = Math.round((result.position.x / 5) * 5);
-    result.position.y = Math.round((result.position.y / 5) * 5);
+    result.position.x = (Math.round(result.position.x / 5) * 5);
+    result.position.y = (Math.round(result.position.y / 5) * 5);
 
     const component = CustomComponents.getComponent(componentType);
     const defaultComponent = component.components.length > 0 ? component.components[0] : null;
@@ -155,7 +154,6 @@ class FlowDiagram extends Component {
 
   insertComponent(componentType,event) {
     this.hideContextMenus();
-    const container = document.getElementById('diagramContainer').getBoundingClientRect();
     const component = this.createComponent(componentType, this.contextPos.x, this.contextPos.y);
     this.selectedElement = component;
     this.updateComponentType();
@@ -206,7 +204,7 @@ class FlowDiagram extends Component {
     panelContextMenu.style.display = null;
   }
 
-  onElementsRemove(elementsToRemove) {
+  removeElements(elementsToRemove) {
     const elements = removeElements(elementsToRemove, this.state.elements);
     this.refresh(elements);
   }
@@ -217,10 +215,6 @@ class FlowDiagram extends Component {
     elements = this.disconnectHandlers(elements, params);
     elements = addEdge(params, elements);
     this.refresh(elements);
-  }
-
-  onDelete(data) {
-    console.log(data);
   }
 
   disconnectHandlers(elements, params) {
@@ -323,6 +317,20 @@ class FlowDiagram extends Component {
     this.setState({ elements: elements || this.state.elements });
   }
 
+  onNodeProperties(event) {
+    this.hideContextMenus();
+    //
+  }
+
+  onNodeDelete(event) {
+    this.hideContextMenus();
+    if (this.selectedElement) {
+      this.removeElements([this.selectedElement]);
+      this.selectedElement = null;
+      this.updateComponentPanel();
+    }
+  }
+
   render() {
     this.props.instanceController.setActiveMenu("/diagram");
 
@@ -338,7 +346,6 @@ class FlowDiagram extends Component {
             zoomOnDoubleClick={false}
             snapToGrid={true}
             snapGrid={[5,5]}
-            onElementsRemove={this.onElementsRemove.bind(this)}
             onConnect={this.onConnect.bind(this)}
             onLoad={this.onLoad.bind(this)}
             selectNodesOnDrag={true}
@@ -374,14 +381,13 @@ class FlowDiagram extends Component {
         <div className="dropdown">
           <ul className="dropdown-menu" id="nodeContextMenu">
             <li><h6 className="dropdown-header">Selected component</h6></li>
-            <li><a className="dropdown-item" href=";">Action</a></li>
-            <li><a className="dropdown-item" href=";">Another action</a></li>
+            <li className="dropdown-item" onClick={this.onNodeProperties.bind(this)}>Properties</li>
+            <li className="dropdown-item diagram-node-action-delete" onClick={this.onNodeDelete.bind(this)}>Delete</li>
           </ul>
         </div>
         <div className="dropdown">
           <ul className="dropdown-menu" id="panelContextMenu" role="menu">
             <li><h6 className="dropdown-header">Add component</h6></li>
-            {/* <li className="dropdown-item" onClick={this.insertComponent.bind(this,'xyz')}>Xyz</li> */}
           </ul>
         </div>
       </section>

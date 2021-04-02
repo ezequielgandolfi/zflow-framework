@@ -4,13 +4,26 @@ import { CustomComponents, NODE_HANDLE_TYPE } from "./CustomNodes";
 import { v4 as uuidv4 } from 'uuid';
 
 import "./FlowDiagram.css";
+import NodeProperties from "./NodeProperties";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { updateElements } from '../../actions';
 
 /*
+
 Configuracao do diagrama
+
+- Start
+  - recebe query e payload como objetos de entrada
 
 - StopCondition: 
   - StopOnError (Aborta o processo quando ocorrer um erro nao tratado pela saida de erro do componente)
   - IgnoreErrors (Continua restante dos processos paralelos, sem abortar o processamento - Nao marca fluxo como erro, apenas se entrar no componente de Stop) 
+
+- API
+  - disponibilizar endpoint que vai chamar diretamente o fluxo em questao
+  - deve ter um componente para atribuir o resultado
+
   
 Configuracao de componentes
 
@@ -53,6 +66,9 @@ Configuracao de componentes
 - Pause
 
 - Process
+  # chama outro processo, permite passar os dados de entrada que serao recebidos no componente Start
+  # pode tbm ser o componente que atribui o retorno do processo (usado tanto em chamadas REST como de outros processos)
+
 
 - Repeat
 
@@ -102,14 +118,17 @@ class FlowDiagram extends Component {
   //#endregion
 
   selectedElement;
-  contextElement;
+  selectedComponent;
+  contextComponent;
   contextPos = { x: 0, y: 0};
 
-  initialElements = [
-    this.createComponent('start', 40, 40)
-  ];
+  state = { elements: this.initialElements(), selection: { show: false, properties: [], data: {} } };
 
-  state = { elements: this.initialElements };
+  initialElements() {
+    const start = this.createComponent('start', 40, 40);
+    start.data.id = 'start';
+    return [ start ];
+  }
 
   onLoad() {
     this.refreshComponentList();
@@ -132,6 +151,22 @@ class FlowDiagram extends Component {
     });
   }
 
+  clearSelectedComponent() {
+    // if (this.selectedElement) {
+    //   this.selectedElement.classList.remove('diagram-node-selected');
+    // }
+    this.selectedComponent = null;
+  }
+
+  setSelectedComponent(component) {
+    this.clearSelectedComponent();
+    this.selectedComponent = component;
+    // if (this.selectedElement) {
+    //   this.selectedElement.classList.add('diagram-node-selected');
+    // }
+    this.refresh();
+  }
+
   createComponent(componentType,left,top) {
     const result = {
       id: uuidv4(),
@@ -146,7 +181,7 @@ class FlowDiagram extends Component {
     const defaultComponent = component.components.length > 0 ? component.components[0] : null;
     if (defaultComponent) {
       result.data.component = defaultComponent.key;
-      result.data.properties = defaultComponent.properties;
+      result.data.properties = CustomComponents.getComponentTypePropertyDefaults(componentType, defaultComponent.key);
     }
 
     return result;
@@ -155,16 +190,17 @@ class FlowDiagram extends Component {
   insertComponent(componentType,event) {
     this.hideContextMenus();
     const component = this.createComponent(componentType, this.contextPos.x, this.contextPos.y);
-    this.selectedElement = component;
+    this.setSelectedComponent(component);
     this.updateComponentType();
     this.updateComponentPanel();
     this.refresh([...this.state.elements,component]);
+    // this.refresh([...this.props.elements,component]);
   }
 
   onNodeContextMenu(event, node) {
     event.preventDefault();
     this.hideContextMenus();
-    this.contextElement = node;
+    this.contextComponent = node;
     const container = document.getElementById('diagramContainer').getBoundingClientRect();
     this.showNodeContextMenu(event.clientX - container.left, event.clientY - container.top);
   };
@@ -197,7 +233,7 @@ class FlowDiagram extends Component {
   }
 
   hideContextMenus() {
-    this.contextElement = null;
+    this.contextComponent = null;
     const nodeContextMenu = document.getElementById('nodeContextMenu');
     nodeContextMenu.style.display = null;
     const panelContextMenu = document.getElementById('panelContextMenu');
@@ -206,12 +242,14 @@ class FlowDiagram extends Component {
 
   removeElements(elementsToRemove) {
     const elements = removeElements(elementsToRemove, this.state.elements);
+    // const elements = removeElements(elementsToRemove, this.props.elements);
     this.refresh(elements);
   }
     
   onConnect(params) { 
     params = this.labelHandle(params);
     let elements = this.state.elements;
+    // let elements = this.props.elements;
     elements = this.disconnectHandlers(elements, params);
     elements = addEdge(params, elements);
     this.refresh(elements);
@@ -220,6 +258,7 @@ class FlowDiagram extends Component {
   disconnectHandlers(elements, params) {
     if (params.targetHandle !== NODE_HANDLE_TYPE.input.multiple) {
       const remove = this.state.elements.filter(item => item.target === params.target);
+      // const remove = this.props.elements.filter(item => item.target === params.target);
       elements = removeElements(remove, elements);
     }
     return elements;
@@ -252,13 +291,13 @@ class FlowDiagram extends Component {
 
   onElementClick(event, element) { 
     this.hideContextMenus();
-    this.selectedElement = element;
+    this.setSelectedComponent(element);
     this.updateComponentPanel();
   }
 
   onSelectionChange(elements) {
     if (!elements) {
-      this.selectedElement = null;
+      this.clearSelectedComponent();
       this.updateComponentPanel();  
     }
   }
@@ -269,10 +308,11 @@ class FlowDiagram extends Component {
     const panel = document.getElementById('componentPanel');
     
     panel.classList.add('invisible');
-    if (this.selectedElement) {
-      const component = CustomComponents.getComponent(this.selectedElement.type);
+
+    if (this.selectedComponent) {
+      const component = CustomComponents.getComponent(this.selectedComponent.type);
       if (component) {
-        inputId.value = this.selectedElement.data.id || '';
+        inputId.value = this.selectedComponent.data.id || '';
         while (selectComponent.length > 0) {
           selectComponent.remove(0);
         }
@@ -282,57 +322,75 @@ class FlowDiagram extends Component {
           option.text = subcomponent.description;
           selectComponent.add(option);
         });
-        selectComponent.value = this.selectedElement.data.component;
+        selectComponent.value = this.selectedComponent.data.component;
         panel.classList.remove('invisible');
       }
     }
   }
 
   onComponentTypeChange(event) {
-    if (this.selectedElement) {
+    if (this.selectedComponent) {
       const value = event.target?.value;
-      this.selectedElement.data.component = value;
+      this.selectedComponent.data.component = value;
       this.updateComponentType();
       this.refresh();
     }
   }
 
   onComponentIdChange(event) {
-    if (this.selectedElement) {
+    if (this.selectedComponent) {
       const value = event.target?.value;
-      this.selectedElement.data.id = value;
+      this.selectedComponent.data.id = value;
       this.refresh();
     }
   }
 
   updateComponentType() {
-    if (this.selectedElement) {
-      const component = CustomComponents.getComponent(this.selectedElement.type);
-      const componentType = component.components.find(item => item.key === this.selectedElement.data.component);
-      this.selectedElement.data.label = componentType.shortDescription;
+    if (this.selectedComponent) {
+      const component = CustomComponents.getComponent(this.selectedComponent.type);
+      const componentType = component.components.find(item => item.key === this.selectedComponent.data.component);
+      this.selectedComponent.data.label = componentType.shortDescription;
     }
   }
 
-  refresh(elements) {
-    this.setState({ elements: elements || this.state.elements });
+  refresh(elements,selection) {
+    // elements = elements || this.props.elements;
+    // this.props.updateElements(elements);
+    elements = elements || this.state.elements;
+    this.setState({ elements: elements, selection: selection || this.state.selection });
   }
 
   onNodeProperties(event) {
+    const component = this.contextComponent;
     this.hideContextMenus();
-    //
+    if (component) {
+      const componentType = CustomComponents.getComponentType(component.type, component.data.component);
+      const selection = { show: true, properties: componentType.properties, data: component.data.properties };
+      this.refresh(null,selection);
+    }
+  }
+
+  onSaveProperties(values) {
+    console.log(values);
   }
 
   onNodeDelete(event) {
+    const component = this.contextComponent;
     this.hideContextMenus();
-    if (this.selectedElement) {
-      this.removeElements([this.selectedElement]);
-      this.selectedElement = null;
-      this.updateComponentPanel();
+    if (component) {
+      if (component.type !== 'start') {
+        this.removeElements([component]);
+        this.clearSelectedComponent();
+        this.updateComponentPanel();
+      }
     }
   }
 
   render() {
-    this.props.instanceController.setActiveMenu("/diagram");
+    // const { elements, updateElements } = this.props;
+    // if (elements.length === 0) {
+    //   updateElements(this.initialElements());
+    // }
 
     return (
       <section>
@@ -357,6 +415,7 @@ class FlowDiagram extends Component {
           >
           </ReactFlow>
         </div>
+        <NodeProperties show={this.state.selection.show} properties={this.state.selection.properties} data={this.state.selection.data} onSave={this.onSaveProperties.bind(this)} />
         <footer className="diagram-component-panel py-3 bg-light" id="componentPanel">
           <div className="row px-3">
             <div className="col-md-4">
@@ -372,10 +431,10 @@ class FlowDiagram extends Component {
                 <label htmlFor="diagramComponentId">ID (optional)</label>
               </div>
             </div>
-            <div className="col-md-6 text-right">
+            {/* <div className="col-md-6 text-right">
               <button type="button" className="btn btn-info btn-lg">Properties</button>
               <button type="button" className="ml-2 btn btn-danger btn-lg">Delete</button>
-            </div>
+            </div> */}
           </div>
         </footer>
         <div className="dropdown">
@@ -395,4 +454,12 @@ class FlowDiagram extends Component {
   }
 }
 
-export default FlowDiagram;
+const mapStateToProps = store => ({
+  elements: store.diagramState.elements
+});
+
+const mapDispatchToProps = dispatch => bindActionCreators({ 
+  updateElements 
+}, dispatch);
+
+export default connect(mapStateToProps, mapDispatchToProps) (FlowDiagram);

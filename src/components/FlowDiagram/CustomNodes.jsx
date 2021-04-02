@@ -119,13 +119,37 @@ const NodeI1O1 = (data, icon, ports, colors) => {
 };
 //#endregion
 
+//#region Data types
+class Type_Object {
+  static key = 'object';
+  static default = { };
+  static inputType = 'text';
+}
+//#endregion
+
+//#region Properties
+class Property_QueryParameter {
+  static key = 'queryParam';
+  static description = 'Query parameter';
+  static type = Type_Object;
+  value;
+}
+
+class Property_Payload {
+  static key = 'payload';
+  static description = 'Payload';
+  static type = Type_Object;
+  value;
+}
+//#endregion
+
 //#region Component - Alert
 class AlertComponent_Force {
   static key = 'force'
   static description = 'Force alert condition';
   static shortDescription = 'Force';
 
-  static properties = { };
+  static properties = [];
 }
 
 class AlertComponent {
@@ -145,7 +169,7 @@ class ConditionComponent_All {
   static description = 'All conditions must be valid';
   static shortDescription = 'All';
   
-  static properties = { };
+  static properties = [];
 }
 
 class ConditionComponent_Any {
@@ -153,7 +177,7 @@ class ConditionComponent_Any {
   static description = 'Any condition must be valid';
   static shortDescription = 'Any';
 
-  static properties = { };
+  static properties = [];
 }
 
 class ConditionComponent {
@@ -174,7 +198,7 @@ class FunctionComponent_Dummy {
   static description = 'Nothing...';
   static shortDescription = 'Dummy';
 
-  static properties = { };
+  static properties = [];
 }
 
 class FunctionComponent {
@@ -194,7 +218,7 @@ class JoinComponent_First {
   static description = 'Go on first event';
   static shortDescription = 'First';
 
-  static properties = { };
+  static properties = [];
 }
 
 class JoinComponent_All {
@@ -202,7 +226,7 @@ class JoinComponent_All {
   static description = 'Wait all events';
   static shortDescription = 'All';
 
-  static properties = { };
+  static properties = [];
 }
 
 class JoinComponent {
@@ -223,7 +247,7 @@ class MathComponent_Sum {
   static description = 'Sum values';
   static shortDescription = 'Sum';
 
-  static properties = { };
+  static properties = [];
 }
 
 class MathComponent {
@@ -243,7 +267,7 @@ class MergeComponent_Array {
   static description = 'Merge array items';
   static shortDescription = 'Array';
 
-  static properties = { };
+  static properties = [];
 }
 
 class MergeComponent {
@@ -263,7 +287,7 @@ class PauseComponent_Delay {
   static description = 'Delay a certain amount of time';
   static shortDescription = 'Delay';
 
-  static properties = { };
+  static properties = [];
 }
 
 class PauseComponent {
@@ -283,7 +307,7 @@ class ProcessComponent_Flow {
   static description = 'Execute';
   static shortDescription = 'Flow';
 
-  static properties = { };
+  static properties = [];
 }
 
 class ProcessComponent {
@@ -303,7 +327,7 @@ class RequestComponent_Get {
   static description = 'GET request';
   static shortDescription = 'Get';
 
-  static properties = { };
+  static properties = [];
 }
 class RequestComponent {
   static description = 'Request';
@@ -322,7 +346,7 @@ class RepeatComponent_For {
   static description = 'FOR loop within a range';
   static shortDescription = 'For';
 
-  static properties = { };
+  static properties = [];
 }
 
 class RepeatComponent_Each {
@@ -330,7 +354,7 @@ class RepeatComponent_Each {
   static description = 'Iterates over a list';
   static shortDescription = 'Each';
 
-  static properties = { };
+  static properties = [];
 }
 
 class RepeatComponent {
@@ -351,7 +375,10 @@ class StartComponent_Start {
   static description = 'Triggered start';
   static shortDescription = 'Start';
 
-  static properties = { };
+  static properties = [
+    Property_QueryParameter,
+    Property_Payload
+  ];
 }
 
 class StartComponent {
@@ -385,7 +412,7 @@ class StopComponent_Stop {
   static description = 'Stop with error condition';
   static shortDescription = 'Stop';
 
-  static properties = { };
+  static properties = [];
 }
 
 class StopComponent {
@@ -418,7 +445,7 @@ class StorageComponent_ReadFile {
   static description = 'Read a data file';
   static shortDescription = 'Read file';
 
-  static properties = { };
+  static properties = [];
 }
 
 class StorageComponent {
@@ -438,7 +465,7 @@ class TransformComponent_Object2Object {
   static description = 'Object to object';
   static shortDescription = 'Obj<->Obj';
 
-  static properties = { };
+  static properties = [];
 }
 
 class TransformComponent {
@@ -458,7 +485,7 @@ class VariableComponent_Set {
   static description = 'Set a value';
   static shortDescription = 'Set';
 
-  static properties = { };
+  static properties = [];
 }
 
 class VariableComponent {
@@ -497,9 +524,36 @@ export class CustomComponents {
     return result;
   }
 
-  static getComponent(node) {
-    return CustomComponents.components[node];
+  static getComponent(key) {
+    return CustomComponents.components[key];
   }
+
+  static getComponentType(key, type) {
+    const component = CustomComponents.getComponent(key);
+    if (component) {
+      return component.components.find(item => item.key === type);
+    }
+  }
+
+  static getComponentTypeProperty(key, type, prop) {
+    const componentType = CustomComponents.getComponentType(key, type);
+    if (componentType) {
+      return componentType.properties.find(item => item.key === prop);
+    }
+  }
+
+  static getComponentTypePropertyDefaults(key, type) {
+    const componentType = CustomComponents.getComponentType(key, type);
+    if (componentType) {
+      const result = { };
+      componentType.properties.forEach(item => {
+        result[item.key] = item.type.default;
+      });
+      return result;
+    }
+    return { };
+  }
+
 }
 
 export const NODE_HANDLE_TYPE = {

@@ -46,3 +46,7 @@
     color: #fff;
     background-color: darkred;
 }
+
+.diagram-node-selected {
+    background-color: aliceblue;
+}

@@ -1,19 +1,8 @@
 import React, { Component } from "react";
-import {
-    Link
-} from "react-router-dom";
+import { connect } from "react-redux";
+import { Link } from "react-router-dom";
 
 class MenuBar extends Component {
-
-  constructor(props) {
-    super(props);
-    this.setState({ menus: this.props.instanceController.menus });
-    this.props.instanceController.menuEvent.addEventListener('refresh', () => { this.updateMenus() });
-  }
-
-  updateMenus() {
-    this.setState({ menus: this.props.instanceController.menus });
-  }
 
   render() {
     
@@ -35,7 +24,7 @@ class MenuBar extends Component {
         </button>
         <div className="collapse navbar-collapse" id="navbarCollapse">
           <ul className="navbar-nav mr-auto">
-            {this.props.instanceController.menus.map((menu,index) => this.renderMenuLink(menu,index))}
+            {this.props.menus.map((menu,index) => this.renderMenuLink(menu,index))}
           </ul>
         </div>
       </nav>
@@ -52,11 +41,15 @@ class MenuBar extends Component {
     }
     const menuClass = menuClassItems.join(' ');
     return (
-      <li className="nav-item active" key={index}>
+      <li className="nav-item" key={index}>
         <Link className={menuClass} to={menu.link}>{menu.name}</Link>
       </li>
     )
   }
 }
 
-export default MenuBar;
+const mapStateToProps = store => ({
+  menus: store.menuState.menus
+});
+
+export default connect(mapStateToProps) (MenuBar);

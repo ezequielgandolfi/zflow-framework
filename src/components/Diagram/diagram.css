@@ -28,7 +28,7 @@
     font-size: x-small;
 }
 
-.diagram-component-panel {
+.diagram-panel {
     position: fixed;
     bottom: 0px;
     z-index: 16;

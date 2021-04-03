@@ -2,89 +2,16 @@ import React, { Component } from "react";
 import ReactFlow, { removeElements, addEdge } from "react-flow-renderer";
 import { v4 as uuidv4 } from 'uuid';
 
-import "./FlowDiagram.css";
+import "./diagram.css";
 import NodeProperties from "./NodeProperties";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { updateElements } from '../../actions';
+import { updateElements, setSelectedElement } from '../../actions/diagramActions';
 import { ZFlowComponents } from "../../helpers/component";
 import { NODE_HANDLE_TYPE } from "../../helpers/diagram/const";
+import DiagramComponentPanel from "./DiagramComponentPanel";
 
-/*
-
-Configuracao do diagrama
-
-- Start
-  - recebe query e payload como objetos de entrada
-
-- StopCondition: 
-  - StopOnError (Aborta o processo quando ocorrer um erro nao tratado pela saida de erro do componente)
-  - IgnoreErrors (Continua restante dos processos paralelos, sem abortar o processamento - Nao marca fluxo como erro, apenas se entrar no componente de Stop) 
-
-- API
-  - disponibilizar endpoint que vai chamar diretamente o fluxo em questao
-  - deve ter um componente para atribuir o resultado
-
-  
-Configuracao de componentes
-
-#Geral
-  - É possivel atribuir IDs para cada componente. Isso é necessário para resgatar valores de saída do componente, qdo utilizado.
-  - Todo processo aberto é registrado em banco, e ao final é gravado o status que o mesmo terminou. Desta forma é possivel criar alertas para processos que falham, etc. Isso tambem vai poder ser visto no dashboard
-
-
-- Alert
-  # registra alerta na tabela de alertas do sistema
-  - ID (ID do alerta previamente criado)
-
-- Condition
-  # testa uma condicao, resultado verdadeira ativa porta de sucesso, falso ativa porta de erro
-  - Type
-    - Expect all (espera que todas entradas sejam satisfatorias)
-    - Expect onde (espera que ao menos uma entrada seja satisfatoria)
-    - Script (executa script)
-  - Entries (exceto para Type = Script)
-    - LeftValue
-    - Operator (==, !=, >, <, >=, <=)
-    - RightValue
-
-- Join
-  # aguarda todas entradas finalizarem antes de continuar
-  - ContinueAfter (condicoes para continuar, depois de receber a primeira entrada)
-    - Immediatly (ja continua na primeira entrada)
-    - All entries (continua somente depois de receber todas entradas)
-    - Timed (se nao receber todas entradas, continua depois de um tempo determinado)
-  - StopAfter (condicoes para abortar o processo, depois de receber a primeira entrada)
-    - Never (nunca gera condicao de erro)
-    - Timed (se nao receber todas entradas, gera erro depois de um tempo determinado)
-
-- Function
-
-- Math
-
-- Merge
-
-- Pause
-
-- Process
-  # chama outro processo, permite passar os dados de entrada que serao recebidos no componente Start
-  # pode tbm ser o componente que atribui o retorno do processo (usado tanto em chamadas REST como de outros processos)
-
-
-- Repeat
-
-- Transform
-
-- Start
-
-- Stop
-
-- Storage
-
-
-*/
-
-class FlowDiagram extends Component {
+class Diagram extends Component {
   //#region Styles
   flowEndStyle = {
     label: "End",
@@ -118,23 +45,23 @@ class FlowDiagram extends Component {
   };
   //#endregion
 
-  selectedElement;
+  state = { elements: [], selection: { show: false, properties: [], data: {} } };
+
   selectedComponent;
   contextComponent;
   contextPos = { x: 0, y: 0};
 
-  state = { elements: this.initialElements(), selection: { show: false, properties: [], data: {} } };
+  componentDidMount() {
+    this.refreshComponentList();
+    // NEW / LOAD ???
+    this.props.updateElements(this.initialElements());
+  }
 
   initialElements() {
     const start = this.createComponent('start', 40, 40);
     start.data.id = 'start';
-    this.updateComponentType(start);
+    ZFlowComponents.updateComponentType(start);
     return [ start ];
-  }
-
-  onLoad() {
-    this.refreshComponentList();
-    this.updateComponentPanel();
   }
 
   refreshComponentList() {
@@ -154,26 +81,23 @@ class FlowDiagram extends Component {
   }
 
   clearSelectedComponent() {
-    // if (this.selectedElement) {
-    //   this.selectedElement.classList.remove('diagram-node-selected');
-    // }
-    this.selectedComponent = null;
+    if (this.props.selectedElement) {
+      this.props.setSelectedElement(null);
+    }
   }
 
   setSelectedComponent(component) {
     this.clearSelectedComponent();
-    this.selectedComponent = component;
-    // if (this.selectedElement) {
-    //   this.selectedElement.classList.add('diagram-node-selected');
-    // }
-    this.refresh();
+    // this.selectedComponent = component;
+    this.props.setSelectedElement(component.id);
+    // this.refresh();
   }
 
   createComponent(componentType,left,top) {
     const result = {
       id: uuidv4(),
       type: componentType,
-      data: {  },
+      data: { id: '' },
       position: { x: left, y: top },
     };
     result.position.x = (Math.round(result.position.x / 5) * 5);
@@ -192,11 +116,10 @@ class FlowDiagram extends Component {
   insertComponent(componentType,event) {
     this.hideContextMenus();
     const component = this.createComponent(componentType, this.contextPos.x, this.contextPos.y);
-    this.setSelectedComponent(component);
-    this.updateComponentType();
-    this.updateComponentPanel();
-    this.refresh([...this.state.elements,component]);
+    ZFlowComponents.updateComponentType(component);
     // this.refresh([...this.props.elements,component]);
+    this.props.updateElements([...this.props.elements,component]);
+    this.setSelectedComponent(component);
   }
 
   onNodeContextMenu(event, node) {
@@ -243,24 +166,23 @@ class FlowDiagram extends Component {
   }
 
   removeElements(elementsToRemove) {
-    const elements = removeElements(elementsToRemove, this.state.elements);
-    // const elements = removeElements(elementsToRemove, this.props.elements);
-    this.refresh(elements);
+    const elements = removeElements(elementsToRemove, this.props.elements);
+    this.props.updateElements(elements);
+    // this.refresh(elements);
   }
     
   onConnect(params) { 
     params = this.labelHandle(params);
-    let elements = this.state.elements;
-    // let elements = this.props.elements;
+    let elements = this.props.elements;
     elements = this.disconnectHandlers(elements, params);
     elements = addEdge(params, elements);
-    this.refresh(elements);
+    // this.refresh(elements);
+    this.props.updateElements(elements);
   }
 
   disconnectHandlers(elements, params) {
     if (params.targetHandle !== NODE_HANDLE_TYPE.input.multiple) {
-      const remove = this.state.elements.filter(item => item.target === params.target);
-      // const remove = this.props.elements.filter(item => item.target === params.target);
+      const remove = this.props.elements.filter(item => item.target === params.target);
       elements = removeElements(remove, elements);
     }
     return elements;
@@ -294,72 +216,17 @@ class FlowDiagram extends Component {
   onElementClick(event, element) { 
     this.hideContextMenus();
     this.setSelectedComponent(element);
-    this.updateComponentPanel();
   }
 
   onSelectionChange(elements) {
     if (!elements) {
       this.clearSelectedComponent();
-      this.updateComponentPanel();  
-    }
-  }
-
-  updateComponentPanel() {
-    const selectComponent = document.getElementById('diagramComponentType');
-    const inputId = document.getElementById('diagramComponentId');
-    const panel = document.getElementById('componentPanel');
-    
-    panel.classList.add('invisible');
-
-    if (this.selectedComponent) {
-      const component = ZFlowComponents.getComponent(this.selectedComponent.type);
-      if (component) {
-        inputId.value = this.selectedComponent.data.id || '';
-        while (selectComponent.length > 0) {
-          selectComponent.remove(0);
-        }
-        component.components.forEach(subcomponent => {
-          let option = document.createElement('option');
-          option.value = subcomponent.key;
-          option.text = subcomponent.description;
-          selectComponent.add(option);
-        });
-        selectComponent.value = this.selectedComponent.data.component;
-        panel.classList.remove('invisible');
-      }
-    }
-  }
-
-  onComponentTypeChange(event) {
-    if (this.selectedComponent) {
-      const value = event.target?.value;
-      this.selectedComponent.data.component = value;
-      this.updateComponentType();
-      this.refresh();
-    }
-  }
-
-  onComponentIdChange(event) {
-    if (this.selectedComponent) {
-      const value = event.target?.value;
-      this.selectedComponent.data.id = value;
-      this.refresh();
-    }
-  }
-
-  updateComponentType(component) {
-    component = component || this.selectedComponent;
-    if (component) {
-      const componentClass = ZFlowComponents.getComponent(component.type);
-      const componentType = componentClass.components.find(item => item.key === component.data.component);
-      component.data.label = componentType.shortDescription;
     }
   }
 
   refresh(elements,selection) {
-    // elements = elements || this.props.elements;
-    // this.props.updateElements(elements);
-    elements = elements || this.state.elements;
+    elements = elements || this.props.elements;
+    this.props.updateElements(elements);
     this.setState({ elements: elements, selection: selection || this.state.selection });
   }
 
@@ -374,7 +241,7 @@ class FlowDiagram extends Component {
   }
 
   onSaveProperties(values) {
-    const elements = this.state.elements;
+    const elements = this.props.elements;
     if (this.state.selection?.component) {
       const el = elements.find(item => item.id === this.state.selection.component.id);
       el.data.properties = { ...values };
@@ -395,22 +262,16 @@ class FlowDiagram extends Component {
       if (component.type !== 'start') {
         this.removeElements([component]);
         this.clearSelectedComponent();
-        this.updateComponentPanel();
       }
     }
   }
 
   render() {
-    // const { elements, updateElements } = this.props;
-    // if (elements.length === 0) {
-    //   updateElements(this.initialElements());
-    // }
-
     return (
-      <section>
+      <section className="diagram">
         <div className="diagram-container" id="diagramContainer">
           <ReactFlow
-            elements={this.state.elements}
+            elements={this.props.elements}
             nodeTypes={ZFlowComponents.nodes()}
             zoomOnScroll={false}
             zoomOnPinch={false}
@@ -419,7 +280,6 @@ class FlowDiagram extends Component {
             snapToGrid={true}
             snapGrid={[5,5]}
             onConnect={this.onConnect.bind(this)}
-            onLoad={this.onLoad.bind(this)}
             selectNodesOnDrag={true}
             onElementClick={this.onElementClick.bind(this)}
             onSelectionChange={this.onSelectionChange.bind(this)}
@@ -430,27 +290,7 @@ class FlowDiagram extends Component {
           </ReactFlow>
         </div>
         <NodeProperties show={this.state.selection.show} properties={this.state.selection.properties} data={this.state.selection.data} onSave={this.onSaveProperties.bind(this)} onCancel={this.onCancelProperties.bind(this)} />
-        <footer className="diagram-component-panel py-3 bg-light" id="componentPanel">
-          <div className="row px-3">
-            <div className="col-md-4">
-              <div className="form-label-group">
-                <select className="form-select w-100" id="diagramComponentType" onChange={this.onComponentTypeChange.bind(this)}>
-                </select>
-                <label htmlFor="diagramComponentType">Component</label>
-              </div>
-            </div>
-            <div className="col-md-2">
-              <div className="form-label-group">
-                <input type="input" className="form-control" id="diagramComponentId" placeholder="Optional" onBlur={this.onComponentIdChange.bind(this)} />
-                <label htmlFor="diagramComponentId">ID (optional)</label>
-              </div>
-            </div>
-            {/* <div className="col-md-6 text-right">
-              <button type="button" className="btn btn-info btn-lg">Properties</button>
-              <button type="button" className="ml-2 btn btn-danger btn-lg">Delete</button>
-            </div> */}
-          </div>
-        </footer>
+        <DiagramComponentPanel />
         <div className="dropdown">
           <ul className="dropdown-menu" id="nodeContextMenu">
             <li><h6 className="dropdown-header">Selected component</h6></li>
@@ -469,11 +309,12 @@ class FlowDiagram extends Component {
 }
 
 const mapStateToProps = store => ({
-  elements: store.diagramState.elements
+  elements: store.diagramState.elements,
+  selectedElement: store.diagramState.selectedElement
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({ 
-  updateElements 
+  updateElements, setSelectedElement 
 }, dispatch);
 
-export default connect(mapStateToProps, mapDispatchToProps) (FlowDiagram);
+export default connect(mapStateToProps, mapDispatchToProps) (Diagram);

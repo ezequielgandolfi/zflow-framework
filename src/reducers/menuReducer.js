@@ -1,11 +1,11 @@
 import { SET_ACTIVE_MENU, UPDATE_MENU } from "../actions/menuActions";
-import FlowDiagram from "../components/FlowDiagram/FlowDiagram";
+import Diagram from "../components/Diagram/Diagram";
 import DashboardPage from "../pages/DashboardPage";
 
 const initialState = {
   menus: [
     { link: '/', name: 'Dashboard', active: false, enabled: true, component: DashboardPage },
-    { link: '/diagram', name: 'Test Diagram', active: false, enabled: true, component: FlowDiagram },
+    { link: '/diagram', name: 'Test Diagram', active: false, enabled: true, component: Diagram },
   ]
 };
 

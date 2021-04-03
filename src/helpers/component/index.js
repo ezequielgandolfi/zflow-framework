@@ -70,4 +70,10 @@ export class ZFlowComponents {
     return { };
   }
 
+  static updateComponentType(component) {
+    const componentClass = ZFlowComponents.getComponent(component.type);
+    const componentType = componentClass.components.find(item => item.key === component.data.component);
+    component.data.label = componentType.shortDescription;
+  }
+
 }

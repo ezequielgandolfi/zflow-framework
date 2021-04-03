@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { connect } from "react-redux";
 import { Switch, Route } from "react-router-dom";
-import FlowDiagram from "../components/FlowDiagram/FlowDiagram";
+import Diagram from "../components/Diagram/Diagram";
 import DashboardPage from "../pages/DashboardPage";
 
 class RouterLayout extends Component {
@@ -23,7 +23,7 @@ class RouterLayout extends Component {
           <div>
             <Switch>
               {/* {this.props.menus.map((item,index) => this.renderMenu(item,index))} */}
-              <Route path="/diagram" component={FlowDiagram} />
+              <Route path="/diagram" component={Diagram} />
               <Route path="/" component={DashboardPage} />
             </Switch>
           </div>

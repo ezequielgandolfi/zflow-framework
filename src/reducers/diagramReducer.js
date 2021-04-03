@@ -1,12 +1,8 @@
-import { UPDATE_ELEMENTS } from "../actions/actionTypes";
+import { SET_SELECTED_ELEMENT, UPDATE_ELEMENTS } from "../actions/diagramActions";
 
 const initialState = {
   elements: [], 
-  selection: { 
-    show: false, 
-    properties: [], 
-    data: { }
-  }
+  selectedElement: null
 };
 
 export const diagramReducer = (state = initialState, action) => {
@@ -15,6 +11,11 @@ export const diagramReducer = (state = initialState, action) => {
       return {
         ...state,
         elements: action.payload
+      }
+    case SET_SELECTED_ELEMENT:
+      return {
+        ...state,
+        selectedElement: action.payload
       }
     default:
       return state;

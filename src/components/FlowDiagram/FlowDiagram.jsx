@@ -365,13 +365,24 @@ class FlowDiagram extends Component {
     this.hideContextMenus();
     if (component) {
       const componentType = CustomComponents.getComponentType(component.type, component.data.component);
-      const selection = { show: true, properties: componentType.properties, data: component.data.properties };
+      const selection = { show: true, component, properties: componentType.properties, data: component.data.properties };
       this.refresh(null,selection);
     }
   }
 
   onSaveProperties(values) {
-    console.log(values);
+    const elements = this.state.elements;
+    if (this.state.selection?.component) {
+      const el = elements.find(item => item.id === this.state.selection.component.id);
+      el.data.properties = { ...values };
+    }
+    const selection = { show: false, properties: [], data: { }, component: null };
+    this.refresh(elements,selection);
+  }
+
+  onCancelProperties() {
+    const selection = { show: false, properties: [], data: { } };
+    this.refresh(null,selection);
   }
 
   onNodeDelete(event) {
@@ -415,7 +426,7 @@ class FlowDiagram extends Component {
           >
           </ReactFlow>
         </div>
-        <NodeProperties show={this.state.selection.show} properties={this.state.selection.properties} data={this.state.selection.data} onSave={this.onSaveProperties.bind(this)} />
+        <NodeProperties show={this.state.selection.show} properties={this.state.selection.properties} data={this.state.selection.data} onSave={this.onSaveProperties.bind(this)} onCancel={this.onCancelProperties.bind(this)} />
         <footer className="diagram-component-panel py-3 bg-light" id="componentPanel">
           <div className="row px-3">
             <div className="col-md-4">

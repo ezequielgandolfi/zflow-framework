@@ -122,7 +122,7 @@ const NodeI1O1 = (data, icon, ports, colors) => {
 //#region Data types
 class Type_Object {
   static key = 'object';
-  static default = { };
+  static default = '';
   static inputType = 'text';
 }
 //#endregion
@@ -134,12 +134,28 @@ class Property_QueryParameter {
   static type = Type_Object;
   value;
 }
+class Property_QueryParameter_ReadOnly extends Property_QueryParameter {
+  static readOnly = true;
+}
+
+class Property_PathParameter {
+  static key = 'pathParam';
+  static description = 'Path parameter';
+  static type = Type_Object;
+  value;
+}
+class Property_PathParameter_ReadOnly extends Property_PathParameter {
+  static readOnly = true;
+}
 
 class Property_Payload {
   static key = 'payload';
   static description = 'Payload';
   static type = Type_Object;
   value;
+}
+class Property_Payload_ReadOnly extends Property_Payload {
+  static readOnly = true;
 }
 //#endregion
 
@@ -376,8 +392,9 @@ class StartComponent_Start {
   static shortDescription = 'Start';
 
   static properties = [
-    Property_QueryParameter,
-    Property_Payload
+    Property_QueryParameter_ReadOnly,
+    Property_PathParameter_ReadOnly,
+    Property_Payload_ReadOnly
   ];
 }
 

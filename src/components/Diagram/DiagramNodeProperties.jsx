@@ -45,6 +45,51 @@ class DiagramNodeProperties extends Component {
     );
   }
 
+  _rederPropertyList() {
+    const list = this.state.properties.filter(item => !item.readOnly);
+    if (list.length > 0) {
+      return list.map((item, index) => this._renderProperty(item, index));
+    }
+    else {
+      return <div className="text-center">No input properties</div>;
+    }
+  }
+
+  _renderCancelButton() {
+    return (
+      <Button variant="secondary" onClick={this._handleCancel.bind(this)}>
+        Cancel
+      </Button>
+    );
+  }
+
+  _renderSaveButton() {
+    if (this.state.properties.filter(item => !item.readOnly).length > 0) {
+      return (
+        <Button variant="primary" onClick={this._handleSave.bind(this)}>
+          Save
+        </Button>
+      );
+    }
+  }
+
+  _renderActionButtons() {
+    return (
+      <>
+        {this._renderCancelButton()}
+        {this._renderSaveButton()}
+      </>
+    );
+  }
+
+  _renderModalTitle() {
+    // TODO - add the component type to the title
+    let title = 'Input properties';
+    return (
+      <Modal.Title>{title}</Modal.Title>
+    )
+  }
+
   componentDidUpdate(prevProps, prevState) {
     if (this.props.show !== prevState.modalShow) {
       this.setState({ modalShow: this.props.show, properties: this.props.properties, data: Object.assign({},this.props.data) });
@@ -56,18 +101,13 @@ class DiagramNodeProperties extends Component {
       <section className="diagram-node-properties">
         <Modal show={this.state.modalShow} onHide={this._handleCancel.bind(this)} size="lg">
           <Modal.Header>
-            <Modal.Title>Input properties</Modal.Title>
+            {this._renderModalTitle()}
           </Modal.Header>
           <Modal.Body>
-            {this.state.properties.filter(item => !!item.readOnly).map((item, index) => this._renderProperty(item, index))}
+            {this._rederPropertyList()}
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="secondary" onClick={this._handleCancel.bind(this)}>
-              Cancel
-            </Button>
-            <Button variant="primary" onClick={this._handleSave.bind(this)}>
-              Save
-            </Button>
+            {this._renderActionButtons()}
           </Modal.Footer>
         </Modal>
       </section>

@@ -1,11 +1,11 @@
 import { UPDATE_MENU } from "../actions/menuActions";
-import Diagram from "../components/Diagram/Diagram";
 import DashboardPage from "../pages/DashboardPage";
+import DiagramPage from "../pages/DiagramPage";
 
 const _initialState = {
   menus: [
     { link: '/', name: 'Dashboard', enabled: true, component: DashboardPage },
-    { link: '/diagram', name: 'Test Diagram', enabled: true, component: Diagram },
+    { link: '/diagram', name: 'Test Diagram', enabled: true, component: DiagramPage },
   ]
 };
 

@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import ReactFlow, { removeElements, addEdge } from "react-flow-renderer";
-import { CustomComponents, NODE_HANDLE_TYPE } from "./CustomNodes";
 import { v4 as uuidv4 } from 'uuid';
 
 import "./FlowDiagram.css";
@@ -8,6 +7,8 @@ import NodeProperties from "./NodeProperties";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { updateElements } from '../../actions';
+import { ZFlowComponents } from "../../helpers/component";
+import { NODE_HANDLE_TYPE } from "../../helpers/diagram/const";
 
 /*
 
@@ -127,6 +128,7 @@ class FlowDiagram extends Component {
   initialElements() {
     const start = this.createComponent('start', 40, 40);
     start.data.id = 'start';
+    this.updateComponentType(start);
     return [ start ];
   }
 
@@ -139,8 +141,8 @@ class FlowDiagram extends Component {
     const panel = document.getElementById('panelContextMenu');
     panel.querySelectorAll('li.dropdown-item').forEach(item => item.remove());
     
-    Object.keys(CustomComponents.components).forEach(key => { 
-      const component = CustomComponents.components[key];
+    Object.keys(ZFlowComponents.components).forEach(key => { 
+      const component = ZFlowComponents.components[key];
       if (!component.hideComponent) {
         const eLi = document.createElement('li');
         eLi.classList.add('dropdown-item');
@@ -177,11 +179,11 @@ class FlowDiagram extends Component {
     result.position.x = (Math.round(result.position.x / 5) * 5);
     result.position.y = (Math.round(result.position.y / 5) * 5);
 
-    const component = CustomComponents.getComponent(componentType);
+    const component = ZFlowComponents.getComponent(componentType);
     const defaultComponent = component.components.length > 0 ? component.components[0] : null;
     if (defaultComponent) {
       result.data.component = defaultComponent.key;
-      result.data.properties = CustomComponents.getComponentTypePropertyDefaults(componentType, defaultComponent.key);
+      result.data.properties = ZFlowComponents.getComponentTypePropertyDefaults(componentType, defaultComponent.key);
     }
 
     return result;
@@ -310,7 +312,7 @@ class FlowDiagram extends Component {
     panel.classList.add('invisible');
 
     if (this.selectedComponent) {
-      const component = CustomComponents.getComponent(this.selectedComponent.type);
+      const component = ZFlowComponents.getComponent(this.selectedComponent.type);
       if (component) {
         inputId.value = this.selectedComponent.data.id || '';
         while (selectComponent.length > 0) {
@@ -345,11 +347,12 @@ class FlowDiagram extends Component {
     }
   }
 
-  updateComponentType() {
-    if (this.selectedComponent) {
-      const component = CustomComponents.getComponent(this.selectedComponent.type);
-      const componentType = component.components.find(item => item.key === this.selectedComponent.data.component);
-      this.selectedComponent.data.label = componentType.shortDescription;
+  updateComponentType(component) {
+    component = component || this.selectedComponent;
+    if (component) {
+      const componentClass = ZFlowComponents.getComponent(component.type);
+      const componentType = componentClass.components.find(item => item.key === component.data.component);
+      component.data.label = componentType.shortDescription;
     }
   }
 
@@ -364,7 +367,7 @@ class FlowDiagram extends Component {
     const component = this.contextComponent;
     this.hideContextMenus();
     if (component) {
-      const componentType = CustomComponents.getComponentType(component.type, component.data.component);
+      const componentType = ZFlowComponents.getComponentType(component.type, component.data.component);
       const selection = { show: true, component, properties: componentType.properties, data: component.data.properties };
       this.refresh(null,selection);
     }
@@ -408,7 +411,7 @@ class FlowDiagram extends Component {
         <div className="diagram-container" id="diagramContainer">
           <ReactFlow
             elements={this.state.elements}
-            nodeTypes={CustomComponents.nodes()}
+            nodeTypes={ZFlowComponents.nodes()}
             zoomOnScroll={false}
             zoomOnPinch={false}
             panOnScroll={true}

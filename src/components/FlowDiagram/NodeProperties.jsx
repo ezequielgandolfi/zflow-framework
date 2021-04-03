@@ -19,6 +19,7 @@ class NodeProperties extends Component {
   }
 
   renderProperty(property, index) {
+    console.log(property.key, property.description, property.readOnly);
     return (
       <div className="row" key={index}>
         <div className="input-group mb-3 col-sm">

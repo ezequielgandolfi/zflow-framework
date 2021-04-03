@@ -1,11 +1,11 @@
 import { SET_SELECTED_ELEMENT, UPDATE_ELEMENTS } from "../actions/diagramActions";
 
-const initialState = {
+const _initialState = {
   elements: [], 
   selectedElement: null
 };
 
-export const diagramReducer = (state = initialState, action) => {
+export const diagramReducer = (state = _initialState, action) => {
   switch (action.type) {
     case UPDATE_ELEMENTS:
       return {

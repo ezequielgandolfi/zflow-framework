@@ -3,51 +3,18 @@ import ReactFlow, { removeElements, addEdge } from "react-flow-renderer";
 import { v4 as uuidv4 } from 'uuid';
 
 import "./diagram.css";
-import NodeProperties from "./NodeProperties";
+import DiagramNodeProperties from "./DiagramNodeProperties";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { updateElements, setSelectedElement } from '../../actions/diagramActions';
 import { ZFlowComponents } from "../../helpers/component";
 import { NODE_HANDLE_TYPE } from "../../helpers/diagram/const";
 import DiagramComponentPanel from "./DiagramComponentPanel";
+import { STYLE_FLOW_END, STYLE_FLOW_ERROR, STYLE_FLOW_FALSE, STYLE_FLOW_REPEAT, STYLE_FLOW_TRUE } from "./diagramStyle";
 
 class Diagram extends Component {
-  //#region Styles
-  flowEndStyle = {
-    label: "End",
-    labelBgPadding: [8, 4],
-    labelBgBorderRadius: 4,
-    labelBgStyle: { fill: 'lightblue', color: '#fff', fillOpacity: 0.7 },
-  };
-  flowTrueStyle = {
-    label: "True",
-    labelBgPadding: [8, 4],
-    labelBgBorderRadius: 4,
-    labelBgStyle: { fill: 'lightgreen', color: '#fff', fillOpacity: 0.7 },
-  };
-  flowFalseStyle = {
-    label: "False",
-    labelBgPadding: [8, 4],
-    labelBgBorderRadius: 4,
-    labelBgStyle: { fill: 'salmon', color: '#fff', fillOpacity: 0.7 },
-  };
-  flowRepeatStyle = {
-    label: "Repeat",
-    labelBgPadding: [8, 4],
-    labelBgBorderRadius: 4,
-    labelBgStyle: { fill: 'lightgreen', color: '#fff', fillOpacity: 0.7 },
-  };
-  flowErrorStyle = {
-    label: "Error",
-    labelBgPadding: [8, 4],
-    labelBgBorderRadius: 4,
-    labelBgStyle: { fill: 'red', color: '#fff', fillOpacity: 0.7 },
-  };
-  //#endregion
-
   state = { elements: [], selection: { show: false, properties: [], data: {} } };
 
-  selectedComponent;
   contextComponent;
   contextPos = { x: 0, y: 0};
 
@@ -80,17 +47,15 @@ class Diagram extends Component {
     });
   }
 
-  clearSelectedComponent() {
+  clearSelectedElement() {
     if (this.props.selectedElement) {
       this.props.setSelectedElement(null);
     }
   }
 
-  setSelectedComponent(component) {
-    this.clearSelectedComponent();
-    // this.selectedComponent = component;
+  setSelectedElement(component) {
+    this.clearSelectedElement();
     this.props.setSelectedElement(component.id);
-    // this.refresh();
   }
 
   createComponent(componentType,left,top) {
@@ -117,9 +82,8 @@ class Diagram extends Component {
     this.hideContextMenus();
     const component = this.createComponent(componentType, this.contextPos.x, this.contextPos.y);
     ZFlowComponents.updateComponentType(component);
-    // this.refresh([...this.props.elements,component]);
     this.props.updateElements([...this.props.elements,component]);
-    this.setSelectedComponent(component);
+    this.setSelectedElement(component);
   }
 
   onNodeContextMenu(event, node) {
@@ -168,7 +132,6 @@ class Diagram extends Component {
   removeElements(elementsToRemove) {
     const elements = removeElements(elementsToRemove, this.props.elements);
     this.props.updateElements(elements);
-    // this.refresh(elements);
   }
     
   onConnect(params) { 
@@ -176,7 +139,6 @@ class Diagram extends Component {
     let elements = this.props.elements;
     elements = this.disconnectHandlers(elements, params);
     elements = addEdge(params, elements);
-    // this.refresh(elements);
     this.props.updateElements(elements);
   }
 
@@ -193,19 +155,19 @@ class Diagram extends Component {
     params.type = "smoothstep";
     switch(params.sourceHandle) {
       case NODE_HANDLE_TYPE.output.error:
-        params = {...params, ...this.flowErrorStyle};
+        params = {...params, ...STYLE_FLOW_ERROR};
         break;
       case NODE_HANDLE_TYPE.output.true:
-        params = {...params, ...this.flowTrueStyle};
+        params = {...params, ...STYLE_FLOW_TRUE};
         break;
       case NODE_HANDLE_TYPE.output.false:
-        params = {...params, ...this.flowFalseStyle};
+        params = {...params, ...STYLE_FLOW_FALSE};
         break;
       case NODE_HANDLE_TYPE.output.repeat:
-        params = {...params, ...this.flowRepeatStyle};
+        params = {...params, ...STYLE_FLOW_REPEAT};
         break;
       case NODE_HANDLE_TYPE.output.end:
-        params = {...params, ...this.flowEndStyle};
+        params = {...params, ...STYLE_FLOW_END};
         break;
       default:
         break;
@@ -215,12 +177,12 @@ class Diagram extends Component {
 
   onElementClick(event, element) { 
     this.hideContextMenus();
-    this.setSelectedComponent(element);
+    this.setSelectedElement(element);
   }
 
   onSelectionChange(elements) {
     if (!elements) {
-      this.clearSelectedComponent();
+      this.clearSelectedElement();
     }
   }
 
@@ -261,7 +223,7 @@ class Diagram extends Component {
     if (component) {
       if (component.type !== 'start') {
         this.removeElements([component]);
-        this.clearSelectedComponent();
+        this.clearSelectedElement();
       }
     }
   }
@@ -289,7 +251,7 @@ class Diagram extends Component {
           >
           </ReactFlow>
         </div>
-        <NodeProperties show={this.state.selection.show} properties={this.state.selection.properties} data={this.state.selection.data} onSave={this.onSaveProperties.bind(this)} onCancel={this.onCancelProperties.bind(this)} />
+        <DiagramNodeProperties show={this.state.selection.show} properties={this.state.selection.properties} data={this.state.selection.data} onSave={this.onSaveProperties.bind(this)} onCancel={this.onCancelProperties.bind(this)} />
         <DiagramComponentPanel />
         <div className="dropdown">
           <ul className="dropdown-menu" id="nodeContextMenu">

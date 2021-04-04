@@ -6,14 +6,14 @@ import "./diagram.css";
 import DiagramNodeProperties from "./DiagramNodeProperties";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
-import { updateElements, setSelectedElement } from '../../actions/diagramActions';
+import { updateElements, setContextElement, setSelectedElement } from '../../actions/diagramActions';
 import { ZFlowComponents } from "../../helpers/component";
 import { NODE_HANDLE_TYPE } from "../../helpers/diagram/const";
 import DiagramComponentPanel from "./DiagramComponentPanel";
 import { STYLE_FLOW_END, STYLE_FLOW_ERROR, STYLE_FLOW_FALSE, STYLE_FLOW_REPEAT, STYLE_FLOW_TRUE } from "./diagramStyle";
 
 class Diagram extends Component {
-  state = { elements: [], selection: { show: false, properties: [], data: {} } };
+  state = { elements: [] };
 
   contextComponent;
   contextPos = { x: 0, y: 0};
@@ -186,35 +186,25 @@ class Diagram extends Component {
     }
   }
 
-  refresh(elements,selection) {
-    elements = elements || this.props.elements;
-    this.props.updateElements(elements);
-    this.setState({ elements: elements, selection: selection || this.state.selection });
-  }
-
   onNodeProperties(event) {
     const component = this.contextComponent;
     this.hideContextMenus();
     if (component) {
-      const componentType = ZFlowComponents.getComponentType(component.type, component.data.component);
-      const selection = { show: true, component, properties: componentType.properties, data: component.data.properties };
-      this.refresh(null,selection);
+      this.props.setContextElement(component.id);
     }
   }
 
   onSaveProperties(values) {
     const elements = this.props.elements;
-    if (this.state.selection?.component) {
-      const el = elements.find(item => item.id === this.state.selection.component.id);
+    if (this.props.contextElement) {
+      const el = elements.find(item => item.id === this.props.contextElement);
       el.data.properties = { ...values };
     }
-    const selection = { show: false, properties: [], data: { }, component: null };
-    this.refresh(elements,selection);
+    this.props.setContextElement(null);
   }
 
   onCancelProperties() {
-    const selection = { show: false, properties: [], data: { } };
-    this.refresh(null,selection);
+    this.props.setContextElement(null);
   }
 
   onNodeDelete(event) {
@@ -251,7 +241,7 @@ class Diagram extends Component {
           >
           </ReactFlow>
         </div>
-        <DiagramNodeProperties show={this.state.selection.show} properties={this.state.selection.properties} data={this.state.selection.data} onSave={this.onSaveProperties.bind(this)} onCancel={this.onCancelProperties.bind(this)} />
+        <DiagramNodeProperties onSave={this.onSaveProperties.bind(this)} onCancel={this.onCancelProperties.bind(this)} />
         <DiagramComponentPanel />
         <div className="dropdown">
           <ul className="dropdown-menu" id="nodeContextMenu">
@@ -272,11 +262,12 @@ class Diagram extends Component {
 
 const mapStateToProps = store => ({
   elements: store.diagramState.elements,
-  selectedElement: store.diagramState.selectedElement
+  selectedElement: store.diagramState.selectedElement,
+  contextElement: store.diagramState.contextElement
 });
 
 const mapDispatchToProps = dispatch => bindActionCreators({ 
-  updateElements, setSelectedElement 
+  updateElements, setSelectedElement, setContextElement 
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps) (Diagram);

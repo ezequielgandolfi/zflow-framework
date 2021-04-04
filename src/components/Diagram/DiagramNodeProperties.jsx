@@ -1,8 +1,12 @@
 import React, { Component } from "react";
 import { Button, Modal } from "react-bootstrap";
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { updateElements, setContextElement } from "../../actions/diagramActions";
+import { ZFlowComponents } from "../../helpers/component";
 
 class DiagramNodeProperties extends Component {
-  state = { modalShow: false, properties: [], data: {} };
+  state = { element: null, properties: [], data: { } }
 
   _handleChange(event) {
     const name = event.target.name;
@@ -16,18 +20,17 @@ class DiagramNodeProperties extends Component {
     if (this.props.onCancel instanceof Function) {
       this.props.onCancel();
     }
-    this.setState({ modalShow: false });
+    this.setState({ element: null });
   }
 
   _handleSave() {
     if (this.props.onSave instanceof Function) {
       this.props.onSave(this.state.data);
     }
-    this.setState({ modalShow: false });
+    this.setState({ element: null });
   }
 
   _renderProperty(property, index) {
-    console.log(property.key, property.description, property.readOnly);
     return (
       <div className="row" key={index}>
         <div className="input-group mb-3 col-sm">
@@ -83,23 +86,39 @@ class DiagramNodeProperties extends Component {
   }
 
   _renderModalTitle() {
-    // TODO - add the component type to the title
     let title = 'Input properties';
+    if (this.state.element) {
+      const componentType = ZFlowComponents.getComponentType(this.state.element.type, this.state.element.data.component);
+      title += ` - ${componentType.shortDescription}`;
+    }
     return (
       <Modal.Title>{title}</Modal.Title>
     )
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (this.props.show !== prevState.modalShow) {
-      this.setState({ modalShow: this.props.show, properties: this.props.properties, data: Object.assign({},this.props.data) });
+  componentDidUpdate() {
+    if (this.state.element?.id != this.props.contextElement) {
+      if (this.props.contextElement) {
+        const element = this.props.elements.find(item => item.id === this.props.contextElement);
+        if (element) {
+          const componentType = ZFlowComponents.getComponentType(element.type, element.data.component);
+          const properties = componentType.properties;
+          const data = Object.assign({},element.data.properties);
+          this.setState({ element, properties, data });
+        }
+      }
+      else {
+        this.setState({ element: null });
+      }
     }
   }
 
   render() {
+    let show = !!(this.state.element);
+
     return (
       <section className="diagram-node-properties">
-        <Modal show={this.state.modalShow} onHide={this._handleCancel.bind(this)} size="lg">
+        <Modal show={show} onHide={this._handleCancel.bind(this)} size="lg">
           <Modal.Header>
             {this._renderModalTitle()}
           </Modal.Header>
@@ -115,4 +134,13 @@ class DiagramNodeProperties extends Component {
   }
 }
 
-export default DiagramNodeProperties;
+const mapStateToProps = store => ({
+  elements: store.diagramState.elements,
+  contextElement: store.diagramState.contextElement
+});
+
+const mapDispatchToProps = dispatch => bindActionCreators({ 
+  updateElements, setContextElement 
+}, dispatch);
+
+export default connect(mapStateToProps,mapDispatchToProps) (DiagramNodeProperties);

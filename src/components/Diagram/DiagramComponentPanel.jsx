@@ -56,6 +56,12 @@ class DiagramComponentPanel extends Component {
     }
   }
 
+  componentDidUpdate(prevProps, prevState) {
+    if (this.props.show !== prevState.modalShow) {
+      this.setState({ modalShow: this.props.show, properties: this.props.properties, data: Object.assign({},this.props.data) });
+    }
+  }
+
   componentDidUpdate() {
     if (this.state.element?.id != this.props.selectedElement) {
       if (this.props.selectedElement) {

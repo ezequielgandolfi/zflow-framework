@@ -1,8 +1,9 @@
-import { SET_SELECTED_ELEMENT, UPDATE_ELEMENTS } from "../actions/diagramActions";
+import { SET_CONTEXT_ELEMENT, SET_SELECTED_ELEMENT, UPDATE_ELEMENTS } from "../actions/diagramActions";
 
 const _initialState = {
   elements: [], 
-  selectedElement: null
+  selectedElement: null,
+  contextElement: null
 };
 
 export const diagramReducer = (state = _initialState, action) => {
@@ -16,6 +17,11 @@ export const diagramReducer = (state = _initialState, action) => {
       return {
         ...state,
         selectedElement: action.payload
+      }
+    case SET_CONTEXT_ELEMENT:
+      return {
+        ...state,
+        contextElement: action.payload
       }
     default:
       return state;

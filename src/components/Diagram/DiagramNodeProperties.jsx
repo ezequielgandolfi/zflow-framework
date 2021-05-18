@@ -4,6 +4,7 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { updateElements, setContextElement } from "../../actions/diagramActions";
 import { ZFlowComponents } from "../../helpers/component";
+import { objectOrNull } from "../../helpers/object";
 
 class DiagramNodeProperties extends Component {
   state = { element: null, properties: [], data: { } }
@@ -97,7 +98,7 @@ class DiagramNodeProperties extends Component {
   }
 
   componentDidUpdate() {
-    if (this.state.element?.id != this.props.contextElement) {
+    if (objectOrNull(this.state.element?.id) !== objectOrNull(this.props.contextElement)) {
       if (this.props.contextElement) {
         const element = this.props.elements.find(item => item.id === this.props.contextElement);
         if (element) {

@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ZFlowComponents } from '../../helpers/component';
 import { updateElements, setSelectedElement } from "../../actions/diagramActions";
+import { objectOrNull } from '../../helpers/object';
 
 class DiagramComponentPanel extends Component {
   state = { element: null }
@@ -56,14 +57,8 @@ class DiagramComponentPanel extends Component {
     }
   }
 
-  componentDidUpdate(prevProps, prevState) {
-    if (this.props.show !== prevState.modalShow) {
-      this.setState({ modalShow: this.props.show, properties: this.props.properties, data: Object.assign({},this.props.data) });
-    }
-  }
-
   componentDidUpdate() {
-    if (this.state.element?.id != this.props.selectedElement) {
+    if (objectOrNull(this.state.element?.id) !== objectOrNull(this.props.selectedElement)) {
       if (this.props.selectedElement) {
         const element = this.props.elements.find(item => item.id === this.props.selectedElement);
         if (element) {

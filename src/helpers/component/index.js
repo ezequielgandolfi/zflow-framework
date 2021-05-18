@@ -1,5 +1,6 @@
 import { AlertComponent } from "./alert";
 import { ConditionComponent } from "./condition";
+import { DatabaseComponent } from "./database";
 import { FunctionComponent } from "./function";
 import { JoinComponent } from "./join";
 import { MathComponent } from "./math";
@@ -19,6 +20,7 @@ export class ZFlowComponents {
   static components = {
     alert: AlertComponent,
     condition: ConditionComponent,
+    database: DatabaseComponent,
     function: FunctionComponent,
     join: JoinComponent,
     math: MathComponent,

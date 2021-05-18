@@ -3,7 +3,13 @@ import { connect } from "react-redux";
 
 class DashboardPage extends Component {
   render() {
-    return <p>Dashboard</p>;
+    return (
+      <section>
+        <h5>Dashboard</h5>
+        <h6>Alarms, Graphics, History...</h6>
+        <h7>Soon...</h7>
+      </section>
+    );
   }
 }
 

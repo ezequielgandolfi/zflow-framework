@@ -1,4 +1,4 @@
-import { Type_Number, Type_Object } from "./type";
+import { Type_Number, Type_Object, Type_String } from "./type";
 
 export const AddReadOnly = BaseClass => class extends BaseClass {
   static readOnly = true;
@@ -26,4 +26,10 @@ export class Property_Milliseconds {
   static key = 'milliseconds';
   static description = 'Milliseconds';
   static type = Type_Number;
+}
+
+export class Property_Text {
+  static key = 'text';
+  static description = 'Text';
+  static type = Type_String;
 }

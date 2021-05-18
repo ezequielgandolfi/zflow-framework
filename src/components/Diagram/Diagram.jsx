@@ -12,6 +12,11 @@ import { NODE_HANDLE_TYPE } from "../../helpers/diagram/const";
 import DiagramComponentPanel from "./DiagramComponentPanel";
 import { STYLE_FLOW_END, STYLE_FLOW_ERROR, STYLE_FLOW_FALSE, STYLE_FLOW_REPEAT, STYLE_FLOW_TRUE } from "./diagramStyle";
 
+/**
+ * Main diagram component.
+ * Currently is only for test purposes. It needs to be "componentized" for the final project
+ */
+
 class Diagram extends Component {
   state = { elements: [] };
 
@@ -94,8 +99,17 @@ class Diagram extends Component {
     this.showNodeContextMenu(event.clientX - container.left, event.clientY - container.top);
   };
 
+  onNodeDoubleClick(event, node) {
+    this.hideContextMenus();
+    this.contextComponent = node;
+    if (this.contextComponent) {
+      this.props.setContextElement(this.contextComponent.id);
+    }
+  }
+
   onPaneClick(event) {
     this.hideContextMenus();
+    this.props.setSelectedElement(null);
   }
 
   onPaneContextMenu(event) {
@@ -236,6 +250,7 @@ class Diagram extends Component {
             onElementClick={this.onElementClick.bind(this)}
             onSelectionChange={this.onSelectionChange.bind(this)}
             onNodeContextMenu={this.onNodeContextMenu.bind(this)}
+            onNodeDoubleClick={this.onNodeDoubleClick.bind(this)}
             onPaneClick={this.onPaneClick.bind(this)}
             onPaneContextMenu={this.onPaneContextMenu.bind(this)}
           >

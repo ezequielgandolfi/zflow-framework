@@ -1,4 +1,4 @@
 # zflow-framework
-Process worker based on flow diagrams
+Low-code development framework
 
 Work In Progress...

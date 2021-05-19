@@ -5,7 +5,7 @@ const property = require("../property");
 
 class First {}
 exports.First = First;
-_.setComponentBasicProps(First, "first", "'Go on first event", "First", []);
+_.setComponentBasicProps(First, "first", "Go on first event", "First", []);
 
 class All {}
 exports.All = All;

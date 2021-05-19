@@ -1,0 +1,14 @@
+{
+  "name": "zflow-studio-server",
+  "version": "0.0.1",
+  "private": true,
+  "author": {
+    "name": "Ezequiel Gandolfi"
+  },
+  "scripts": {
+    "start": "node ./index.js"
+  },
+  "dependencies": {
+    "express": "~4.16.1"
+  }
+}

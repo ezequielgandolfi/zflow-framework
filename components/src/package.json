@@ -1,0 +1,11 @@
+{
+  "name": "@zflow/components",
+  "version": "0.0.5",
+  "private": true,
+  "author": {
+    "name": "Ezequiel Gandolfi"
+  },
+  "scripts": {
+    "pack": "(cd ../build && npm pack ../src)"
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "name": "zflow-framework",
+  "name": "zflow-studio",
   "version": "0.0.1",
   "private": true,
   "author": {
@@ -9,6 +9,7 @@
     "@testing-library/jest-dom": "^5.11.9",
     "@testing-library/react": "^11.2.5",
     "@testing-library/user-event": "^12.8.3",
+    "@zflow/components": "file:../components/build/zflow-components-0.0.5.tgz",
     "bootstrap": "^4.6.0",
     "bootstrap-icons": "^1.4.0",
     "react": "^17.0.1",
@@ -26,6 +27,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
+  "proxy": "http://localhost:3001",
   "eslintConfig": {
     "extends": [
       "react-app",

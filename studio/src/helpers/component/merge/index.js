@@ -1,13 +1,13 @@
 import { buildNodeI1O2 } from "../../diagram/factory";
 
-const components = require("@zflow/components/merge");
+const components = require("@zflow/components");
 
 export class MergeComponent {
   static description = 'Merge data';
   static diagramNode = ({ data }) => { return buildNodeI1O2(data, 'diagram-3') };
 
   static components = [
-    components.Lists
+    components.merge.Lists
   ];
 
 }

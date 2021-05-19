@@ -54,13 +54,26 @@ class Diagram extends Component {
 
   clearSelectedElement() {
     if (this.props.selectedElement) {
+      const element = this.props.elements.find(item => item.id === this.props.selectedElement);
+      if (element) {
+        delete element.data.$selected;
+      }
       this.props.setSelectedElement(null);
     }
   }
 
   setSelectedElement(component) {
     this.clearSelectedElement();
-    this.props.setSelectedElement(component.id);
+    if (component) {
+      const element = this.props.elements.find(item => item.id === component.id);
+      if (element) {
+        element.data.$selected = true;
+      }
+      this.props.setSelectedElement(component.id);
+    }
+    else {
+      this.props.setSelectedElement(null);
+    }
   }
 
   createComponent(componentType,left,top) {
@@ -109,7 +122,7 @@ class Diagram extends Component {
 
   onPaneClick(event) {
     this.hideContextMenus();
-    this.props.setSelectedElement(null);
+    this.setSelectedElement(null);
   }
 
   onPaneContextMenu(event) {

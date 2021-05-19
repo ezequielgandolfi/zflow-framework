@@ -27,9 +27,10 @@ export function buildNodeI1O2(data, icon, ports, colors) {
   const hColorO1 = colors?.output1 ? colors.output1 : HANDLE_COLOR.ok;
   const hColorO2 = colors?.output2 ? colors.output2 : HANDLE_COLOR.error;
   const nColor = colors?.node ? colors.node : { };
+  const divClassName = data.$selected ? 'diagram-node-selected' : '';
   icon = `bi bi-${icon}`;
   return (
-    <div style={{...nodeStyle,...nColor}}>
+    <div style={{...nodeStyle,...nColor}} className={divClassName}>
       <Handle 
         type="target" 
         position="left" 
@@ -61,9 +62,10 @@ export function buildNodeI1O1(data, icon, ports, colors) {
   const hColorI1 = colors?.input1 ? colors.input1 : { };
   const hColorO1 = colors?.output1 ? colors.output1 : HANDLE_COLOR.ok;
   const nColor = colors?.node ? colors.node : { };
+  const divClassName = data.$selected ? 'diagram-node-selected' : '';
   icon = `bi bi-${icon}`;
   return (
-    <div style={{...nodeStyle,...nColor}}>
+    <div style={{...nodeStyle,...nColor}} className={divClassName}>
       <div className="diagram-node-id">{data.id}</div>
       <Handle 
         type="target" 
@@ -87,9 +89,10 @@ export function buildNodeO1(data, icon, ports, colors) {
   const portO1 = ports?.output1 ? ports.output1 : NODE_HANDLE_TYPE.output.default;
   const hColorO1 = colors?.output1 ? colors.output1 : HANDLE_COLOR.ok;
   const nColor = colors?.node ? colors.node : { };
+  const divClassName = data.$selected ? 'diagram-node-selected' : '';
   icon = `bi bi-${icon}`;
   return (
-    <div style={{...nodeStyle,...nColor}}>
+    <div style={{...nodeStyle,...nColor}} className={divClassName}>
       <div className="diagram-node-id">{data.id}</div>
       <div><i className={icon}></i></div>
       <div className="diagram-node-type">{data.label}</div>
@@ -107,9 +110,10 @@ export function buildNodeI1(data, icon, ports, colors) {
   const portI1 = ports?.input1 ? ports.input1 : NODE_HANDLE_TYPE.input.single;
   const hColorI1 = colors?.input1 ? colors.input1 : { };
   const nColor = colors?.node ? colors.node : { };
+  const divClassName = data.$selected ? 'diagram-node-selected' : '';
   icon = `bi bi-${icon}`;
   return (
-    <div style={{...nodeStyle,...nColor}}>
+    <div style={{...nodeStyle,...nColor}} className={divClassName}>
       <Handle 
         type="target" 
         position="left" 

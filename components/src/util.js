@@ -15,8 +15,17 @@ function _defineProperties (obj, props) {
   return obj;
 }
 
+function _setComponentBasicProps(obj, key, desc, shortDesc, props) {
+  _defineProperties(obj, {
+    key: key,
+    description: desc,
+    shortDescription: shortDesc,
+    properties: props
+  });
+}
 
 module.exports = {
   defineProperty: _defineProperty,
-  defineProperties: _defineProperties
+  defineProperties: _defineProperties,
+  setComponentBasicProps: _setComponentBasicProps
 }

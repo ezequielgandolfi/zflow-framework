@@ -5,9 +5,10 @@ import { bindActionCreators } from "redux";
 import { updateElements, setContextElement } from "../../actions/diagramActions";
 import { ZFlowComponents } from "../../helpers/component";
 import { objectOrNull } from "../../helpers/object";
+import DiagramPropertyAssign from "./DiagramPropertyAssign";
 
 class DiagramNodeProperties extends Component {
-  state = { element: null, properties: [], data: { } }
+  state = { element: null, properties: [], data: { }, valueWizardData: null }
 
   _handleChange(event) {
     const name = event.target.name;
@@ -31,6 +32,22 @@ class DiagramNodeProperties extends Component {
     this.setState({ element: null });
   }
 
+  _handleValueWizardClick(property) {
+    this.setState({valueWizardData: { property, value: this.state.data[property.key] }});
+  }
+
+  _handleValueWizardSave(value) {
+    const data = this.state.data;
+    if (this.state.valueWizardData) {
+      data[this.state.valueWizardData.property.key] = value;
+    }
+    this.setState({data, valueWizardData: null});
+  }
+
+  _handleValueWizardCancel() {
+    this.setState({valueWizardData: null});
+  }
+
   _renderProperty(property, index) {
     return (
       <div className="row" key={index}>
@@ -43,7 +60,7 @@ class DiagramNodeProperties extends Component {
             value={this.state.data[property.key]}
             onChange={this._handleChange.bind(this)}
           />
-          <button className="btn btn-outline-secondary" type="button">Value</button>
+          <button className="btn btn-outline-secondary" type="button" onClick={this._handleValueWizardClick.bind(this, property)}>Value</button>
         </div>
       </div>
     );
@@ -119,7 +136,7 @@ class DiagramNodeProperties extends Component {
 
     return (
       <section className="diagram-node-properties">
-        <Modal show={show} onHide={this._handleCancel.bind(this)} size="lg">
+        <Modal show={show} onHide={this._handleCancel.bind(this)} size="lg" centered={true}>
           <Modal.Header>
             {this._renderModalTitle()}
           </Modal.Header>
@@ -130,6 +147,7 @@ class DiagramNodeProperties extends Component {
             {this._renderActionButtons()}
           </Modal.Footer>
         </Modal>
+        <DiagramPropertyAssign data={this.state.valueWizardData} onSave={this._handleValueWizardSave.bind(this)} onCancel={this._handleValueWizardCancel.bind(this)} />
       </section>
     );
   }

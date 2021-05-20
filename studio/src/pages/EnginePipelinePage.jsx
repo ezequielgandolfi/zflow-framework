@@ -23,7 +23,7 @@ class EnginePipelinePage extends Component {
       <section>
         <h5>Engine Pipeline</h5>
         <h6>Here we'll configure the engine pipelines with their lifecycle</h6>
-        <h7>Fetch API: {this.state.message}</h7>
+        <h6>Fetch API: {this.state.message}</h6>
       </section>
     );
   }

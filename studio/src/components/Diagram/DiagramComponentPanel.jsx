@@ -29,7 +29,7 @@ class DiagramComponentPanel extends Component {
     const _optionElement = (value,text) => {
       return <option key={value} value={value}>{text}</option>
     };
-    const component = this.state.element ? ZFlowComponents.getComponent(this.state.element.type) : null;
+    const component = this.state.element ? ZFlowComponents.getType(this.state.element.type) : null;
     return component?.components.map(subcomponent => _optionElement(subcomponent.key,subcomponent.description));
   }
 

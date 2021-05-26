@@ -2,8 +2,13 @@
 
 const _ = require("../util");
 const property = require("../property");
+const component = require("../component");
 
-class Start {}
+class Start extends component.Ok {
+  execute() {
+    this.dispatch("ok");
+  }
+}
 exports.Start = Start;
 _.setComponentBasicProps(Start, "trigger", "Triggered start", "Start", [
   property.AddReadOnly(property.QueryParameter),

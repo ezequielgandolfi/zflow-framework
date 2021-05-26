@@ -1,3 +1,5 @@
+export const GRID_SIZE = 5;
+
 export const NODE_HANDLE_TYPE = {
   input: {
     single: 'single',

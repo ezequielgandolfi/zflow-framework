@@ -36,3 +36,7 @@ setBaseProps(Milliseconds, "milliseconds", "Milliseconds", Type.ZtNumber);
 class Text {}
 exports.Text = Text;
 setBaseProps(Text, "text", "Text", Type.ZtString);
+
+class Value {}
+exports.Value = Value;
+setBaseProps(Value, "value", "Value", Type.ZtAny);

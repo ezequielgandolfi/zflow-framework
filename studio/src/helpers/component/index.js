@@ -17,7 +17,7 @@ import { VariableComponent } from "./variable";
 
 
 export class ZFlowComponents {
-  static components = {
+  static types = {
     alert: AlertComponent,
     condition: ConditionComponent,
     database: DatabaseComponent,
@@ -38,44 +38,41 @@ export class ZFlowComponents {
 
   static nodes() {
     let result = { };
-    Object.keys(ZFlowComponents.components).forEach(key => { result[key] = ZFlowComponents.components[key].diagramNode });
+    Object.keys(ZFlowComponents.types).forEach(key => result[key] = ZFlowComponents.types[key].diagramNode);
     return result;
   }
 
-  static getComponent(key) {
-    return ZFlowComponents.components[key];
+  static getType(type) {
+    return ZFlowComponents.types[type];
   }
 
-  static getComponentType(key, type) {
-    const component = ZFlowComponents.getComponent(key);
+  static getComponent(type, componentKey) {
+    const component = ZFlowComponents.getType(type);
     if (component) {
-      return component.components.find(item => item.key === type);
+      return component.components.find(item => item.key === componentKey);
     }
   }
 
-  static getComponentTypeProperty(key, type, prop) {
-    const componentType = ZFlowComponents.getComponentType(key, type);
+  static getTypeProperty(type, componentKey, propKey) {
+    const componentType = ZFlowComponents.getComponent(type, componentKey);
     if (componentType) {
-      return componentType.properties.find(item => item.key === prop);
+      return componentType.properties.find(item => item.key === propKey);
     }
   }
 
-  static getComponentTypePropertyDefaults(key, type) {
-    const componentType = ZFlowComponents.getComponentType(key, type);
+  static getTypePropertiesDefaultValues(type, componentKey) {
+    const result = { };
+    const componentType = ZFlowComponents.getComponent(type, componentKey);
     if (componentType) {
-      const result = { };
-      componentType.properties.forEach(item => {
-        result[item.key] = item.type.default;
-      });
-      return result;
+      componentType.properties.forEach(item => result[item.key] = item.type.default);
     }
-    return { };
+    return result;
   }
 
   static updateComponentType(component) {
-    const componentClass = ZFlowComponents.getComponent(component.type);
-    const componentType = componentClass.components.find(item => item.key === component.data.component);
-    component.data.label = componentType.shortDescription;
+    const componentClass = ZFlowComponents.getType(component.type);
+    const componentData = componentClass.components.find(item => item.key === component.data.component);
+    component.data.label = componentData.shortDescription;
   }
 
 }

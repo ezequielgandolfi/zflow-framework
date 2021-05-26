@@ -3,38 +3,34 @@ import { Button, Modal } from "react-bootstrap";
 import { connect } from "react-redux";
 import { ZFlowComponents } from "../../helpers/component";
 
+const componentUtil = require("@zflow/components/util");
+
 const VALUE_TYPE_FIXED = 'F';
 const VALUE_TYPE_OBJECT = 'O';
 
-const VALUE_OBJECT_PREFIX = '$(';
-const VALUE_OBJECT_SUFIX = ')';
-const VALUE_OBJECT_PROP_SPLIT = '.';
-
 class DiagramPropertyAssign extends Component {
   state = { property: null, valueType: null, componentId: '', componentProp: '', fixedValue: '' }
-
+  
   static value2state(value) {
+    const property = componentUtil.value2property(value);
     const state = { valueType: VALUE_TYPE_FIXED, fixedValue: '', componentId: '', componentProp: '' };
-    state.fixedValue = value || '';
-    if (value.startsWith(VALUE_OBJECT_PREFIX) && value.endsWith(VALUE_OBJECT_SUFIX)) {
-      const valueFrom = value.substring(VALUE_OBJECT_PREFIX.length, value.length - VALUE_OBJECT_PREFIX.length + 1);
-      const valueSplit = valueFrom.split(VALUE_OBJECT_PROP_SPLIT);
-      if (valueSplit.length === 2) {
-        state.valueType = VALUE_TYPE_OBJECT;
-        state.fixedValue = '';
-        state.componentId = valueSplit[0];
-        state.componentProp = valueSplit[1];
-      }
+    if (property.component) {
+      state.valueType = VALUE_TYPE_OBJECT;
+      state.componentId = property.component.id;
+      state.componentProp = property.component.property;
+    }
+    else {
+      state.fixedValue = property.fixed || '';
     }
     return state;
   }
 
   static state2value(state) {
     if (state.valueType === VALUE_TYPE_FIXED) {
-      return state.fixedValue;
+      return componentUtil.property2value({ fixed: state.fixedValue }) ;
     }
     else {
-      return `${VALUE_OBJECT_PREFIX}${state.componentId}${VALUE_OBJECT_PROP_SPLIT}${state.componentProp}${VALUE_OBJECT_SUFIX}`;
+      return componentUtil.property2value({ component: { id: state.componentId, property: state.componentProp } });
     }
   }
 
@@ -112,10 +108,14 @@ class DiagramPropertyAssign extends Component {
       return <option key={value} value={value}>{text}</option>
     };
     const components = [
-      { id: '', data: { id: '' } },
-      ...this.props.elements.filter(item => !!item.data?.id)
+      { key: '', text: '' },
+      ...this.props.elements.filter(item => !!item.data?.id).map(item => { 
+        const component = ZFlowComponents.getType(item.type);
+        const componentType = ZFlowComponents.getComponent(item.type, item.data.component);
+        return { key: item.data.id, text: `${item.data.id} (${component.description} > ${componentType.description})` }
+      })
     ];
-    return components.map(item => _optionElement(item.data.id,item.data.id));
+    return components.map(item => _optionElement(item.key, item.text));
   }
 
   _renderComponentList() {
@@ -139,7 +139,7 @@ class DiagramPropertyAssign extends Component {
     };
     const component = this.props.elements.find(item => item.data?.id === this.state.componentId);
     if (component) {
-      const compType = ZFlowComponents.getComponentType(component.type, component.data.component);
+      const compType = ZFlowComponents.getComponent(component.type, component.data.component);
       if (compType) {
         const properties = [
           { key: '', description: '' },

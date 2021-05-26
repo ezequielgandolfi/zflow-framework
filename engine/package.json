@@ -1,5 +1,5 @@
 {
-  "name": "zflow-studio-server",
+  "name": "zflow-engine",
   "version": "0.0.1",
   "private": true,
   "author": {
@@ -9,8 +9,8 @@
     "start": "node ./index.js"
   },
   "dependencies": {
+    "@zflow/components": "file:../components/build/zflow-components-0.0.16.tgz",
     "express": "~4.16.1",
-    "mongodb": "^3.6.7",
-    "uuid": "^8.3.2"
+    "mongodb": "^3.6.7"
   }
 }

@@ -8,9 +8,10 @@ import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { updateElements, setContextElement, setSelectedElement } from '../../actions/diagramActions';
 import { ZFlowComponents } from "../../helpers/component";
-import { NODE_HANDLE_TYPE } from "../../helpers/diagram/const";
+import { GRID_SIZE, NODE_HANDLE_TYPE } from "../../helpers/diagram/const";
 import DiagramComponentPanel from "./DiagramComponentPanel";
 import { STYLE_FLOW_END, STYLE_FLOW_ERROR, STYLE_FLOW_FALSE, STYLE_FLOW_REPEAT, STYLE_FLOW_TRUE } from "./diagramStyle";
+import { Button } from "react-bootstrap";
 
 /**
  * Main diagram component.
@@ -21,7 +22,7 @@ class Diagram extends Component {
   state = { elements: [] };
 
   contextComponent;
-  contextPos = { x: 0, y: 0};
+  contextPos = { x: 0, y: 0 };
 
   componentDidMount() {
     this.refreshComponentList();
@@ -30,7 +31,7 @@ class Diagram extends Component {
   }
 
   initialElements() {
-    const start = this.createComponent('start', 40, 40);
+    const start = this.createComponent('start', GRID_SIZE * 2, GRID_SIZE * 2);
     start.data.id = 'start';
     ZFlowComponents.updateComponentType(start);
     return [ start ];
@@ -40,8 +41,8 @@ class Diagram extends Component {
     const panel = document.getElementById('panelContextMenu');
     panel.querySelectorAll('li.dropdown-item').forEach(item => item.remove());
     
-    Object.keys(ZFlowComponents.components).forEach(key => { 
-      const component = ZFlowComponents.components[key];
+    Object.keys(ZFlowComponents.types).forEach(key => { 
+      const component = ZFlowComponents.types[key];
       if (!component.hideComponent) {
         const eLi = document.createElement('li');
         eLi.classList.add('dropdown-item');
@@ -83,14 +84,14 @@ class Diagram extends Component {
       data: { id: '' },
       position: { x: left, y: top },
     };
-    result.position.x = (Math.round(result.position.x / 5) * 5);
-    result.position.y = (Math.round(result.position.y / 5) * 5);
+    result.position.x = (Math.round(result.position.x / GRID_SIZE) * GRID_SIZE);
+    result.position.y = (Math.round(result.position.y / GRID_SIZE) * GRID_SIZE);
 
-    const component = ZFlowComponents.getComponent(componentType);
+    const component = ZFlowComponents.getType(componentType);
     const defaultComponent = component.components.length > 0 ? component.components[0] : null;
     if (defaultComponent) {
       result.data.component = defaultComponent.key;
-      result.data.properties = ZFlowComponents.getComponentTypePropertyDefaults(componentType, defaultComponent.key);
+      result.data.properties = ZFlowComponents.getTypePropertiesDefaultValues(componentType, defaultComponent.key);
     }
 
     return result;
@@ -221,6 +222,17 @@ class Diagram extends Component {
     }
   }
 
+  onNodeClearOutputs(event) {
+    const component = this.contextComponent;
+    this.hideContextMenus();
+    if (component) {
+      const remove = this.props.elements.filter(item => item.source === component.id);
+      let elements = this.props.elements;
+      elements = removeElements(remove, elements);
+      this.props.updateElements(elements);
+    }
+  }
+
   onSaveProperties(values) {
     const elements = this.props.elements;
     if (this.props.contextElement) {
@@ -245,6 +257,13 @@ class Diagram extends Component {
     }
   }
 
+  test() {
+    fetch("/api/test", { method: "POST", body: JSON.stringify(this.props.elements) })
+      .then((res) => res.json())
+      .then((data) => console.log(data))
+      .catch(() => this.setData('ERROR feching /api/test'));
+  }
+
   render() {
     return (
       <section className="diagram">
@@ -257,7 +276,7 @@ class Diagram extends Component {
             panOnScroll={true}
             zoomOnDoubleClick={false}
             snapToGrid={true}
-            snapGrid={[5,5]}
+            snapGrid={[GRID_SIZE,GRID_SIZE]}
             onConnect={this.onConnect.bind(this)}
             selectNodesOnDrag={true}
             onElementClick={this.onElementClick.bind(this)}
@@ -275,6 +294,7 @@ class Diagram extends Component {
           <ul className="dropdown-menu" id="nodeContextMenu">
             <li><h6 className="dropdown-header">Selected component</h6></li>
             <li className="dropdown-item" onClick={this.onNodeProperties.bind(this)}>Properties</li>
+            <li className="dropdown-item" onClick={this.onNodeClearOutputs.bind(this)}>Clear outputs</li>
             <li className="dropdown-item diagram-node-action-delete" onClick={this.onNodeDelete.bind(this)}>Delete</li>
           </ul>
         </div>
@@ -282,6 +302,11 @@ class Diagram extends Component {
           <ul className="dropdown-menu" id="panelContextMenu" role="menu">
             <li><h6 className="dropdown-header">Add component</h6></li>
           </ul>
+        </div>
+        <div className="diagram-action-panel">
+          <Button onClick={this.test.bind(this)}>
+            Save (TEST)
+          </Button>
         </div>
       </section>
     );

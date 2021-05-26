@@ -15,8 +15,12 @@ setBaseProps(ZtObject, "object", "");
 
 class ZtNumber {}
 exports.ZtNumber = ZtNumber;
-setBaseProps(ZtNumber, "number", "0");
+setBaseProps(ZtNumber, "number", "");
 
 class ZtString {}
 exports.ZtString = ZtString;
 setBaseProps(ZtString, "string", "");
+
+class ZtAny {}
+exports.ZtAny = ZtAny;
+setBaseProps(ZtAny, "any", "");

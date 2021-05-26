@@ -27,6 +27,9 @@ class DiagramNodeProperties extends Component {
 
   _handleSave() {
     if (this.props.onSave instanceof Function) {
+      // change component alias in property values to GUID
+      // TODO
+      //
       this.props.onSave(this.state.data);
     }
     this.setState({ element: null });
@@ -60,7 +63,7 @@ class DiagramNodeProperties extends Component {
             value={this.state.data[property.key]}
             onChange={this._handleChange.bind(this)}
           />
-          <button className="btn btn-outline-secondary" type="button" onClick={this._handleValueWizardClick.bind(this, property)}>Value</button>
+          <button className="btn btn-outline-secondary" type="button" onClick={this._handleValueWizardClick.bind(this, property)}>&lt;&lt; Value</button>
         </div>
       </div>
     );
@@ -106,7 +109,7 @@ class DiagramNodeProperties extends Component {
   _renderModalTitle() {
     let title = 'Input properties';
     if (this.state.element) {
-      const componentType = ZFlowComponents.getComponentType(this.state.element.type, this.state.element.data.component);
+      const componentType = ZFlowComponents.getComponent(this.state.element.type, this.state.element.data.component);
       title += ` - ${componentType.shortDescription}`;
     }
     return (
@@ -119,9 +122,12 @@ class DiagramNodeProperties extends Component {
       if (this.props.contextElement) {
         const element = this.props.elements.find(item => item.id === this.props.contextElement);
         if (element) {
-          const componentType = ZFlowComponents.getComponentType(element.type, element.data.component);
+          const componentType = ZFlowComponents.getComponent(element.type, element.data.component);
           const properties = componentType.properties;
           const data = Object.assign({},element.data.properties);
+          // change GUID for component alias in property values
+          // TODO
+          //
           this.setState({ element, properties, data });
         }
       }
@@ -132,11 +138,11 @@ class DiagramNodeProperties extends Component {
   }
 
   render() {
-    let show = !!(this.state.element);
+    const show = !!(this.state.element) && !(this.state.valueWizardData);
 
     return (
       <section className="diagram-node-properties">
-        <Modal show={show} onHide={this._handleCancel.bind(this)} size="lg" centered={true}>
+        <Modal show={show} onHide={this._handleCancel.bind(this)} size="lg">
           <Modal.Header>
             {this._renderModalTitle()}
           </Modal.Header>

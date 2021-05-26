@@ -11,7 +11,8 @@ class EnginePipelinePage extends Component {
   test() {
     fetch("/api")
       .then((res) => res.json())
-      .then((data) => this.setData(data.message));
+      .then((data) => this.setData(data.message))
+      .catch(() => this.setData('ERROR feching /api'));
   }
 
   componentDidMount() {

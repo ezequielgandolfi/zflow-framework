@@ -1,6 +1,6 @@
 const workers = require("./workers");
 const logger = require("./logger");
-const test01 = require("../test-log.json");
+const test01 = require("../test-repeat.json");
 
 const runningWorkers = [];
 

@@ -9,7 +9,7 @@ class Log extends component.Ok {
 
   execute() {
     console.log(this.text);
-    this.dispatch("ok");
+    this.ok();
   }
 }
 exports.Log = Log;

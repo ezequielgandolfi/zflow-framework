@@ -40,3 +40,15 @@ setBaseProps(Text, "text", "Text", Type.ZtString);
 class Value {}
 exports.Value = Value;
 setBaseProps(Value, "value", "Value", Type.ZtAny);
+
+class FromNumber {}
+exports.FromNumber = FromNumber;
+setBaseProps(FromNumber, "from", "From", Type.ZtNumber);
+
+class ToNumber {}
+exports.ToNumber = ToNumber;
+setBaseProps(ToNumber, "to", "To", Type.ZtNumber);
+
+class CurrentNumber {}
+exports.CurrentNumber = CurrentNumber;
+setBaseProps(CurrentNumber, "current", "Current", Type.ZtNumber);

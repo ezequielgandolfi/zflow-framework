@@ -6,7 +6,7 @@ const component = require("../component");
 
 class Start extends component.Ok {
   execute() {
-    this.dispatch("ok");
+    this.ok();
   }
 }
 exports.Start = Start;

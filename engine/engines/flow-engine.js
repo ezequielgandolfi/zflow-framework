@@ -1,11 +1,12 @@
 const threads = require("worker_threads");
 const components = require("@zflow/components");
 const componentUtil = require("@zflow/components/util");
+const EngineFunctions = require("./engine-functions");
 
-const flow = threads.workerData.flow;
-const initData = threads.workerData.initData;
+const { flow, initData } = threads.workerData;
 
-const storedComponents = { };
+const engineFunctions = new EngineFunctions();
+engineFunctions.flow.setFlow(flow);
 
 function getComponent(type,key) {
   const t = components[type];
@@ -27,7 +28,7 @@ function transformProps(props) {
     if (typeof(value) === "string") {
       const prop = componentUtil.value2property(value);
       if (prop.component) {
-        const component = storedComponents[prop.component.id];
+        const component = engineFunctions.flow.getStoredComponent(prop.component.id);
         if (component) {
           props[k] = component[prop.component.property];
         }
@@ -38,26 +39,31 @@ function transformProps(props) {
 }
 
 function execComponent(component) {
-  const componentClass = getComponent(component.type, component.data.component);
+  let thisComponent = engineFunctions.flow.getStoredComponent(component.id) 
+  if (!thisComponent) {
+    const componentClass = getComponent(component.type, component.data.component);
+    thisComponent = new componentClass();
+    thisComponent.setup(engineFunctions, component);
+    engineFunctions.flow.storeComponent(component.id, thisComponent);
+  
+    thisComponent.change.on(engineFunctions.flow.CONSTS.EXEC.STATUS_CHANGE, event => { 
+      engineFunctions.flow.updateWatchers();
+      next(component.id, event.type, event.data);
+    });
+
+    thisComponent.change.on(engineFunctions.flow.CONSTS.EXEC.AGAIN, event => { 
+      process.nextTick(() => thisComponent.execute());
+    });
+  }
+
   let props = transformProps(deepCopy(component.data.properties));
-  const thisComponent = new componentClass();
-  storedComponents[component.id] = thisComponent;
-
-  thisComponent.change.on("status", event => { 
-    next(component.id, event.type, event.data);
-  });
-
-  thisComponent.setup({});
   thisComponent.inject(props);
   process.nextTick(() => thisComponent.execute());
 }
 
 function next(id, handle, data) {
-  const outputs = flow.filter(item => (item.source === id) && (item.sourceHandle === handle));
-  outputs.forEach(output => {
-    const component = flow.find(item => item.id === output.target);
-    execComponent(component);
-  });
+  const outputs = engineFunctions.flow.getNext(id, handle);
+  outputs.forEach(component => execComponent(component));
 }
 
 

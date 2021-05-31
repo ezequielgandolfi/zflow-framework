@@ -31,7 +31,7 @@ class FlowEngine {
       console.log(">ONLINE");
     });
     worker.on("error", err => {
-      console.log(">ERROR");
+      console.log(">ERROR", err);
     });
     worker.on("exit", exitCode => {
       console.log(">EXIT:", exitCode);

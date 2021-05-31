@@ -1,0 +1,11 @@
+{
+  "FLOW": {
+    "WATCH": {
+      "STREAM_END": "stream_end"
+    },
+    "EXEC": {
+      "AGAIN": "again",
+      "STATUS_CHANGE": "status"
+    }
+  }
+}

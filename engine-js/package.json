@@ -9,7 +9,7 @@
     "start": "node ./index.js"
   },
   "dependencies": {
-    "@zflow/components": "file:../components/build/zflow-components-0.0.28.tgz",
+    "@zflow/components": "file:../components/build/zflow-components-0.0.29.tgz",
     "express": "~4.16.1",
     "mongodb": "^3.6.7"
   }

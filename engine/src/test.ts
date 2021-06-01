@@ -25,7 +25,7 @@ export const REPEAT = [
       component: "for",
       properties: {
         from: "1",
-        to: "5",
+        to: "$(8f0b7cc6-9676-45ac-80a7-ece9d65a17f4.pathParam.repeat)",
       },
       label: "From",
     },

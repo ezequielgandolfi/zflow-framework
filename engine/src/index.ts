@@ -5,10 +5,6 @@ import * as Workers from "./workers";
 import * as TEST from "./test";
 const test01 = TEST.REPEAT;
 
-const runningWorkers = [];
-
-Logger.info(process.version);
-
 const data = {
   workers: [
     {
@@ -22,7 +18,7 @@ const data = {
           type: "flow",
           config: {
             method: "GET",
-            path: "/test/:param1"
+            path: "/test/:repeat"
           },
           data: test01
         }
@@ -30,9 +26,11 @@ const data = {
     }
   ]
 };
+//
 
 // WORKERS
 
+const runningWorkers = [];
 Logger.info("Starting workers...");
 
 data.workers.forEach(w => {

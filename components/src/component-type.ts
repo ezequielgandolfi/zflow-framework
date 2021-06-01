@@ -3,7 +3,7 @@ import EventEmitter from "events";
 
 type ComponentEvents = "status" | "again";
 
-export class Abstract {
+export class Abstract implements ZFlowTypes.Component.Instance {
   
   status = ZFlowTypes.Const.COMPONENT.STATUS.PRISTINE;
 
@@ -11,22 +11,24 @@ export class Abstract {
   protected $data: any;
   protected $engine: ZFlowTypes.Engine.IEngine;
 
-  setup(engine: ZFlowTypes.Engine.IEngine, data: any) {
+  setup(engine: ZFlowTypes.Engine.IEngine, data: ZFlowTypes.Component.Execution) {
     this.$engine = engine;
     this.$data = data;
   }
 
   inject(props) {
-    Object.keys(props).forEach(name => {
-      const objProp = this[name];
-      if (objProp && ZFlowTypes.DataType.isZFlowDataType(objProp)) {
-        let propValue = props[name];
-        if (ZFlowTypes.DataType.isZFlowDataType(propValue)) {
-          propValue = propValue.get();
+    if ((props) && (props instanceof Object)) {
+      Object.keys(props).forEach(name => {
+        const objProp = this[name];
+        if (objProp && ZFlowTypes.DataType.isZFlowDataType(objProp)) {
+          let propValue = props[name];
+          if (ZFlowTypes.DataType.isZFlowDataType(propValue)) {
+            propValue = propValue.get();
+          }
+          objProp.set(propValue);
         }
-        objProp.set(propValue);
-      }
-    });
+      });
+    }
   }
 
   execute() {

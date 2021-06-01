@@ -2,8 +2,7 @@ import React, { Component } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { connect } from "react-redux";
 import { ZFlowComponents } from "../../helpers/component";
-
-const componentUtil = require("@zflow/components/util");
+import { Util } from "@zflow/components";
 
 const VALUE_TYPE_FIXED = 'F';
 const VALUE_TYPE_OBJECT = 'O';
@@ -12,7 +11,7 @@ class DiagramPropertyAssign extends Component {
   state = { property: null, valueType: null, componentId: '', componentProp: '', fixedValue: '' }
   
   static value2state(value) {
-    const property = componentUtil.value2property(value);
+    const property = Util.value2property(value);
     const state = { valueType: VALUE_TYPE_FIXED, fixedValue: '', componentId: '', componentProp: '' };
     if (property.component) {
       state.valueType = VALUE_TYPE_OBJECT;
@@ -27,10 +26,10 @@ class DiagramPropertyAssign extends Component {
 
   static state2value(state) {
     if (state.valueType === VALUE_TYPE_FIXED) {
-      return componentUtil.property2value({ fixed: state.fixedValue }) ;
+      return Util.property2value({ fixed: state.fixedValue }) ;
     }
     else {
-      return componentUtil.property2value({ component: { id: state.componentId, property: state.componentProp } });
+      return Util.property2value({ component: { id: state.componentId, property: state.componentProp } });
     }
   }
 

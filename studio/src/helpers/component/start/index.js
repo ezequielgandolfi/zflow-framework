@@ -1,7 +1,6 @@
 import { NODE_COLOR } from "../../diagram/const";
 import { buildNodeO1 } from "../../diagram/factory";
-
-const components = require("@zflow/components");
+import * as ZFlowComponents from "@zflow/components";
 
 export class StartComponent {
   static hideComponent = true;
@@ -10,7 +9,7 @@ export class StartComponent {
   static diagramNode = ({ data }) => { return buildNodeO1(data, 'play-circle', null, { node: NODE_COLOR.ok }) };
 
   static components = [
-    components.start.Start
+    ZFlowComponents.Component.start.Start
   ];
 
 }

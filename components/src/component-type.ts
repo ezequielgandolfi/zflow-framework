@@ -1,19 +1,20 @@
 import * as ZFlowTypes from "@zflow/types";
 import EventEmitter from "events";
 
-type ComponentEvents = "status" | "again";
-
 export class Abstract implements ZFlowTypes.Component.Instance {
   
-  status = ZFlowTypes.Const.COMPONENT.STATUS.PRISTINE;
+  private _data: ZFlowTypes.Component.Execution;
+  private _engine: ZFlowTypes.Engine.IEngine;  
+  $status = ZFlowTypes.Const.COMPONENT.STATUS.PRISTINE;
 
   protected change = new EventEmitter();
-  protected $data: any;
-  protected $engine: ZFlowTypes.Engine.IEngine;
+  
+  get $data() { return this._data };
+  get $engine() { return this._engine };
 
   setup(engine: ZFlowTypes.Engine.IEngine, data: ZFlowTypes.Component.Execution) {
-    this.$engine = engine;
-    this.$data = data;
+    this._engine = engine;
+    this._data = data;
   }
 
   inject(props) {
@@ -32,28 +33,32 @@ export class Abstract implements ZFlowTypes.Component.Instance {
   }
 
   execute() {
-    this.status = ZFlowTypes.Const.COMPONENT.STATUS.RUNNING;
+    this.$status = ZFlowTypes.Const.COMPONENT.STATUS.RUNNING;
   }
   suspend() {
-    this.status = ZFlowTypes.Const.COMPONENT.STATUS.WAITING;
+    this.$status = ZFlowTypes.Const.COMPONENT.STATUS.WAITING;
   }
   resume() {
-    this.status = ZFlowTypes.Const.COMPONENT.STATUS.RUNNING;
+    this.$status = ZFlowTypes.Const.COMPONENT.STATUS.RUNNING;
   }
   finish() {
-    this.status = ZFlowTypes.Const.COMPONENT.STATUS.FINISHED;
+    this.$status = ZFlowTypes.Const.COMPONENT.STATUS.FINISHED;
   }
 
-  on(event: ComponentEvents, callback: (...args: any[]) => void) {
+  on(event: ZFlowTypes.Component.ComponentEvents, callback: (...args: any[]) => void) {
     return this.change.on(event, callback);
   }
 
-  dispatch(event: ComponentEvents, data?: any) {
+  once(event: ZFlowTypes.Component.ComponentEvents, callback: (...args: any[]) => void) {
+    return this.change.once(event, callback);
+  }
+
+  dispatch(event: ZFlowTypes.Component.ComponentEvents, data?: any) {
     return this.change.emit(event, data);
   }
 
   protected signalOutput(output: string) {
-    return this.dispatch("status", { type: output });
+    return this.dispatch("complete", { type: output });
   }
 
 }

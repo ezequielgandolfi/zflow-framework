@@ -1,6 +1,7 @@
 export const FLOW = {
-  WATCHER: {
-    STREAM_END: "stream_end"
+  LISTENER: {
+    COMPONENT_COMPLETED: 'component_completed',
+    STREAM_COMPLETED: "stream_completed"
   }
 };
 

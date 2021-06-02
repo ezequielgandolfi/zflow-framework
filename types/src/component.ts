@@ -40,13 +40,17 @@ export interface Output {
  */
 export type Any = Execution | Output;
 
+export type ComponentEvents = "complete" | "resume";
+
 /**
  * Interface for component instance
  * This is the basic interface for the component execution instance running on ZFlow Engine
  */
 export interface Instance {
-  
-  status: string;
+
+  readonly $engine: IEngine;
+  readonly $data: Execution;
+  $status: string;
 
   setup(engine: IEngine, data: Execution);
   inject(props: any);
@@ -56,7 +60,8 @@ export interface Instance {
   resume();
   finish();
 
-  on(event: string, callback: (...args: any[]) => void);
-  dispatch(event: string, data?: any);
+  on(event: ComponentEvents, callback: (...args: any[]) => void): EventEmitter;
+  once(event: ComponentEvents, callback: (...args: any[]) => void): EventEmitter;
+  dispatch(event: ComponentEvents, data?: any): boolean;
 
 }

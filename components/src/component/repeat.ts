@@ -16,8 +16,11 @@ export class For extends ComponentType.Repeat {
   to = new ZFlowTypes.DataType.TNumber();
   current = new ZFlowTypes.DataType.TNumber();
 
+  resume() {
+    this.execute();
+  }
+
   execute() {
-    this.resume();
     if (isNaN(this.current.get())) {
       this.current.set(this.from.get());
     }
@@ -25,10 +28,10 @@ export class For extends ComponentType.Repeat {
       this.current.set(this.current.get()+1);
     }
     if (this.current.get() <= this.to.get()) {
-      const watcher = this.$engine.flow.watchStreamEnd(this.$data.id, "repeat");
-      watcher.on(ZFlowTypes.Const.FLOW.WATCHER.STREAM_END, () => { 
+      const watcher = this.$engine.flow.listenStreamCompleted(this.$data.id, "repeat");
+      watcher.on(ZFlowTypes.Const.FLOW.LISTENER.STREAM_COMPLETED, () => { 
         this.$engine.flow.freeChildComponents(this.$data.id);
-        this.dispatch("again", { id: this.$data.id });
+        this.dispatch("resume", { id: this.$data.id });
       });
       this.repeat();
     }

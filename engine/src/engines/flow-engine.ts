@@ -54,7 +54,7 @@ function transformProps(props) {
 }
 
 function execComponent(component) {
-  let thisComponent: ZFlowComponents.ComponentType.Abstract = engineFunctions.flow.getStoredComponent(component.id) 
+  let thisComponent: ZFlowTypes.Component.Instance = engineFunctions.flow.getStoredComponent(component.id) 
   if (!thisComponent) {
     const componentClass = getComponent(component.type, component.data.component);
     thisComponent = new componentClass();
@@ -62,20 +62,19 @@ function execComponent(component) {
 
     engineFunctions.flow.storeComponent(component.id, thisComponent);
   
-    thisComponent.on("status", event => { 
-      engineFunctions.flow.updateWatchers();
+    thisComponent.on("complete", event => { 
       next(component.id, event.type, event.data);
     });
 
-    thisComponent.on("again", event => { 
-      process.nextTick(() => thisComponent.execute());
+    thisComponent.on("resume", event => { 
+      engineFunctions.flow.execute(thisComponent);
     });
   }
 
   let props = transformProps(deepCopy(component.data.properties));
   thisComponent.inject(props);
 
-  process.nextTick(() => thisComponent.execute());
+  engineFunctions.flow.execute(thisComponent);
 }
 
 function next(id, handle, data) {

@@ -63,5 +63,6 @@ export interface Instance {
   on(event: ComponentEvents, callback: (...args: any[]) => void): EventEmitter;
   once(event: ComponentEvents, callback: (...args: any[]) => void): EventEmitter;
   dispatch(event: ComponentEvents, data?: any): boolean;
+  removeAllListeners();
 
 }

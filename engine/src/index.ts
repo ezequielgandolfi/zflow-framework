@@ -4,6 +4,8 @@ import * as Workers from "./workers";
 // TEST DATA
 import * as TEST from "./test";
 const test01 = TEST.REPEAT;
+const test02 = TEST.JOIN_ALL;
+const test03 = TEST.JOIN_FIRST;
 
 const data = {
   workers: [
@@ -14,13 +16,31 @@ const data = {
       },
       exec: [
         {
-          id: "ABC",
+          id: "REPEAT",
           type: "flow",
           config: {
             method: "GET",
             path: "/test/:repeat"
           },
           data: test01
+        },
+        {
+          id: "JOIN_ALL",
+          type: "flow",
+          config: {
+            method: "GET",
+            path: "/all"
+          },
+          data: test02
+        },
+        {
+          id: "JOIN_FIRST",
+          type: "flow",
+          config: {
+            method: "GET",
+            path: "/first"
+          },
+          data: test03
         }
       ]
     }

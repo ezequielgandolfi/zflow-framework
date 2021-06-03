@@ -83,9 +83,10 @@ class FlowFunctions implements ZFlowTypes.Engine.IFlow {
   }
 
   freeComponent(id: string) {
-    const component = this.storedComponents[id];
-    if (component) {
-      component.change.removeAllListeners();
+    const component: ZFlowTypes.Component.Instance = this.storedComponents[id];
+    if (component?.$status === ZFlowTypes.Const.COMPONENT.STATUS.FINISHED) {
+      component.removeAllListeners();
+      delete this.storedComponents[id];
       const next = this.flow.filter((item:ZFlowTypes.Component.Output) => item.source === id);
       next.forEach((item:ZFlowTypes.Component.Output) => this.freeComponent(item.target));
     }
@@ -102,7 +103,7 @@ class FlowFunctions implements ZFlowTypes.Engine.IFlow {
   updateListeners(options?: ZFlowTypes.Engine.IUpdateListenersOptions) {
     // COMPONENT COMPLETED
     if (options?.completedComponentId) {
-      const componentListeners = this.listeners.filter(w => w.type === ZFlowTypes.Const.FLOW.LISTENER).filter(w => w.sourceId === options.completedComponentId);
+      const componentListeners = this.listeners.filter(w => w.type === ZFlowTypes.Const.FLOW.LISTENER.COMPONENT_COMPLETED);
       componentListeners.forEach(w => {
         process.nextTick(() => w.event.emit(ZFlowTypes.Const.FLOW.LISTENER.COMPONENT_COMPLETED, { id: w.sourceId }));
       })

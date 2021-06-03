@@ -57,6 +57,10 @@ export class Abstract implements ZFlowTypes.Component.Instance {
     return this.change.emit(event, data);
   }
 
+  removeAllListeners() {
+    this.change.removeAllListeners();
+  }
+
   protected signalOutput(output: string) {
     return this.dispatch("complete", { type: output });
   }

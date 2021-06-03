@@ -94,3 +94,347 @@ export const REPEAT = [
     id: "reactflow__edge-07dd8aed-2223-43e7-859e-de4b5036b877ok-68feedf4-da75-4e05-9506-bf9adedd052fsingle",
   },
 ];
+
+export const JOIN_ALL = [
+  {
+    "id": "fdcbaec1-dfee-4d6b-afd7-a2f4adf22976",
+    "type": "start",
+    "data": {
+      "id": "start",
+      "component": "trigger",
+      "properties": {},
+      "label": "Start"
+    },
+    "position": {
+      "x": 10,
+      "y": 10
+    }
+  },
+  {
+    "id": "b58019ab-1ba5-425f-b6e5-549a2b290f9d",
+    "type": "function",
+    "data": {
+      "id": "",
+      "component": "log",
+      "properties": {
+        "text": "INICIO"
+      },
+      "label": "Log"
+    },
+    "position": {
+      "x": 125,
+      "y": 25
+    }
+  },
+  {
+    "source": "fdcbaec1-dfee-4d6b-afd7-a2f4adf22976",
+    "sourceHandle": "ok",
+    "target": "b58019ab-1ba5-425f-b6e5-549a2b290f9d",
+    "targetHandle": "single",
+    "animated": true,
+    "type": "smoothstep",
+    "id": "reactflow__edge-fdcbaec1-dfee-4d6b-afd7-a2f4adf22976ok-b58019ab-1ba5-425f-b6e5-549a2b290f9dsingle"
+  },
+  {
+    "id": "c17353e2-724d-4430-b49d-83fa685ced93",
+    "type": "repeat",
+    "data": {
+      "id": "",
+      "component": "for",
+      "properties": {
+        "from": "1",
+        "to": "3"
+      },
+      "label": "For"
+    },
+    "position": {
+      "x": 230,
+      "y": 40
+    }
+  },
+  {
+    "id": "22fb7c58-bbd5-4ec7-9645-9fd83f534e0e",
+    "type": "function",
+    "data": {
+      "id": "",
+      "component": "log",
+      "properties": {
+        "text": "$(c17353e2-724d-4430-b49d-83fa685ced93.current)"
+      },
+      "label": "Log"
+    },
+    "position": {
+      "x": 430,
+      "y": 30
+    }
+  },
+  {
+    "source": "c17353e2-724d-4430-b49d-83fa685ced93",
+    "sourceHandle": "repeat",
+    "target": "22fb7c58-bbd5-4ec7-9645-9fd83f534e0e",
+    "targetHandle": "single",
+    "animated": true,
+    "type": "smoothstep",
+    "label": "Repeat",
+    "labelBgPadding": [
+      8,
+      4
+    ],
+    "labelBgBorderRadius": 4,
+    "labelBgStyle": {
+      "fill": "lightgreen",
+      "color": "#fff",
+      "fillOpacity": 0.7
+    },
+    "id": "reactflow__edge-c17353e2-724d-4430-b49d-83fa685ced93repeat-22fb7c58-bbd5-4ec7-9645-9fd83f534e0esingle"
+  },
+  {
+    "id": "d2dba2aa-a4dd-4f06-9c92-f4f26a505912",
+    "type": "join",
+    "data": {
+      "id": "",
+      "component": "all",
+      "properties": {},
+      "label": "All"
+    },
+    "position": {
+      "x": 455,
+      "y": 115
+    }
+  },
+  {
+    "source": "b58019ab-1ba5-425f-b6e5-549a2b290f9d",
+    "sourceHandle": "ok",
+    "target": "c17353e2-724d-4430-b49d-83fa685ced93",
+    "targetHandle": "single",
+    "animated": true,
+    "type": "smoothstep",
+    "id": "reactflow__edge-b58019ab-1ba5-425f-b6e5-549a2b290f9dok-c17353e2-724d-4430-b49d-83fa685ced93single"
+  },
+  {
+    "source": "b58019ab-1ba5-425f-b6e5-549a2b290f9d",
+    "sourceHandle": "ok",
+    "target": "d2dba2aa-a4dd-4f06-9c92-f4f26a505912",
+    "targetHandle": "multi",
+    "animated": true,
+    "type": "smoothstep",
+    "id": "reactflow__edge-b58019ab-1ba5-425f-b6e5-549a2b290f9dok-d2dba2aa-a4dd-4f06-9c92-f4f26a505912multi"
+  },
+  {
+    "source": "c17353e2-724d-4430-b49d-83fa685ced93",
+    "sourceHandle": "end",
+    "target": "d2dba2aa-a4dd-4f06-9c92-f4f26a505912",
+    "targetHandle": "multi",
+    "animated": true,
+    "type": "smoothstep",
+    "label": "End",
+    "labelBgPadding": [
+      8,
+      4
+    ],
+    "labelBgBorderRadius": 4,
+    "labelBgStyle": {
+      "fill": "lightblue",
+      "color": "#fff",
+      "fillOpacity": 0.7
+    },
+    "id": "reactflow__edge-c17353e2-724d-4430-b49d-83fa685ced93end-d2dba2aa-a4dd-4f06-9c92-f4f26a505912multi"
+  },
+  {
+    "id": "f917f658-f2a7-47e0-a5ae-cd77a79a5d55",
+    "type": "function",
+    "data": {
+      "id": "",
+      "component": "log",
+      "properties": {
+        "text": "FIM"
+      },
+      "label": "Log"
+    },
+    "position": {
+      "x": 510,
+      "y": 145
+    }
+  },
+  {
+    "source": "d2dba2aa-a4dd-4f06-9c92-f4f26a505912",
+    "sourceHandle": "ok",
+    "target": "f917f658-f2a7-47e0-a5ae-cd77a79a5d55",
+    "targetHandle": "single",
+    "animated": true,
+    "type": "smoothstep",
+    "id": "reactflow__edge-d2dba2aa-a4dd-4f06-9c92-f4f26a505912ok-f917f658-f2a7-47e0-a5ae-cd77a79a5d55single"
+  }
+];
+
+export const JOIN_FIRST = [
+  {
+    "id": "fdcbaec1-dfee-4d6b-afd7-a2f4adf22976",
+    "type": "start",
+    "data": {
+      "id": "start",
+      "component": "trigger",
+      "properties": {},
+      "label": "Start"
+    },
+    "position": {
+      "x": 10,
+      "y": 10
+    }
+  },
+  {
+    "id": "b58019ab-1ba5-425f-b6e5-549a2b290f9d",
+    "type": "function",
+    "data": {
+      "id": "",
+      "component": "log",
+      "properties": {
+        "text": "INICIO"
+      },
+      "label": "Log"
+    },
+    "position": {
+      "x": 125,
+      "y": 25
+    }
+  },
+  {
+    "source": "fdcbaec1-dfee-4d6b-afd7-a2f4adf22976",
+    "sourceHandle": "ok",
+    "target": "b58019ab-1ba5-425f-b6e5-549a2b290f9d",
+    "targetHandle": "single",
+    "animated": true,
+    "type": "smoothstep",
+    "id": "reactflow__edge-fdcbaec1-dfee-4d6b-afd7-a2f4adf22976ok-b58019ab-1ba5-425f-b6e5-549a2b290f9dsingle"
+  },
+  {
+    "id": "c17353e2-724d-4430-b49d-83fa685ced93",
+    "type": "repeat",
+    "data": {
+      "id": "",
+      "component": "for",
+      "properties": {
+        "from": "1",
+        "to": "3"
+      },
+      "label": "For"
+    },
+    "position": {
+      "x": 230,
+      "y": 40
+    }
+  },
+  {
+    "id": "22fb7c58-bbd5-4ec7-9645-9fd83f534e0e",
+    "type": "function",
+    "data": {
+      "id": "",
+      "component": "log",
+      "properties": {
+        "text": "$(c17353e2-724d-4430-b49d-83fa685ced93.current)"
+      },
+      "label": "Log"
+    },
+    "position": {
+      "x": 430,
+      "y": 30
+    }
+  },
+  {
+    "source": "c17353e2-724d-4430-b49d-83fa685ced93",
+    "sourceHandle": "repeat",
+    "target": "22fb7c58-bbd5-4ec7-9645-9fd83f534e0e",
+    "targetHandle": "single",
+    "animated": true,
+    "type": "smoothstep",
+    "label": "Repeat",
+    "labelBgPadding": [
+      8,
+      4
+    ],
+    "labelBgBorderRadius": 4,
+    "labelBgStyle": {
+      "fill": "lightgreen",
+      "color": "#fff",
+      "fillOpacity": 0.7
+    },
+    "id": "reactflow__edge-c17353e2-724d-4430-b49d-83fa685ced93repeat-22fb7c58-bbd5-4ec7-9645-9fd83f534e0esingle"
+  },
+  {
+    "id": "d2dba2aa-a4dd-4f06-9c92-f4f26a505912",
+    "type": "join",
+    "data": {
+      "id": "",
+      "component": "first",
+      "properties": {},
+      "label": "First"
+    },
+    "position": {
+      "x": 455,
+      "y": 115
+    }
+  },
+  {
+    "source": "b58019ab-1ba5-425f-b6e5-549a2b290f9d",
+    "sourceHandle": "ok",
+    "target": "c17353e2-724d-4430-b49d-83fa685ced93",
+    "targetHandle": "single",
+    "animated": true,
+    "type": "smoothstep",
+    "id": "reactflow__edge-b58019ab-1ba5-425f-b6e5-549a2b290f9dok-c17353e2-724d-4430-b49d-83fa685ced93single"
+  },
+  {
+    "source": "b58019ab-1ba5-425f-b6e5-549a2b290f9d",
+    "sourceHandle": "ok",
+    "target": "d2dba2aa-a4dd-4f06-9c92-f4f26a505912",
+    "targetHandle": "multi",
+    "animated": true,
+    "type": "smoothstep",
+    "id": "reactflow__edge-b58019ab-1ba5-425f-b6e5-549a2b290f9dok-d2dba2aa-a4dd-4f06-9c92-f4f26a505912multi"
+  },
+  {
+    "source": "c17353e2-724d-4430-b49d-83fa685ced93",
+    "sourceHandle": "end",
+    "target": "d2dba2aa-a4dd-4f06-9c92-f4f26a505912",
+    "targetHandle": "multi",
+    "animated": true,
+    "type": "smoothstep",
+    "label": "End",
+    "labelBgPadding": [
+      8,
+      4
+    ],
+    "labelBgBorderRadius": 4,
+    "labelBgStyle": {
+      "fill": "lightblue",
+      "color": "#fff",
+      "fillOpacity": 0.7
+    },
+    "id": "reactflow__edge-c17353e2-724d-4430-b49d-83fa685ced93end-d2dba2aa-a4dd-4f06-9c92-f4f26a505912multi"
+  },
+  {
+    "id": "f917f658-f2a7-47e0-a5ae-cd77a79a5d55",
+    "type": "function",
+    "data": {
+      "id": "",
+      "component": "log",
+      "properties": {
+        "text": "FIM"
+      },
+      "label": "Log"
+    },
+    "position": {
+      "x": 510,
+      "y": 145
+    }
+  },
+  {
+    "source": "d2dba2aa-a4dd-4f06-9c92-f4f26a505912",
+    "sourceHandle": "ok",
+    "target": "f917f658-f2a7-47e0-a5ae-cd77a79a5d55",
+    "targetHandle": "single",
+    "animated": true,
+    "type": "smoothstep",
+    "id": "reactflow__edge-d2dba2aa-a4dd-4f06-9c92-f4f26a505912ok-f917f658-f2a7-47e0-a5ae-cd77a79a5d55single"
+  }
+];

@@ -10,9 +10,12 @@ export class First extends ComponentType.Ok {
   ];
 
   execute() {
-    if (this.$status !== ZFlowTypes.Const.COMPONENT.STATUS.FINISHED) {
+    if (this.$status === ZFlowTypes.Const.COMPONENT.STATUS.PRISTINE) {
       this.ok();
     }
+  }
+
+  resume() {
   }
 }
 
@@ -34,6 +37,9 @@ export class All extends ComponentType.Ok {
         this.waitForInputs();
       }
     }
+  }
+
+  resume() {    
   }
 
   private hasPendingInputs(id: string) {

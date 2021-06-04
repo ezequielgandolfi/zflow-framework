@@ -67,13 +67,11 @@ function execComponent(component) {
     });
 
     thisComponent.on("resume", event => { 
-      engineFunctions.flow.execute(thisComponent);
+      engineFunctions.flow.resume(thisComponent);
     });
   }
 
-  let props = transformProps(deepCopy(component.data.properties));
-  thisComponent.inject(props);
-
+  thisComponent.inject(transformProps(deepCopy(component.data.properties)));
   engineFunctions.flow.execute(thisComponent);
 }
 

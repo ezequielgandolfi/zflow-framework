@@ -16,11 +16,12 @@ export interface IFlow {
   setFlow(flow: Array<Component.Any>);
   getNext(from: string, output: string): Array<Component.Execution>;
   execute(component: Component.Instance);
+  resume(component: Component.Instance);
 
   storeComponent(id: string, component: Component.Instance);
   getStoredComponent(id: string): Component.Instance;
   freeComponent(id: string);
-  freeChildComponents(id: string);
+  freeChildComponents(id: string, output?: string);
 
   updateListeners(options?:IUpdateListenersOptions);
   listenStreamCompleted(from: string, output: string): events.EventEmitter;

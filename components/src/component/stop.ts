@@ -2,7 +2,7 @@ import * as ZFlowTypes from "@zflow/types";
 import * as ComponentType from "../component-type";
 import * as Property from "../property";
 
-export class Error extends ComponentType.Ok {
+export class Error extends ComponentType.Stop {
   static key = "error";
   static description = "Stop with error condition";
   static shortDescription = "Error";
@@ -10,6 +10,6 @@ export class Error extends ComponentType.Ok {
   ];
 
   execute() {
-    this.ok();
+    this.$output.error();
   }
 }

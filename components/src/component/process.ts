@@ -13,3 +13,15 @@ export class Flow extends ComponentType.OkError {
     this.ok();
   }
 }
+
+export class SetReturn extends ComponentType.OkError {
+  static key = "return";
+  static description = "Set return value";
+  static shortDescription = "Return";
+  static properties = [
+  ];
+
+  execute() {
+    this.ok();
+  }
+}

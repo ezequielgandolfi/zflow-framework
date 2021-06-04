@@ -22,7 +22,7 @@ class FlowFunctions implements ZFlowTypes.Engine.IFlow {
     return !!next.find(n => {
       const component = this.getStoredComponent(n.id);
       if (component) {
-        if (component.$status !== ZFlowTypes.Const.COMPONENT.STATUS.FINISHED) {
+        if (component.$status !== ZFlowTypes.Component.ComponentStatus.FINISHED) {
           return true;
         }
         else {
@@ -64,12 +64,12 @@ class FlowFunctions implements ZFlowTypes.Engine.IFlow {
   }
 
   execute(component: ZFlowTypes.Component.Instance) {
-    component.once("complete", () => { this.onExecutionComplete(component) });
+    component.$event.once("complete", () => { this.onExecutionComplete(component) });
     process.nextTick(() => component.execute());
   }
 
   resume(component: ZFlowTypes.Component.Instance) {
-    component.once("complete", () => { this.onExecutionComplete(component) });
+    component.$event.once("complete", () => { this.onExecutionComplete(component) });
     process.nextTick(() => component.resume());
   }
 
@@ -89,8 +89,8 @@ class FlowFunctions implements ZFlowTypes.Engine.IFlow {
 
   freeComponent(id: string) {
     const component: ZFlowTypes.Component.Instance = this.storedComponents[id];
-    if (component?.$status === ZFlowTypes.Const.COMPONENT.STATUS.FINISHED) {
-      component.removeAllListeners();
+    if (component?.$status === ZFlowTypes.Component.ComponentStatus.FINISHED) {
+      component.$event.removeAll();
       delete this.storedComponents[id];
       const next = this.flow.filter((item:ZFlowTypes.Component.Output) => item.source === id);
       next.forEach((item:ZFlowTypes.Component.Output) => this.freeComponent(item.target));
@@ -110,21 +110,21 @@ class FlowFunctions implements ZFlowTypes.Engine.IFlow {
   updateListeners(options?: ZFlowTypes.Engine.IUpdateListenersOptions) {
     // COMPONENT COMPLETED
     if (options?.completedComponentId) {
-      const componentListeners = this.listeners.filter(w => w.type === ZFlowTypes.Const.FLOW.LISTENER.COMPONENT_COMPLETED);
+      const componentListeners = this.listeners.filter(w => w.type === ZFlowTypes.Engine.ListenerEvent.COMPONENT_COMPLETED);
       componentListeners.forEach(w => {
-        process.nextTick(() => w.event.emit(ZFlowTypes.Const.FLOW.LISTENER.COMPONENT_COMPLETED, { id: w.sourceId }));
+        process.nextTick(() => w.event.emit(ZFlowTypes.Engine.ListenerEvent.COMPONENT_COMPLETED, { id: w.sourceId }));
       })
     }
     // STREAM COMPLETED
-    const streamListeners = this.listeners.filter(w => w.type === ZFlowTypes.Const.FLOW.LISTENER.STREAM_COMPLETED).filter(w => !this.hasPendingExec(w.from, w.output));
+    const streamListeners = this.listeners.filter(w => w.type === ZFlowTypes.Engine.ListenerEvent.STREAM_COMPLETED).filter(w => !this.hasPendingExec(w.from, w.output));
     streamListeners.forEach(w => {
       this.unlistenStreamCompleted(w.from, w.output);
-      process.nextTick(() => w.event.emit(ZFlowTypes.Const.FLOW.LISTENER.STREAM_COMPLETED, { from: w.from, output: w.output }));
+      process.nextTick(() => w.event.emit(ZFlowTypes.Engine.ListenerEvent.STREAM_COMPLETED, { from: w.from, output: w.output }));
     });
   }
 
   listenStreamCompleted(from: string, output: string) {
-    const listener = { type: ZFlowTypes.Const.FLOW.LISTENER.STREAM_COMPLETED, from, output, event: new events.EventEmitter() };
+    const listener = { type: ZFlowTypes.Engine.ListenerEvent.STREAM_COMPLETED, from, output, event: new events.EventEmitter() };
     this.listeners.push(listener);
     return listener.event;
   }
@@ -132,7 +132,7 @@ class FlowFunctions implements ZFlowTypes.Engine.IFlow {
   unlistenStreamCompleted(from: string, output: string) {
     let index: number;
     do {
-      index = this.listeners.findIndex(item => (item.type === ZFlowTypes.Const.FLOW.LISTENER.STREAM_COMPLETED) && (item.from === from) && (item.output === output));  
+      index = this.listeners.findIndex(item => (item.type === ZFlowTypes.Engine.ListenerEvent.STREAM_COMPLETED) && (item.from === from) && (item.output === output));  
       if (index >= 0) {
         this.listeners.splice(index, 1);
       }
@@ -140,7 +140,7 @@ class FlowFunctions implements ZFlowTypes.Engine.IFlow {
   }
 
   listenComponentCompleted(sourceId: string): events.EventEmitter {
-    const listener = { type: ZFlowTypes.Const.FLOW.LISTENER.COMPONENT_COMPLETED, sourceId, event: new events.EventEmitter() };
+    const listener = { type: ZFlowTypes.Engine.ListenerEvent.COMPONENT_COMPLETED, sourceId, event: new events.EventEmitter() };
     this.listeners.push(listener);
     return listener.event;
   };
@@ -148,7 +148,7 @@ class FlowFunctions implements ZFlowTypes.Engine.IFlow {
   unlistenComponentCompleted(sourceId: string) {
     let index: number;
     do {
-      index = this.listeners.findIndex(item => (item.type === ZFlowTypes.Const.FLOW.LISTENER.COMPONENT_COMPLETED) && (item.sourceId === sourceId));  
+      index = this.listeners.findIndex(item => (item.type === ZFlowTypes.Engine.ListenerEvent.COMPONENT_COMPLETED) && (item.sourceId === sourceId));  
       if (index >= 0) {
         this.listeners.splice(index, 1);
       }

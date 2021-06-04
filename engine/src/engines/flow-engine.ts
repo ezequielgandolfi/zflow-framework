@@ -61,17 +61,17 @@ function execComponent(component) {
     thisComponent.setup(engineFunctions, component);
 
     engineFunctions.flow.storeComponent(component.id, thisComponent);
-  
-    thisComponent.on("complete", event => { 
+
+    thisComponent.$event.on("complete", event => { 
       next(component.id, event.type, event.data);
     });
 
-    thisComponent.on("resume", event => { 
+    thisComponent.$event.on("resume", event => { 
       engineFunctions.flow.resume(thisComponent);
     });
   }
 
-  thisComponent.inject(transformProps(deepCopy(component.data.properties)));
+  thisComponent.$input.inject(transformProps(deepCopy(component.data.properties)));
   engineFunctions.flow.execute(thisComponent);
 }
 

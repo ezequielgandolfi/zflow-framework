@@ -11,6 +11,11 @@ export interface IUpdateListenersOptions {
 export interface IDatabase {
 }
 
+export enum ListenerEvent {
+  COMPONENT_COMPLETED = 'component_completed',
+  STREAM_COMPLETED = "stream_completed"
+}
+
 export interface IFlow {
   getFlow(): Array<Component.Any>;
   setFlow(flow: Array<Component.Any>);

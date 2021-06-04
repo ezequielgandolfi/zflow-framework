@@ -14,6 +14,6 @@ export class Log extends ComponentType.OkError {
 
   execute() {
     console.log(this.text.get());
-    this.ok();
+    this.$output.ok();
   }
 }

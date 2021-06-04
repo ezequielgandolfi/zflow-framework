@@ -14,6 +14,32 @@ import { StopComponent } from "./stop";
 import { StorageComponent } from "./storage";
 import { TransformComponent } from "./transform";
 import { VariableComponent } from "./variable";
+// import * as ZFlowComponents from "@zflow/components";
+
+function buildComponentList() {
+  let result = {};
+  // Object.keys(ZFlowComponents.Component).forEach(typeKey => {
+  //   const type = {
+  //     hideComponent: (typeKey === "start"),
+  //     description: (typeKey.substring(0,1).toUpperCase() + typeKey.substring(1)),
+  //     diagramNode: '',
+  //     components: Object.values(ZFlowComponents.Component[typeKey])
+  //   }
+  //   result[typeKey] = type;
+  // });
+  return result;
+}
+
+// const buildComponent = (baseClass) => {
+//   return {
+//     hideComponent = true,
+//     description = 'Start',
+//     diagramNode = ({ data }) => { return buildNodeO1(data, 'play-circle', null, { node: NODE_COLOR.ok }) },
+//     components = [
+//       ZFlowComponents.Component.start.Start
+//     ]
+//   }
+// }
 
 
 export class ZFlowComponents {

@@ -2,7 +2,7 @@ import * as ZFlowTypes from "@zflow/types";
 
 export const AddReadOnly = (BaseClass) => {
   return class extends BaseClass {
-    static readonly = true;
+    static readOnly = true;
   }
 }
 

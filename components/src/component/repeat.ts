@@ -29,14 +29,14 @@ export class For extends ComponentType.Repeat {
     }
     if (this.current.get() <= this.to.get()) {
       const watcher = this.$engine.flow.listenStreamCompleted(this.$data.id, "repeat");
-      watcher.on(ZFlowTypes.Const.FLOW.LISTENER.STREAM_COMPLETED, () => { 
+      watcher.on(ZFlowTypes.Engine.ListenerEvent.STREAM_COMPLETED, () => { 
         this.$engine.flow.freeChildComponents(this.$data.id, "repeat");
-        this.dispatch("resume", { id: this.$data.id });
+        this.$event.dispatch("resume", { id: this.$data.id });
       });
-      this.repeat();
+      this.$output.repeat();
     }
     else {
-      this.end();
+      this.$output.end();
     }
   }
 }

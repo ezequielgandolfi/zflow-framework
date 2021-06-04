@@ -40,29 +40,61 @@ export interface Output {
  */
 export type Any = Execution | Output;
 
-export type ComponentEvents = "complete" | "resume";
+export type ComponentEventType = "complete" | "resume";
+
+export interface ComponentEvent {
+  on(event: ComponentEventType, callback: (...args: any[]) => void): EventEmitter;
+  once(event: ComponentEventType, callback: (...args: any[]) => void): EventEmitter;
+  dispatch(event: ComponentEventType, data?: any): boolean;
+  removeAll();
+}
+
+export type ComponentInputPort = "none" | "single" | "multiple";
+
+export type ComponentOutputPort = "ok" | "error" | "repeat" | "end" | "true" | "false";
+
+export interface ComponentInput {
+  inject: (props: any) => void;
+}
+
+export interface ComponentOutput {
+  ok?: () => void;
+  error?: () => void;
+  repeat?: () => void;
+  end?: () => void;
+  true?: () => void;
+  false?: () => void;
+}
+
+export enum ComponentStatus {
+  PRISTINE = "pristine",
+  RUNNING = "running",
+  FINISHED = "finished",
+  WAITING = "waiting"
+}
 
 /**
  * Interface for component instance
  * This is the basic interface for the component execution instance running on ZFlow Engine
  */
-export interface Instance {
+export abstract class Instance {
 
-  readonly $engine: IEngine;
-  readonly $data: Execution;
+  static inputPort: ComponentInputPort;
+  static outputPorts: Array<ComponentOutputPort>;
+
+  abstract get $engine(): IEngine;
+  abstract get $data(): Execution;
+  
   $status: string;
+  $event: ComponentEvent;
+  $input: ComponentInput;
+  $output: ComponentOutput;
 
-  setup(engine: IEngine, data: Execution);
-  inject(props: any);
+  abstract setup(engine: IEngine, data: Execution);
 
-  execute();
-  suspend();
-  resume();
-  finish();
-
-  on(event: ComponentEvents, callback: (...args: any[]) => void): EventEmitter;
-  once(event: ComponentEvents, callback: (...args: any[]) => void): EventEmitter;
-  dispatch(event: ComponentEvents, data?: any): boolean;
-  removeAllListeners();
+  abstract execute();
+  abstract suspend();
+  abstract resume();
+  abstract finish();
 
 }

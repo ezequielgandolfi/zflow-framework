@@ -7,7 +7,7 @@ import DiagramNodeProperties from "./DiagramNodeProperties";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { updateElements, setContextElement, setSelectedElement } from '../../actions/diagramActions';
-import { ZFlowComponents } from "../../helpers/component";
+import { FlowComponents } from "../../helpers/component";
 import { GRID_SIZE, NODE_HANDLE_TYPE } from "../../helpers/diagram/const";
 import DiagramComponentPanel from "./DiagramComponentPanel";
 import { STYLE_FLOW_END, STYLE_FLOW_ERROR, STYLE_FLOW_FALSE, STYLE_FLOW_REPEAT, STYLE_FLOW_TRUE } from "./diagramStyle";
@@ -33,7 +33,7 @@ class Diagram extends Component {
   initialElements() {
     const start = this.createComponent('start', GRID_SIZE * 2, GRID_SIZE * 2);
     start.data.id = 'start';
-    ZFlowComponents.updateComponentType(start);
+    FlowComponents.updateComponentType(start);
     return [ start ];
   }
 
@@ -41,8 +41,8 @@ class Diagram extends Component {
     const panel = document.getElementById('panelContextMenu');
     panel.querySelectorAll('li.dropdown-item').forEach(item => item.remove());
     
-    Object.keys(ZFlowComponents.types).forEach(key => { 
-      const component = ZFlowComponents.types[key];
+    Object.keys(FlowComponents.types).forEach(key => { 
+      const component = FlowComponents.types[key];
       if (!component.hideComponent) {
         const eLi = document.createElement('li');
         eLi.classList.add('dropdown-item');
@@ -87,11 +87,11 @@ class Diagram extends Component {
     result.position.x = (Math.round(result.position.x / GRID_SIZE) * GRID_SIZE);
     result.position.y = (Math.round(result.position.y / GRID_SIZE) * GRID_SIZE);
 
-    const component = ZFlowComponents.getType(componentType);
+    const component = FlowComponents.getType(componentType);
     const defaultComponent = component.components.length > 0 ? component.components[0] : null;
     if (defaultComponent) {
       result.data.component = defaultComponent.key;
-      result.data.properties = ZFlowComponents.getTypePropertiesDefaultValues(componentType, defaultComponent.key);
+      result.data.properties = FlowComponents.getTypePropertiesDefaultValues(componentType, defaultComponent.key);
     }
 
     return result;
@@ -100,7 +100,7 @@ class Diagram extends Component {
   insertComponent(componentType,event) {
     this.hideContextMenus();
     const component = this.createComponent(componentType, this.contextPos.x, this.contextPos.y);
-    ZFlowComponents.updateComponentType(component);
+    FlowComponents.updateComponentType(component);
     this.props.updateElements([...this.props.elements,component]);
     this.setSelectedElement(component);
   }
@@ -270,7 +270,7 @@ class Diagram extends Component {
         <div className="diagram-container" id="diagramContainer">
           <ReactFlow
             elements={this.props.elements}
-            nodeTypes={ZFlowComponents.nodes()}
+            nodeTypes={FlowComponents.nodes()}
             zoomOnScroll={false}
             zoomOnPinch={false}
             panOnScroll={true}

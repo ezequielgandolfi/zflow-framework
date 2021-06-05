@@ -3,7 +3,7 @@ import { Button, Modal } from "react-bootstrap";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { updateElements, setContextElement } from "../../actions/diagramActions";
-import { ZFlowComponents } from "../../helpers/component";
+import { FlowComponents } from "../../helpers/component";
 import { objectOrNull } from "../../helpers/object";
 import DiagramPropertyAssign from "./DiagramPropertyAssign";
 
@@ -109,7 +109,7 @@ class DiagramNodeProperties extends Component {
   _renderModalTitle() {
     let title = 'Input properties';
     if (this.state.element) {
-      const componentType = ZFlowComponents.getComponent(this.state.element.type, this.state.element.data.component);
+      const componentType = FlowComponents.getComponent(this.state.element.type, this.state.element.data.component);
       title += ` - ${componentType.shortDescription}`;
     }
     return (
@@ -122,7 +122,7 @@ class DiagramNodeProperties extends Component {
       if (this.props.contextElement) {
         const element = this.props.elements.find(item => item.id === this.props.contextElement);
         if (element) {
-          const componentType = ZFlowComponents.getComponent(element.type, element.data.component);
+          const componentType = FlowComponents.getComponent(element.type, element.data.component);
           const properties = componentType.properties;
           const data = Object.assign({},element.data.properties);
           // change GUID for component alias in property values

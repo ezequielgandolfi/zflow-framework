@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { ZFlowComponents } from '../../helpers/component';
+import { FlowComponents } from '../../helpers/component';
 import { updateElements, setSelectedElement } from "../../actions/diagramActions";
 import { objectOrNull } from '../../helpers/object';
 
@@ -12,7 +12,7 @@ class DiagramComponentPanel extends Component {
     const value = event.target.value;
     const element = this.state.element;
     element.data.component = value;
-    ZFlowComponents.updateComponentType(element);
+    FlowComponents.updateComponentType(element);
     this.setState({ element });
     this.props.updateElements([...this.props.elements]);
   }
@@ -29,7 +29,7 @@ class DiagramComponentPanel extends Component {
     const _optionElement = (value,text) => {
       return <option key={value} value={value}>{text}</option>
     };
-    const component = this.state.element ? ZFlowComponents.getType(this.state.element.type) : null;
+    const component = this.state.element ? FlowComponents.getType(this.state.element.type) : null;
     return component?.components.map(subcomponent => _optionElement(subcomponent.key,subcomponent.description));
   }
 

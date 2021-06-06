@@ -148,7 +148,7 @@ export class FlowComponents {
     const result = { };
     const componentType = FlowComponents.getComponent(type, componentKey);
     if (componentType) {
-      componentType.properties.forEach(item => result[item.key] = item.type.default);
+      componentType.properties.forEach(item => result[item.key] = '');
     }
     return result;
   }

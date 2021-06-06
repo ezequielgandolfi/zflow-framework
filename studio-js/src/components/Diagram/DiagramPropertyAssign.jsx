@@ -109,9 +109,8 @@ class DiagramPropertyAssign extends Component {
     const components = [
       { key: '', text: '' },
       ...this.props.elements.filter(item => !!item.data?.id).map(item => { 
-        const component = FlowComponents.getType(item.type);
-        const componentType = FlowComponents.getComponent(item.type, item.data.component);
-        return { key: item.data.id, text: `${item.data.id} (${component.description} > ${componentType.description})` }
+        const component = FlowComponents.getComponent(item.type);
+        return { key: item.data.id, text: `${item.data.id} (${component.description})` }
       })
     ];
     return components.map(item => _optionElement(item.key, item.text));
@@ -138,7 +137,7 @@ class DiagramPropertyAssign extends Component {
     };
     const component = this.props.elements.find(item => item.data?.id === this.state.componentId);
     if (component) {
-      const compType = FlowComponents.getComponent(component.type, component.data.component);
+      const compType = FlowComponents.getComponent(component.type);
       if (compType) {
         const properties = [
           { key: '', description: '' },

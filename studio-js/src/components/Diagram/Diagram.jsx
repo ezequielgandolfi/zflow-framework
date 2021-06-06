@@ -12,6 +12,7 @@ import { GRID_SIZE, NODE_HANDLE_TYPE } from "../../helpers/diagram/const";
 import DiagramComponentPanel from "./DiagramComponentPanel";
 import { STYLE_FLOW_END, STYLE_FLOW_ERROR, STYLE_FLOW_FALSE, STYLE_FLOW_REPEAT, STYLE_FLOW_TRUE } from "./diagramStyle";
 import { Button } from "react-bootstrap";
+import DiagramComponentSelection from "./DiagramComponentSelection";
 
 /**
  * Main diagram component.
@@ -19,38 +20,21 @@ import { Button } from "react-bootstrap";
  */
 
 class Diagram extends Component {
-  state = { elements: [] };
+  state = { elements: [], addComponent: { show: false } };
 
   contextComponent;
   contextPos = { x: 0, y: 0 };
 
   componentDidMount() {
-    this.refreshComponentList();
+    // this.refreshComponentList();
     // NEW / LOAD ???
     this.props.updateElements(this.initialElements());
   }
 
   initialElements() {
-    const start = this.createComponent('start', GRID_SIZE * 2, GRID_SIZE * 2);
+    const start = this.createComponent('start.default', GRID_SIZE * 2, GRID_SIZE * 2);
     start.data.id = 'start';
-    FlowComponents.updateComponentType(start);
     return [ start ];
-  }
-
-  refreshComponentList() {
-    const panel = document.getElementById('panelContextMenu');
-    panel.querySelectorAll('li.dropdown-item').forEach(item => item.remove());
-    
-    Object.keys(FlowComponents.types).forEach(key => { 
-      const component = FlowComponents.types[key];
-      if (!component.hideComponent) {
-        const eLi = document.createElement('li');
-        eLi.classList.add('dropdown-item');
-        eLi.onclick = (event) => { this.insertComponent(key, event) };
-        eLi.innerText = component.description;
-        panel.appendChild(eLi);
-      }
-    });
   }
 
   clearSelectedElement() {
@@ -77,21 +61,20 @@ class Diagram extends Component {
     }
   }
 
-  createComponent(componentType,left,top) {
+  createComponent(key,left,top) {
     const result = {
       id: uuidv4(),
-      type: componentType,
+      type: key,
       data: { id: '' },
       position: { x: left, y: top },
     };
     result.position.x = (Math.round(result.position.x / GRID_SIZE) * GRID_SIZE);
     result.position.y = (Math.round(result.position.y / GRID_SIZE) * GRID_SIZE);
 
-    const component = FlowComponents.getType(componentType);
-    const defaultComponent = component.components.length > 0 ? component.components[0] : null;
-    if (defaultComponent) {
-      result.data.component = defaultComponent.key;
-      result.data.properties = FlowComponents.getTypePropertiesDefaultValues(componentType, defaultComponent.key);
+    const component = FlowComponents.components[key];
+    if (component) {
+      result.data.label = component.shortDescription;
+      result.data.properties = FlowComponents.getComponentPropertiesDefaultValues(key);
     }
 
     return result;
@@ -100,9 +83,22 @@ class Diagram extends Component {
   insertComponent(componentType,event) {
     this.hideContextMenus();
     const component = this.createComponent(componentType, this.contextPos.x, this.contextPos.y);
-    FlowComponents.updateComponentType(component);
     this.props.updateElements([...this.props.elements,component]);
     this.setSelectedElement(component);
+  }
+
+  onAddComponent(event) {
+    this.hideContextMenus();
+    this.setState({ addComponent: { show: true } });
+  }
+
+  handleAddComponentSave(key) {
+    this.setState({ addComponent: { show: false } });
+    this.insertComponent(key);
+  }
+
+  handleAddComponentCancel() {
+    this.setState({ addComponent: { show: false } });
   }
 
   onNodeContextMenu(event, node) {
@@ -290,6 +286,7 @@ class Diagram extends Component {
         </div>
         <DiagramNodeProperties onSave={this.onSaveProperties.bind(this)} onCancel={this.onCancelProperties.bind(this)} />
         <DiagramComponentPanel />
+        <DiagramComponentSelection show={this.state.addComponent.show} onSave={this.handleAddComponentSave.bind(this)} onCancel={this.handleAddComponentCancel.bind(this)} />
         <div className="dropdown">
           <ul className="dropdown-menu" id="nodeContextMenu">
             <li><h6 className="dropdown-header">Selected component</h6></li>
@@ -300,7 +297,8 @@ class Diagram extends Component {
         </div>
         <div className="dropdown">
           <ul className="dropdown-menu" id="panelContextMenu" role="menu">
-            <li><h6 className="dropdown-header">Add component</h6></li>
+            <li><h6 className="dropdown-header">Add</h6></li>
+            <li className="dropdown-item" onClick={this.onAddComponent.bind(this)}>Component</li>
           </ul>
         </div>
         <div className="diagram-action-panel">

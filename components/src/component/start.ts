@@ -2,7 +2,11 @@ import * as ZFlowTypes from "@zflow/types";
 import * as ComponentType from "../component-type";
 import * as Property from "../property";
 
-export class StartDefault extends ComponentType.Start {
+class StartComponent extends ComponentType.Start {
+  static icon = "play-circle";
+}
+
+export class StartDefault extends StartComponent {
   static key = "start.default";
   static description = "Start process";
   static shortDescription = "Start";

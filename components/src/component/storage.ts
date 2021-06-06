@@ -2,7 +2,11 @@ import * as ZFlowTypes from "@zflow/types";
 import * as ComponentType from "../component-type";
 import * as Property from "../property";
 
-export class StorageReadFile extends ComponentType.OkError {
+class StorageComponent extends ComponentType.OkError {
+  static icon = "hdd-stack";
+}
+
+export class StorageReadFile extends StorageComponent {
   static key = "storage.readfile";
   static description = "Read a data file";
   static shortDescription = "R.File";
@@ -14,7 +18,7 @@ export class StorageReadFile extends ComponentType.OkError {
   }
 }
 
-export class StorageWriteFile extends ComponentType.OkError {
+export class StorageWriteFile extends StorageComponent {
   static key = "storage.writefile";
   static description = "Write a data file";
   static shortDescription = "W.File";

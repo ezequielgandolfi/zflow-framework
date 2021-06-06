@@ -2,7 +2,11 @@ import * as ZFlowTypes from "@zflow/types";
 import * as ComponentType from "../component-type";
 import * as Property from "../property";
 
-export class RequestGet extends ComponentType.OkError {
+class RequestComponent extends ComponentType.OkError {
+  static icon = "cloud";
+}
+
+export class RequestGet extends RequestComponent {
   static key = "request.get";
   static description = "GET request";
   static shortDescription = "Get";

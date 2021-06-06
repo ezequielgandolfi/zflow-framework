@@ -6,7 +6,7 @@ export const NODE_HANDLE_TYPE = {
     multiple: 'multi'
   },
   output: {
-    default: 'ok',
+    ok: 'ok',
     error: 'error',
     repeat: 'repeat',
     end: 'end',
@@ -16,10 +16,10 @@ export const NODE_HANDLE_TYPE = {
 }
 
 export const NODE_COLOR = {
-  ok: {
+  start: {
     borderColor: 'green'
   },
-  error: {
+  stop: {
     borderColor: 'red'
   }
 };
@@ -31,9 +31,19 @@ export const HANDLE_COLOR = {
   error: {
     backgroundColor: 'red'
   },
-  alternative: {
+  true: {
+    backgroundColor: 'green'
+  },
+  false: {
     backgroundColor: 'coral'
   },
+  repeat: {
+    backgroundColor: 'green'
+  },
+  end: {
+    backgroundColor: 'coral'
+  },
+  single: { },
   multiple: {
     backgroundColor: 'deepskyblue'
   }

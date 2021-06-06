@@ -109,8 +109,8 @@ class DiagramNodeProperties extends Component {
   _renderModalTitle() {
     let title = 'Input properties';
     if (this.state.element) {
-      const componentType = FlowComponents.getComponent(this.state.element.type, this.state.element.data.component);
-      title += ` - ${componentType.shortDescription}`;
+      const componentType = FlowComponents.getComponent(this.state.element.type);
+      title += ` - ${componentType.shortDescription.toUpperCase()}`;
     }
     return (
       <Modal.Title>{title}</Modal.Title>
@@ -122,7 +122,7 @@ class DiagramNodeProperties extends Component {
       if (this.props.contextElement) {
         const element = this.props.elements.find(item => item.id === this.props.contextElement);
         if (element) {
-          const componentType = FlowComponents.getComponent(element.type, element.data.component);
+          const componentType = FlowComponents.getComponent(element.type);
           const properties = componentType.properties;
           const data = Object.assign({},element.data.properties);
           // change GUID for component alias in property values

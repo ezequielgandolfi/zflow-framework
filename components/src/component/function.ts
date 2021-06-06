@@ -2,9 +2,13 @@ import * as ZFlowTypes from "@zflow/types";
 import * as ComponentType from "../component-type";
 import * as Property from "../property";
 
-export class FunctionLog extends ComponentType.OkError {
+class FunctionComponent extends ComponentType.OkError {
+  static icon = "command";
+}
+
+export class FunctionLog extends FunctionComponent {
   static key = "function.log";
-  static description = "Log";
+  static description = "Print a log information";
   static shortDescription = "Log";
   static properties = [
     Property.Text

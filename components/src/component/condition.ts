@@ -2,7 +2,11 @@ import * as ZFlowTypes from "@zflow/types";
 import * as ComponentType from "../component-type";
 import * as Property from "../property";
 
-export class ConditionAll extends ComponentType.Condition {
+class ConditionComponent extends ComponentType.Condition {
+  static icon = "stoplights";
+}
+
+export class ConditionAll extends ConditionComponent {
   static key = "condition.all";
   static description = "All conditions must be valid";
   static shortDescription = "All";
@@ -14,7 +18,7 @@ export class ConditionAll extends ComponentType.Condition {
   }
 }
 
-export class ConditionAny extends ComponentType.Condition {
+export class ConditionAny extends ConditionComponent {
   static key = "condition.any";
   static description = "Any condition must be valid";
   static shortDescription = "Any";

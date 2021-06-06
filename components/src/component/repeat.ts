@@ -2,7 +2,11 @@ import * as ZFlowTypes from "@zflow/types";
 import * as ComponentType from "../component-type";
 import * as Property from "../property";
 
-export class RepeatFor extends ComponentType.Repeat {
+class RepeatComponent extends ComponentType.Repeat {
+  static icon = "arrow-repeat";
+}
+
+export class RepeatFor extends RepeatComponent {
   static key = "repeat.for";
   static description = "FOR loop within a range";
   static shortDescription = "For";

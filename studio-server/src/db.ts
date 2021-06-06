@@ -1,9 +1,8 @@
-import * as fs from "fs";
-import * as path from "path";
 import { MongoClient } from "mongodb";
 import { Logger } from "./logger";
+import { Config } from "./config"
 
-const config = JSON.parse(fs.readFileSync(path.join(__dirname, process.env.CONFIG || 'config.json'), 'utf8'));
+const config = new Config();
 
 const COLLECTION = {
   DIAGRAM: "test_diagram",
@@ -13,7 +12,7 @@ const COLLECTION = {
 export class Database {
   setupConnection() {
     if (!global.connection) {
-      MongoClient.connect(config.database.uri, { useUnifiedTopology: true })
+      MongoClient.connect(config.env.database.uri, { useUnifiedTopology: true })
         .then(con => {
           const _db = con.db();
           global.connection = { 

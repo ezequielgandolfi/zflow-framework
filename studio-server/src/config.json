@@ -1,5 +1,7 @@
 {
-  "database": {
-    "uri": "mongodb://localhost"
+  "development": {
+    "database": {
+      "uri": "mongodb://localhost"
+    }
   }
 }

@@ -2,8 +2,8 @@ import * as ZFlowTypes from "@zflow/types";
 import * as ComponentType from "../component-type";
 import * as Property from "../property";
 
-export class First extends ComponentType.Join {
-  static key = "first";
+export class JoinFirst extends ComponentType.Join {
+  static key = "join.first";
   static description = "Go on first event";
   static shortDescription = "First";
   static properties = [
@@ -19,8 +19,8 @@ export class First extends ComponentType.Join {
   }
 }
 
-export class All extends ComponentType.Join {
-  static key = "all";
+export class JoinAll extends ComponentType.Join {
+  static key = "join.all";
   static description = "Wait all events";
   static shortDescription = "All";
   static properties = [

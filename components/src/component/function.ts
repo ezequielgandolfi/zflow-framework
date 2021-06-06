@@ -2,8 +2,8 @@ import * as ZFlowTypes from "@zflow/types";
 import * as ComponentType from "../component-type";
 import * as Property from "../property";
 
-export class Log extends ComponentType.OkError {
-  static key = "log";
+export class FunctionLog extends ComponentType.OkError {
+  static key = "function.log";
   static description = "Log";
   static shortDescription = "Log";
   static properties = [

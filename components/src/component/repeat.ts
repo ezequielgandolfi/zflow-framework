@@ -2,8 +2,8 @@ import * as ZFlowTypes from "@zflow/types";
 import * as ComponentType from "../component-type";
 import * as Property from "../property";
 
-export class For extends ComponentType.Repeat {
-  static key = "for";
+export class RepeatFor extends ComponentType.Repeat {
+  static key = "repeat.for";
   static description = "FOR loop within a range";
   static shortDescription = "For";
   static properties = [

@@ -1,10 +1,9 @@
 export const REPEAT = [
   {
     id: "8f0b7cc6-9676-45ac-80a7-ece9d65a17f4",
-    type: "start",
+    type: "start.default",
     data: {
       id: "start",
-      component: "trigger",
       properties: {
         queryParam: "",
         pathParam: "",
@@ -19,10 +18,9 @@ export const REPEAT = [
   },
   {
     id: "07dd8aed-2223-43e7-859e-de4b5036b877",
-    type: "repeat",
+    type: "repeat.for",
     data: {
       id: "",
-      component: "for",
       properties: {
         from: "1",
         to: "$(8f0b7cc6-9676-45ac-80a7-ece9d65a17f4.pathParam.repeat)",
@@ -45,10 +43,9 @@ export const REPEAT = [
   },
   {
     id: "6a6b2617-5f94-4e18-ae3a-f17aaa238747",
-    type: "function",
+    type: "function.log",
     data: {
       id: "",
-      component: "log",
       properties: {
         text: "$(07dd8aed-2223-43e7-859e-de4b5036b877.current)",
       },
@@ -70,10 +67,9 @@ export const REPEAT = [
   },
   {
     id: "68feedf4-da75-4e05-9506-bf9adedd052f",
-    type: "function",
+    type: "function.log",
     data: {
       id: "",
-      component: "log",
       properties: {
         text: "FIM DO LOOP",
       },
@@ -98,10 +94,9 @@ export const REPEAT = [
 export const JOIN_ALL = [
   {
     "id": "fdcbaec1-dfee-4d6b-afd7-a2f4adf22976",
-    "type": "start",
+    "type": "start.default",
     "data": {
       "id": "start",
-      "component": "trigger",
       "properties": {},
       "label": "Start"
     },
@@ -112,10 +107,9 @@ export const JOIN_ALL = [
   },
   {
     "id": "b58019ab-1ba5-425f-b6e5-549a2b290f9d",
-    "type": "function",
+    "type": "function.log",
     "data": {
       "id": "",
-      "component": "log",
       "properties": {
         "text": "INICIO"
       },
@@ -137,10 +131,9 @@ export const JOIN_ALL = [
   },
   {
     "id": "c17353e2-724d-4430-b49d-83fa685ced93",
-    "type": "repeat",
+    "type": "repeat.for",
     "data": {
       "id": "",
-      "component": "for",
       "properties": {
         "from": "1",
         "to": "3"
@@ -154,10 +147,9 @@ export const JOIN_ALL = [
   },
   {
     "id": "22fb7c58-bbd5-4ec7-9645-9fd83f534e0e",
-    "type": "function",
+    "type": "function.log",
     "data": {
       "id": "",
-      "component": "log",
       "properties": {
         "text": "$(c17353e2-724d-4430-b49d-83fa685ced93.current)"
       },
@@ -190,10 +182,9 @@ export const JOIN_ALL = [
   },
   {
     "id": "d2dba2aa-a4dd-4f06-9c92-f4f26a505912",
-    "type": "join",
+    "type": "join.all",
     "data": {
       "id": "",
-      "component": "all",
       "properties": {},
       "label": "All"
     },
@@ -242,10 +233,9 @@ export const JOIN_ALL = [
   },
   {
     "id": "f917f658-f2a7-47e0-a5ae-cd77a79a5d55",
-    "type": "function",
+    "type": "function.log",
     "data": {
       "id": "",
-      "component": "log",
       "properties": {
         "text": "FIM"
       },
@@ -270,10 +260,9 @@ export const JOIN_ALL = [
 export const JOIN_FIRST = [
   {
     "id": "fdcbaec1-dfee-4d6b-afd7-a2f4adf22976",
-    "type": "start",
+    "type": "start.default",
     "data": {
       "id": "start",
-      "component": "trigger",
       "properties": {},
       "label": "Start"
     },
@@ -284,10 +273,9 @@ export const JOIN_FIRST = [
   },
   {
     "id": "b58019ab-1ba5-425f-b6e5-549a2b290f9d",
-    "type": "function",
+    "type": "function.log",
     "data": {
       "id": "",
-      "component": "log",
       "properties": {
         "text": "INICIO"
       },
@@ -309,10 +297,9 @@ export const JOIN_FIRST = [
   },
   {
     "id": "c17353e2-724d-4430-b49d-83fa685ced93",
-    "type": "repeat",
+    "type": "repeat.for",
     "data": {
       "id": "",
-      "component": "for",
       "properties": {
         "from": "1",
         "to": "3"
@@ -326,10 +313,9 @@ export const JOIN_FIRST = [
   },
   {
     "id": "22fb7c58-bbd5-4ec7-9645-9fd83f534e0e",
-    "type": "function",
+    "type": "function.log",
     "data": {
       "id": "",
-      "component": "log",
       "properties": {
         "text": "$(c17353e2-724d-4430-b49d-83fa685ced93.current)"
       },
@@ -362,10 +348,9 @@ export const JOIN_FIRST = [
   },
   {
     "id": "d2dba2aa-a4dd-4f06-9c92-f4f26a505912",
-    "type": "join",
+    "type": "join.first",
     "data": {
       "id": "",
-      "component": "first",
       "properties": {},
       "label": "First"
     },
@@ -414,10 +399,9 @@ export const JOIN_FIRST = [
   },
   {
     "id": "f917f658-f2a7-47e0-a5ae-cd77a79a5d55",
-    "type": "function",
+    "type": "function.log",
     "data": {
       "id": "",
-      "component": "log",
       "properties": {
         "text": "FIM"
       },

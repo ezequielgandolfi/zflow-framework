@@ -6,57 +6,62 @@ export const AddReadOnly = (BaseClass) => {
   }
 }
 
+export abstract class AbstractProperty {
+  static key: string;
+  static description: string;
+  static type: any;
+}
 
 
-export class QueryParameter {
+export class QueryParameter extends AbstractProperty {
   static key = "queryParam";
   static description = "Query parameters";
   static type = ZFlowTypes.DataType.TObject;
 }
 
-export class PathParameter {
+export class PathParameter extends AbstractProperty {
   static key = "pathParam";
   static description = "Path parameters";
   static type = ZFlowTypes.DataType.TObject;
 }
 
-export class Payload {
+export class Payload extends AbstractProperty {
   static key = "payload";
   static description = "Payload";
   static type = ZFlowTypes.DataType.TObject;
 }
 
-export class Milliseconds {
+export class Milliseconds extends AbstractProperty {
   static key = "milliseconds";
   static description = "Milliseconds";
   static type = ZFlowTypes.DataType.TNumber;
 }
 
-export class Text {
+export class Text extends AbstractProperty {
   static key = "text";
   static description = "Text";
   static type = ZFlowTypes.DataType.TString;
 }
 
-export class Value {
+export class Value extends AbstractProperty {
   static key = "value";
   static description = "Value";
   static type = ZFlowTypes.DataType.TAny;
 }
 
-export class FromNumber {
+export class FromNumber extends AbstractProperty {
   static key = "from";
   static description = "From";
   static type = ZFlowTypes.DataType.TNumber;
 }
 
-export class ToNumber {
+export class ToNumber extends AbstractProperty {
   static key = "to";
   static description = "To";
   static type = ZFlowTypes.DataType.TNumber;
 }
 
-export class CurrentNumber {
+export class CurrentNumber extends AbstractProperty {
   static key = "current";
   static description = "Current";
   static type = ZFlowTypes.DataType.TNumber;

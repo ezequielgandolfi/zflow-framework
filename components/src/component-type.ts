@@ -1,8 +1,13 @@
 import * as ZFlowTypes from "@zflow/types";
 import EventEmitter from "events";
+import { AbstractProperty } from "./property";
 
 export class Abstract extends ZFlowTypes.Component.Instance {
 
+  static key = "";
+  static description = "";
+  static shortDescription = "";
+  static properties: AbstractProperty[] = [];
   static inputPort: ZFlowTypes.Component.ComponentInputPort = "single";
   static outputPorts: Array<ZFlowTypes.Component.ComponentOutputPort> = [];
   

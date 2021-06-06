@@ -8,13 +8,10 @@ const { flow, initData } = threads.workerData;
 const engineFunctions = new EngineFunctions();
 engineFunctions.flow.setFlow(flow);
 
-function getComponent(type,key) {
-  const t = ZFlowComponents.Component[type];
-  if (t) {
-    const k = Object.keys(t).find(k => t[k].key === key);
-    if (k) {
-      return t[k];
-    }
+function getComponent(key) {
+  const k = Object.keys(ZFlowComponents.Component).find(k => ZFlowComponents.Component[k].key === key);
+  if (k) {
+    return ZFlowComponents.Component[k];
   }
 }
 
@@ -56,7 +53,7 @@ function transformProps(props) {
 function execComponent(component) {
   let thisComponent: ZFlowTypes.Component.Instance = engineFunctions.flow.getStoredComponent(component.id) 
   if (!thisComponent) {
-    const componentClass = getComponent(component.type, component.data.component);
+    const componentClass = getComponent(component.type);
     thisComponent = new componentClass();
     thisComponent.setup(engineFunctions, component);
 
@@ -82,7 +79,7 @@ function next(id, handle, data) {
 
 
 //
-const startComponent = flow.find(item => item.type === "start");
+const startComponent = flow.find(item => item.type.startsWith("start."));
 if (startComponent) {
   Object.assign(startComponent.data.properties, initData);
   execComponent(startComponent);

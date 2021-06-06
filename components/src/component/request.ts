@@ -2,14 +2,14 @@ import * as ZFlowTypes from "@zflow/types";
 import * as ComponentType from "../component-type";
 import * as Property from "../property";
 
-export class Get extends ComponentType.OkError {
-  static key = "get";
+export class RequestGet extends ComponentType.OkError {
+  static key = "request.get";
   static description = "GET request";
   static shortDescription = "Get";
   static properties = [
   ];
 
   execute() {
-    this.ok();
+    this.$output.ok();
   }
 }

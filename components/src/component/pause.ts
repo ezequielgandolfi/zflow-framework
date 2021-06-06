@@ -2,8 +2,8 @@ import * as ZFlowTypes from "@zflow/types";
 import * as ComponentType from "../component-type";
 import * as Property from "../property";
 
-export class Delay extends ComponentType.Ok {
-  static key = "delay";
+export class PauseDelay extends ComponentType.Ok {
+  static key = "pause.delay";
   static description = "Delay a certain amount of time";
   static shortDescription = "Delay";
   static properties = [
@@ -13,6 +13,6 @@ export class Delay extends ComponentType.Ok {
   milliseconds = new ZFlowTypes.DataType.TNumber();
 
   execute() {
-    this.ok();
+    this.$output.ok();
   }
 }

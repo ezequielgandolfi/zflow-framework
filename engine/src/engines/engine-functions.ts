@@ -157,10 +157,22 @@ class FlowFunctions implements ZFlowTypes.Engine.IFlow {
   //#endregion
 }
 
+class StorageFunctions implements ZFlowTypes.Engine.IStorage {
+
+  get(id: string): any {
+    return null;
+  }
+
+  set(id: string, value: any) {
+    //
+  }
+}
+
 
 export class EngineFunctions implements ZFlowTypes.Engine.IEngine {
 
   database = new DatabaseFunctions();
   flow = new FlowFunctions();
+  storage = new StorageFunctions();
 
 }

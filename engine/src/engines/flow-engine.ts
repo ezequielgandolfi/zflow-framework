@@ -2,11 +2,14 @@ import * as threads from "worker_threads";
 import { EngineFunctions } from "./engine-functions";
 import * as ZFlowComponents from "@zflow/components";
 import * as ZFlowTypes from "@zflow/types";
+import { ZFlowScript } from "@zflow/script";
 
 const { flow, initData } = threads.workerData;
 
 const engineFunctions = new EngineFunctions();
 engineFunctions.flow.setFlow(flow);
+
+const zflowScript = new ZFlowScript(engineFunctions);
 
 function getComponent(key) {
   const k = Object.keys(ZFlowComponents.Component).find(k => ZFlowComponents.Component[k].key === key);
@@ -24,22 +27,23 @@ function transformProps(props) {
     try {
       let value = props[k];
       if (typeof(value) === "string") {
-        const prop = ZFlowComponents.Util.value2property(value);
-        if (prop.component) {
-          const sourceComponent = engineFunctions.flow.getStoredComponent(prop.component.id);
-          if (sourceComponent) {
-            let sourceProperty = sourceComponent[prop.component.property];
-            if (ZFlowTypes.DataType.isZFlowDataType(sourceProperty)) {
-              sourceProperty = sourceProperty.get();
-              if (prop.component.childProperty) {
-                props[k] = sourceProperty[prop.component.childProperty];
-              }
-              else {
-                props[k] = sourceProperty;
-              }
-            }
-          }
-        }
+        props[k] = zflowScript.parse(value);
+        // const prop = ZFlowComponents.Util.value2property(value);
+        // if (prop.component) {
+        //   const sourceComponent = engineFunctions.flow.getStoredComponent(prop.component.id);
+        //   if (sourceComponent) {
+        //     let sourceProperty = sourceComponent[prop.component.property];
+        //     if (ZFlowTypes.DataType.isZFlowDataType(sourceProperty)) {
+        //       sourceProperty = sourceProperty.get();
+        //       if (prop.component.childProperty) {
+        //         props[k] = sourceProperty[prop.component.childProperty];
+        //       }
+        //       else {
+        //         props[k] = sourceProperty;
+        //       }
+        //     }
+        //   }
+        // }
       }
     }
     catch {

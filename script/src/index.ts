@@ -1,8 +1,15 @@
+import * as ZFlowTypes from "@zflow/types";
+
 interface IToken {
   expr: string;
   args?: IToken[];
 }
 
+interface IProperty {
+  component: string;
+  property: string;
+  childProperty?: string;
+}
 
 enum SPECIAL_CHARS  {
   DOWN_LEVEL = "(",
@@ -11,9 +18,31 @@ enum SPECIAL_CHARS  {
   ARGS_SEPARATOR = " "
 }
 
-
 class ScriptFuncions {
-  $SUM(args: any[]): number {
+  private _engine: ZFlowTypes.Engine.IEngine;
+
+  constructor(engine: ZFlowTypes.Engine.IEngine) {
+    this._engine = engine;
+  }
+
+  get(name: string): Function {
+    name = name.toUpperCase();
+    if (this[name] instanceof Function) {
+      return this[name].bind(this);
+    }
+    return null;
+  }
+
+  private value2prop(value: string): IProperty {
+    const valueSplit = value.split('.');
+    return { 
+      component: valueSplit.length >= 1 ? valueSplit[0] : null,
+      property: valueSplit.length >= 2 ? valueSplit[1] : null,
+      childProperty: valueSplit.length >= 3 ? valueSplit[2] : null
+    };
+  }
+
+  protected $SUM(args: any[]): number {
     let result = 0;
     args.forEach(arg => {
       result += parseFloat(arg);
@@ -21,14 +50,50 @@ class ScriptFuncions {
     return result;
   }
   
-  $CONCAT(args: any[]): string {
+  protected $CONCAT(args: any[]): string {
     return args.join("");
   }
+
+  protected $(args: any[]): any {
+    let result = args?.map(arg => {
+      try {
+        const prop = this.value2prop(arg);
+        if (prop.property) {
+          const sourceComponent = this._engine.flow.getStoredComponent(prop.component);
+          if (sourceComponent) {
+            let sourceProperty = sourceComponent[prop.property];
+            if (ZFlowTypes.DataType.isZFlowDataType(sourceProperty)) {
+              sourceProperty = sourceProperty.get();
+            }
+            if (prop.childProperty) {
+              return sourceProperty[prop.childProperty];
+            }
+            return sourceProperty;
+          }
+        }
+        return null;
+      }
+      catch {
+        return null;
+      }
+    });
+    if (result.length === 1) {
+      return result[0];
+    }
+    return result.join(' ');
+  }
+
 }
 
 export class ZFlowScript {
 
-  private scriptFunctions = new ScriptFuncions();
+  private _engine: ZFlowTypes.Engine.IEngine;
+  private _scriptFunctions: ScriptFuncions;
+
+  constructor(engine: ZFlowTypes.Engine.IEngine) {
+    this._engine = engine;
+    this._scriptFunctions = new ScriptFuncions(this._engine);
+  }
 
   private tokens(exp: string): IToken[] {
     let result: IToken[] = [];
@@ -101,7 +166,7 @@ export class ZFlowScript {
   }
   
   private apply(token: string, args: any[]): any {
-    const tokenFunction = this.scriptFunctions[token.toUpperCase()];
+    const tokenFunction = this._scriptFunctions.get(token);
     if (tokenFunction instanceof Function) { 
       return tokenFunction(args);
     }
@@ -114,10 +179,13 @@ export class ZFlowScript {
   parse(exp: string): any {
     const tokens = this.tokens(exp);
     const result = this.parseTokens(tokens);
-    if ((result) && (result.length === 1)) {
+    if (result.length === 1) {
       return result[0];
     }
-    return result;
+    if (result.length === 0) {
+      return '';
+    }
+    return result.join(' ');
   }
 
 }

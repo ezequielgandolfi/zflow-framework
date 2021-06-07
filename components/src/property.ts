@@ -66,3 +66,9 @@ export class CurrentNumber extends AbstractProperty {
   static description = "Current";
   static type = ZFlowTypes.DataType.TNumber;
 }
+
+export class Id extends AbstractProperty {
+  static key = "id";
+  static description = "ID";
+  static type = ZFlowTypes.DataType.TString;
+}

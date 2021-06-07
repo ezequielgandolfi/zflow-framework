@@ -182,7 +182,7 @@ export const JOIN_ALL = [
   },
   {
     "id": "d2dba2aa-a4dd-4f06-9c92-f4f26a505912",
-    "type": "join.all",
+    "type": "process.wait-all",
     "data": {
       "id": "",
       "properties": {},
@@ -348,7 +348,7 @@ export const JOIN_FIRST = [
   },
   {
     "id": "d2dba2aa-a4dd-4f06-9c92-f4f26a505912",
-    "type": "join.first",
+    "type": "process.wait-first",
     "data": {
       "id": "",
       "properties": {},

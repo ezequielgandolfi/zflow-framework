@@ -15,7 +15,8 @@ enum SPECIAL_CHARS  {
   DOWN_LEVEL = "(",
   UP_LEVEL = ")",
   STRING = '"',
-  ARGS_SEPARATOR = " "
+  ARGS_SEPARATOR = " ",
+  PROP_SEPARATOR = "."
 }
 
 class ScriptFuncions {
@@ -34,7 +35,7 @@ class ScriptFuncions {
   }
 
   private value2prop(value: string): IProperty {
-    const valueSplit = value.split('.');
+    const valueSplit = value.split(SPECIAL_CHARS.PROP_SEPARATOR);
     return { 
       component: valueSplit.length >= 1 ? valueSplit[0] : null,
       property: valueSplit.length >= 2 ? valueSplit[1] : null,
@@ -80,7 +81,7 @@ class ScriptFuncions {
     if (result.length === 1) {
       return result[0];
     }
-    return result.join(' ');
+    return result.join(SPECIAL_CHARS.ARGS_SEPARATOR);
   }
 
 }
@@ -185,7 +186,7 @@ export class ZFlowScript {
     if (result.length === 0) {
       return '';
     }
-    return result.join(' ');
+    return result.join(SPECIAL_CHARS.ARGS_SEPARATOR);
   }
 
 }

@@ -28,22 +28,6 @@ function transformProps(props) {
       let value = props[k];
       if (typeof(value) === "string") {
         props[k] = zflowScript.parse(value);
-        // const prop = ZFlowComponents.Util.value2property(value);
-        // if (prop.component) {
-        //   const sourceComponent = engineFunctions.flow.getStoredComponent(prop.component.id);
-        //   if (sourceComponent) {
-        //     let sourceProperty = sourceComponent[prop.component.property];
-        //     if (ZFlowTypes.DataType.isZFlowDataType(sourceProperty)) {
-        //       sourceProperty = sourceProperty.get();
-        //       if (prop.component.childProperty) {
-        //         props[k] = sourceProperty[prop.component.childProperty];
-        //       }
-        //       else {
-        //         props[k] = sourceProperty;
-        //       }
-        //     }
-        //   }
-        // }
       }
     }
     catch {

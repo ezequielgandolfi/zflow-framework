@@ -30,9 +30,7 @@ class DiagramComponentSelection extends Component {
   static groupLabel(name) {
     return name
       .split('-')
-      .map(word => {
-        return word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase();
-      })
+      .map(word => { return word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase() })
       .join(' ');
   }
 

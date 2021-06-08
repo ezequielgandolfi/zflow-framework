@@ -1,6 +1,6 @@
 {
   "name": "@zflow/script",
-  "version": "0.0.5",
+  "version": "0.0.7",
   "description": "ZFlow Framework Script Parser",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -13,7 +13,7 @@
     "dist/**/*"
   ],
   "dependencies": {
-    "@zflow/types": "^0.0.28"
+    "@zflow/types": "~0.0.28"
   },
   "devDependencies": {
     "@types/node": "^15.6.1",

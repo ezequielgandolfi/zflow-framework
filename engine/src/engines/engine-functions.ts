@@ -117,6 +117,7 @@ class FlowFunctions implements ZFlowTypes.Engine.IFlow {
     }
     // STREAM COMPLETED
     const streamListeners = this.listeners.filter(w => w.type === ZFlowTypes.Engine.ListenerEvent.STREAM_COMPLETED).filter(w => !this.hasPendingExec(w.from, w.output));
+    // if (options?.completedComponentId == "3dd78101-4b91-4bfb-a103-320731835cd5") console.log('Z', streamListeners);
     streamListeners.forEach(w => {
       this.unlistenStreamCompleted(w.from, w.output);
       process.nextTick(() => w.event.emit(ZFlowTypes.Engine.ListenerEvent.STREAM_COMPLETED, { from: w.from, output: w.output }));
@@ -159,12 +160,14 @@ class FlowFunctions implements ZFlowTypes.Engine.IFlow {
 
 class StorageFunctions implements ZFlowTypes.Engine.IStorage {
 
+  private variables = {  };
+
   get(id: string): any {
-    return null;
+    return this.variables[id];
   }
 
   set(id: string, value: any) {
-    //
+    this.variables[id] = value;
   }
 }
 

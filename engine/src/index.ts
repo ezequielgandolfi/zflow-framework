@@ -6,6 +6,7 @@ import * as TEST from "./test";
 const test01 = TEST.REPEAT;
 const test02 = TEST.JOIN_ALL;
 const test03 = TEST.JOIN_FIRST;
+const test04 = TEST.VARIABLE;
 
 const data = {
   workers: [
@@ -41,6 +42,15 @@ const data = {
             path: "/first"
           },
           data: test03
+        },
+        {
+          id: "VARIABLE",
+          type: "flow",
+          config: {
+            method: "GET",
+            path: "/var"
+          },
+          data: test04
         }
       ]
     }

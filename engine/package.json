@@ -7,14 +7,15 @@
   "scripts": {
     "clean": "rimraf dist/",
     "config": "copyfiles -f src/config.json dist/",
-    "prestart": "npm run clean && tsc && npm run config",
+    "_prestart": "npm run clean && tsc && npm run config",
+    "prestart": "tsc",
     "start": "node ./dist/index.js"
   },
   "author": "Ezequiel Gandolfi",
   "license": "Apache-2.0",
   "dependencies": {
-    "@zflow/components": "0.0.26",
-    "@zflow/script": "0.0.5",
+    "@zflow/components": "0.0.28",
+    "@zflow/script": "0.0.7",
     "express": "~4.16.1",
     "mongodb": "^3.6.7"
   },

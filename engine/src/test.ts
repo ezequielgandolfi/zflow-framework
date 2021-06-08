@@ -422,3 +422,194 @@ export const JOIN_FIRST = [
     "id": "reactflow__edge-d2dba2aa-a4dd-4f06-9c92-f4f26a505912ok-f917f658-f2a7-47e0-a5ae-cd77a79a5d55single"
   }
 ];
+
+export const VARIABLE = [
+  {
+    "id": "eeb93fd5-3f3c-4adb-b622-ed9cbded99a4",
+    "type": "start.default",
+    "data": {
+      "id": "start",
+      "label": "Start",
+      "properties": {
+        "queryParam": "",
+        "pathParam": "",
+        "payload": ""
+      }
+    },
+    "position": {
+      "x": 10,
+      "y": 10
+    }
+  },
+  {
+    "id": "462557d9-f639-45e3-bdec-f948137b8674",
+    "type": "variable.set",
+    "data": {
+      "id": "",
+      "label": "Set",
+      "properties": {
+        "id": "teste",
+        "value": "inicial"
+      }
+    },
+    "position": {
+      "x": 140,
+      "y": 25
+    }
+  },
+  {
+    "source": "eeb93fd5-3f3c-4adb-b622-ed9cbded99a4",
+    "sourceHandle": "ok",
+    "target": "462557d9-f639-45e3-bdec-f948137b8674",
+    "targetHandle": "single",
+    "animated": true,
+    "type": "smoothstep",
+    "id": "reactflow__edge-eeb93fd5-3f3c-4adb-b622-ed9cbded99a4ok-462557d9-f639-45e3-bdec-f948137b8674single"
+  },
+  {
+    "id": "56e1fe55-6765-4cf8-8545-54a6d2227b07",
+    "type": "repeat.for",
+    "data": {
+      "id": "loop",
+      "label": "For",
+      "properties": {
+        "from": "1",
+        "to": "3",
+        "current": ""
+      }
+    },
+    "position": {
+      "x": 215,
+      "y": 20
+    }
+  },
+  {
+    "source": "462557d9-f639-45e3-bdec-f948137b8674",
+    "sourceHandle": "ok",
+    "target": "56e1fe55-6765-4cf8-8545-54a6d2227b07",
+    "targetHandle": "single",
+    "animated": true,
+    "type": "smoothstep",
+    "id": "reactflow__edge-462557d9-f639-45e3-bdec-f948137b8674ok-56e1fe55-6765-4cf8-8545-54a6d2227b07single"
+  },
+  {
+    "id": "ed48f275-142c-40a3-9792-100bb1943dc0",
+    "type": "variable.get",
+    "data": {
+      "id": "teste",
+      "label": "Get",
+      "properties": {
+        "id": "teste",
+        "value": ""
+      }
+    },
+    "position": {
+      "x": 400,
+      "y": 130
+    }
+  },
+  {
+    "source": "56e1fe55-6765-4cf8-8545-54a6d2227b07",
+    "sourceHandle": "repeat",
+    "target": "ed48f275-142c-40a3-9792-100bb1943dc0",
+    "targetHandle": "single",
+    "animated": true,
+    "type": "smoothstep",
+    "label": "Repeat",
+    "labelBgPadding": [
+      8,
+      4
+    ],
+    "labelBgBorderRadius": 4,
+    "labelBgStyle": {
+      "fill": "lightgreen",
+      "color": "#fff",
+      "fillOpacity": 0.7
+    },
+    "id": "reactflow__edge-56e1fe55-6765-4cf8-8545-54a6d2227b07repeat-ed48f275-142c-40a3-9792-100bb1943dc0single"
+  },
+  {
+    "id": "849ffc11-63ac-47c1-8c32-b3f57ba7498d",
+    "type": "function.log",
+    "data": {
+      "id": "",
+      "label": "Log",
+      "properties": {
+        "text": "$CONCAT(\"valor atual: \" $(ed48f275-142c-40a3-9792-100bb1943dc0.value))"
+      }
+    },
+    "position": {
+      "x": 525,
+      "y": 80
+    }
+  },
+  {
+    "source": "ed48f275-142c-40a3-9792-100bb1943dc0",
+    "sourceHandle": "ok",
+    "target": "849ffc11-63ac-47c1-8c32-b3f57ba7498d",
+    "targetHandle": "single",
+    "animated": true,
+    "type": "smoothstep",
+    "id": "reactflow__edge-ed48f275-142c-40a3-9792-100bb1943dc0ok-849ffc11-63ac-47c1-8c32-b3f57ba7498dsingle"
+  },
+  {
+    "id": "3dd78101-4b91-4bfb-a103-320731835cd5",
+    "type": "variable.set",
+    "data": {
+      "id": "",
+      "label": "Set",
+      "properties": {
+        "id": "teste",
+        "value": "$(56e1fe55-6765-4cf8-8545-54a6d2227b07.current)"
+      }
+    },
+    "position": {
+      "x": 635,
+      "y": 70
+    }
+  },
+  {
+    "source": "849ffc11-63ac-47c1-8c32-b3f57ba7498d",
+    "sourceHandle": "ok",
+    "target": "3dd78101-4b91-4bfb-a103-320731835cd5",
+    "targetHandle": "single",
+    "animated": true,
+    "type": "smoothstep",
+    "id": "reactflow__edge-849ffc11-63ac-47c1-8c32-b3f57ba7498dok-3dd78101-4b91-4bfb-a103-320731835cd5single"
+  },
+  {
+    "id": "cd700146-d0aa-466b-8c61-e0665bd4c3bd",
+    "type": "function.log",
+    "data": {
+      "id": "",
+      "label": "Log",
+      "properties": {
+        "text": "FIM"
+      }
+    },
+    "position": {
+      "x": 415,
+      "y": 175
+    }
+  },
+  {
+    "source": "56e1fe55-6765-4cf8-8545-54a6d2227b07",
+    "sourceHandle": "end",
+    "target": "cd700146-d0aa-466b-8c61-e0665bd4c3bd",
+    "targetHandle": "single",
+    "animated": true,
+    "type": "smoothstep",
+    "label": "End",
+    "labelBgPadding": [
+      8,
+      4
+    ],
+    "labelBgBorderRadius": 4,
+    "labelBgStyle": {
+      "fill": "lightblue",
+      "color": "#fff",
+      "fillOpacity": 0.7
+    },
+    "id": "reactflow__edge-56e1fe55-6765-4cf8-8545-54a6d2227b07end-cd700146-d0aa-466b-8c61-e0665bd4c3bdsingle"
+  }
+];

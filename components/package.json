@@ -1,6 +1,6 @@
 {
   "name": "@zflow/components",
-  "version": "0.0.26",
+  "version": "0.0.28",
   "description": "ZFlow Framework Components",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -13,7 +13,7 @@
     "dist/**/*"
   ],
   "dependencies": {
-    "@zflow/types": "^0.0.28"
+    "@zflow/types": "~0.0.30"
   },
   "devDependencies": {
     "@types/node": "^15.6.1",

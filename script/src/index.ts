@@ -1,8 +1,11 @@
 import * as ZFlowTypes from "@zflow/types";
 
+type TOKEN_TYPE = 'undefined' | 'string' | 'number' | 'function' | 'property';
+
 interface IToken {
   expr: string;
   args?: IToken[];
+  type: TOKEN_TYPE;
 }
 
 interface IProperty {
@@ -16,7 +19,8 @@ enum SPECIAL_CHARS  {
   UP_LEVEL = ")",
   STRING = '"',
   ARGS_SEPARATOR = " ",
-  PROP_SEPARATOR = "."
+  PROP_SEPARATOR = ".",
+  FUNCTION_PREFIX = "$"
 }
 
 class ScriptFuncions {
@@ -91,59 +95,11 @@ export class ZFlowScript {
   private _engine: ZFlowTypes.Engine.IEngine;
   private _scriptFunctions: ScriptFuncions;
 
-  constructor(engine: ZFlowTypes.Engine.IEngine) {
+  constructor(engine?: ZFlowTypes.Engine.IEngine) {
     this._engine = engine;
     this._scriptFunctions = new ScriptFuncions(this._engine);
   }
 
-  private tokens(exp: string): IToken[] {
-    let result: IToken[] = [];
-    let token: string = "";
-    let args: IToken[] = [];
-    let inString: boolean = false;
-  
-    const pushAndReset = () => {
-      if (token !== "") {
-        result.push({ expr: token, args });
-      }
-      token = "";
-      args = [];
-    };
-  
-    for (let iChar = 0; iChar < exp.length; iChar++) {
-      const char = exp[iChar];
-      if (char === SPECIAL_CHARS.STRING) {
-        if (inString) {
-          inString = false;
-        }
-        else {
-          if (token !== "") { throw Error(`Invalid string token position`) }
-          inString = true;
-        }
-        token += char;
-      }
-      else if (!inString && (char === SPECIAL_CHARS.DOWN_LEVEL)) {
-        let lastIndex = this.findClosingBraket(exp, iChar + 1);
-        if (lastIndex > iChar) {
-          args = [...this.tokens(exp.substring(iChar + 1, lastIndex))];
-          iChar = lastIndex;
-          pushAndReset();
-        }
-        else {
-          throw Error(`Invalid token ${char}`);
-        }
-      }
-      else if (!inString && (char === SPECIAL_CHARS.ARGS_SEPARATOR)) {
-        pushAndReset();
-      }
-      else {
-        token += char;
-      }
-    }
-    pushAndReset();
-    return result;
-  }
-  
   private findClosingBraket(exp, start): number {
     let inString = false;
     let level = 0;
@@ -176,9 +132,79 @@ export class ZFlowScript {
     }
     return token;
   }
+
+  private identifyType(expr: string): TOKEN_TYPE {
+    const PROPERTY_REGEX = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\.[0-9a-f]+$/i;
+    if (expr.startsWith(SPECIAL_CHARS.STRING) && expr.endsWith(SPECIAL_CHARS.STRING)) { return "string" }
+    if (expr.startsWith(SPECIAL_CHARS.FUNCTION_PREFIX)) { return "function" }
+    if (!isNaN(parseFloat(expr))) { return "number" }
+    if (PROPERTY_REGEX.test(expr)) { return "property" }
+    return 'undefined';
+  }
+
+  tokenize(exp: string): IToken[] {
+    let result: IToken[] = [];
+    let token: string = "";
+    let args: IToken[] = [];
+    let inString: boolean = false;
+  
+    const pushAndReset = () => {
+      if (token !== "") {
+        result.push({ expr: token, args, type: this.identifyType(token) });
+      }
+      token = "";
+      args = [];
+    };
+  
+    for (let iChar = 0; iChar < exp.length; iChar++) {
+      const char = exp[iChar];
+      if (char === SPECIAL_CHARS.STRING) {
+        if (inString) {
+          inString = false;
+        }
+        else {
+          if (token !== "") { throw Error(`Invalid string token position`) }
+          inString = true;
+        }
+        token += char;
+      }
+      else if (!inString && (char === SPECIAL_CHARS.DOWN_LEVEL)) {
+        let lastIndex = this.findClosingBraket(exp, iChar + 1);
+        if (lastIndex > iChar) {
+          args = [...this.tokenize(exp.substring(iChar + 1, lastIndex))];
+          iChar = lastIndex;
+          pushAndReset();
+        }
+        else {
+          throw Error(`Invalid token ${char}`);
+        }
+      }
+      else if (!inString && (char === SPECIAL_CHARS.ARGS_SEPARATOR)) {
+        pushAndReset();
+      }
+      else {
+        token += char;
+      }
+    }
+    pushAndReset();
+    return result;
+  }
+
+  untokenize(tokens: IToken[]): string {
+    const result = [];
+    tokens.forEach(token => {
+      if (token.args?.length > 0) {
+        result.push(token.expr + SPECIAL_CHARS.DOWN_LEVEL + this.untokenize(token.args) + SPECIAL_CHARS.UP_LEVEL);
+      }
+      else {
+        result.push(token.expr);
+      }
+    });
+    return result.join(SPECIAL_CHARS.ARGS_SEPARATOR);
+  }
   
   parse(exp: string): any {
-    const tokens = this.tokens(exp);
+    const tokens = this.tokenize(exp);
     const result = this.parseTokens(tokens);
     if (result.length === 1) {
       return result[0];

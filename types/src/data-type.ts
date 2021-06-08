@@ -16,14 +16,14 @@ export function isZFlowDataType(object: any): object is IDataType<any> {
 export class TObject implements IDataType<any> {
   static key = "object";
 
-  value: any = null;
+  value: any = { };
   get(): any {
     return this.value;
   }
   set(value: any) {
     try {
       if (value instanceof Object) {
-        this.value = value;
+        this.value = JSON.parse(JSON.stringify(value));
       }
       else {
         this.value = JSON.parse(value);
@@ -38,17 +38,17 @@ export class TObject implements IDataType<any> {
 export class TNumber implements IDataType<number> {
   static key = "number";
 
-  value: number = null;
+  value: number = 0;
   get(): number {
     return this.value;
   }
   set(value: any) {
     try {
-      if (!isNaN(value)) {
+      if (typeof(value) === "number") {
         this.value = value;
       }
       else {
-        this.value = parseInt(value);
+        this.value = parseFloat(value);
       }
     }
     catch {
@@ -60,16 +60,16 @@ export class TNumber implements IDataType<number> {
 export class TString implements IDataType<string> {
   static key = "string";
 
-  value: string = null;
+  value: string = "";
   get(): string {
     return this.value;
   }
   set(value: any) {
     try {
-      this.value = '' + value;
+      this.value = "" + value;
     }
     catch {
-      this.value = '';
+      this.value = "";
     }
   }
 }
@@ -84,10 +84,10 @@ export class TAny implements IDataType<any> {
   set(value: any) {
     try {
       if (value instanceof Object) {
-        this.value = value;
+        this.value = JSON.parse(JSON.stringify(value));
       }
       else {
-        this.value = JSON.parse(value);
+        this.value = value;
       }
     }
     catch {

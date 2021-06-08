@@ -3,6 +3,7 @@ import { EngineFunctions } from "./engine-functions";
 import * as ZFlowComponents from "@zflow/components";
 import * as ZFlowTypes from "@zflow/types";
 import { ZFlowScript } from "@zflow/script";
+// import { ZFlowScript } from "../_script";
 
 const { flow, initData } = threads.workerData;
 

@@ -6,9 +6,55 @@ import { updateElements, setContextElement } from "../../actions/diagramActions"
 import { FlowComponents } from "../../helpers/component";
 import { objectOrNull } from "../../helpers/object";
 import DiagramPropertyAssign from "./DiagramPropertyAssign";
+import { ZFlowScript } from "@zflow/script";
 
 class DiagramNodeProperties extends Component {
-  state = { element: null, properties: [], data: { }, valueWizardData: null }
+  state = { element: null, properties: [], data: { }, valueWizardData: null };
+  zflowScript = new ZFlowScript(null);
+
+  _changeComponentGuid2Id(props) {
+    const change = (tokens) => {
+      tokens.forEach(token => {
+        if (token.type === "property") {
+          const props = token.expr.split(".");
+          const element = this.props.elements.find(item => item.id === props[0]);
+          if (element && element.data) {
+            props[0] = element.data.id;
+            token.expr = props.join(".");
+          }
+        }
+        change(token.args);
+      });
+    }
+    Object.keys(props).forEach(key => {
+      const tokens = this.zflowScript.tokenize(props[key]);
+      change(tokens);
+      props[key] = this.zflowScript.untokenize(tokens);
+    });
+    return props;
+  }
+
+  _changeComponentId2Guid(props) {
+    const change = (tokens) => {
+      tokens.forEach(token => {
+        if (token.type === "property") {
+          const props = token.expr.split(".");
+          const element = this.props.elements.find(item => (item.data) && (item.data.id === props[0]));
+          if (element) {
+            props[0] = element.id;
+            token.expr = props.join(".");
+          }
+        }
+        change(token.args);
+      });
+    }
+    Object.keys(props).forEach(key => {
+      const tokens = this.zflowScript.tokenize(props[key]);
+      change(tokens);
+      props[key] = this.zflowScript.untokenize(tokens);
+    });
+    return props;
+  }
 
   _handleChange(event) {
     const name = event.target.name;
@@ -27,10 +73,8 @@ class DiagramNodeProperties extends Component {
 
   _handleSave() {
     if (this.props.onSave instanceof Function) {
-      // change component alias in property values to GUID
-      // TODO
-      //
-      this.props.onSave(this.state.data);
+      const data = this._changeComponentId2Guid(Object.assign({}, this.state.data));
+      this.props.onSave(data);
     }
     this.setState({ element: null });
   }
@@ -124,10 +168,7 @@ class DiagramNodeProperties extends Component {
         if (element) {
           const componentType = FlowComponents.getComponent(element.type);
           const properties = componentType.properties;
-          const data = Object.assign({},element.data.properties);
-          // change GUID for component alias in property values
-          // TODO
-          //
+          const data = this._changeComponentGuid2Id(Object.assign({},element.data.properties));
           this.setState({ element, properties, data });
         }
       }

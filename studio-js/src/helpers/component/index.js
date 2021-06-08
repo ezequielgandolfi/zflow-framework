@@ -57,10 +57,6 @@ function buildComponentList() {
 export class FlowComponents {
   static components = buildComponentList();
 
-  // REMOVE
-  static types = {
-  }
-
   static nodes() {
     let result = { };
     Object.values(FlowComponents.components).forEach(componentClass => result[componentClass.key] = componentClass.diagramNode);

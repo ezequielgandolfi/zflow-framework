@@ -11,10 +11,18 @@ export class ConditionAll extends ConditionComponent {
   static description = "All conditions must be valid";
   static shortDescription = "All";
   static properties = [
+    Property.Conditions
   ];
 
+  conditions = new ZFlowTypes.DataType.TBooleanArray();
+
   execute() {
-    this.$output.true();
+    if (this.conditions.get().find(condition => !condition)) {
+      this.$output.false();
+    }
+    else {
+      this.$output.true();  
+    }
   }
 }
 
@@ -23,9 +31,17 @@ export class ConditionAny extends ConditionComponent {
   static description = "Any condition must be valid";
   static shortDescription = "Any";
   static properties = [
+    Property.Conditions
   ];
 
+  conditions = new ZFlowTypes.DataType.TBooleanArray();
+
   execute() {
-    this.$output.true();
+    if ((this.conditions.get().length === 0) || (this.conditions.get().find(condition => condition))) {
+      this.$output.true();
+    }
+    else {
+      this.$output.false();  
+    }
   }
 }

@@ -72,3 +72,9 @@ export class Id extends AbstractProperty {
   static description = "ID";
   static type = ZFlowTypes.DataType.TString;
 }
+
+export class Conditions extends AbstractProperty {
+  static key = "conditions";
+  static description = "Conditions";
+  static type = ZFlowTypes.DataType.TBooleanArray;
+}

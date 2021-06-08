@@ -5,93 +5,236 @@ export interface IDataType<T> {
 }
 
 export function isZFlowDataType(object: any): object is IDataType<any> {
-  return (!!object)
-      && (object instanceof Object)
-      && ("value" in object)
-      && ("get" in object)
-      && ("set" in object);
+  return (object instanceof TDataType) || (object instanceof TArrayType);
 }
 
+class TDataType<T> implements IDataType<T> {
+  static key = "";
+  value: T = this.default();
 
-export class TObject implements IDataType<any> {
+  get(): T {
+    return this.value;
+  }
+
+  set(value: any) {
+    try {
+      if (Array.isArray(value)) {
+        if (value.length > 0) {
+          this.value = this.mapItem(value[0]);
+        }
+        else {
+          this.value = this.default();
+        }
+      }
+      else {
+        this.value = this.mapItem(value);
+      }
+    }
+    catch {
+      this.value = this.default();
+    }
+  }
+
+  protected default(): T {
+    return null;
+  }
+
+  protected mapItem(value: any): T {
+    return null;
+  }
+}
+
+export class TObject extends TDataType<any> {
   static key = "object";
 
-  value: any = { };
-  get(): any {
-    return this.value;
+  protected default(): any {
+    return { };
   }
-  set(value: any) {
-    try {
-      if (value instanceof Object) {
-        this.value = JSON.parse(JSON.stringify(value));
-      }
-      else {
-        this.value = JSON.parse(value);
-      }
+
+  protected mapItem(value: any): any {
+    if (value instanceof Object) {
+      return JSON.parse(JSON.stringify(value));
     }
-    catch {
-      this.value = { };
+    else {
+      return JSON.parse(value);
     }
   }
 }
 
-export class TNumber implements IDataType<number> {
+export class TNumber extends TDataType<number> {
   static key = "number";
 
-  value: number = 0;
-  get(): number {
-    return this.value;
+  protected default(): number {
+    return 0;
   }
-  set(value: any) {
-    try {
-      if (typeof(value) === "number") {
-        this.value = value;
-      }
-      else {
-        this.value = parseFloat(value);
-      }
+
+  protected mapItem(value: any): number {
+    if (typeof(value) === "number") {
+      return value;
     }
-    catch {
-      this.value = 0;
+    else {
+      return parseFloat(value);
     }
   }
 }
 
-export class TString implements IDataType<string> {
+export class TString extends TDataType<string> {
   static key = "string";
 
-  value: string = "";
-  get(): string {
-    return this.value;
+  protected default(): string {
+    return "";
   }
-  set(value: any) {
-    try {
-      this.value = "" + value;
+
+  protected mapItem(value: any): string {
+    return "" + value;
+  }
+}
+
+export class TBoolean extends TDataType<boolean> {
+  static key = "boolean";
+
+  protected default(): boolean {
+    return false;
+  }
+
+  protected mapItem(value: any): boolean {
+    return !!value;
+  }
+}
+
+export class TAny extends TDataType<any> {
+  static key = "any";
+
+  protected default(): any {
+    return { };
+  }
+
+  protected mapItem(value: any): any {
+    if (value instanceof Object) {
+      return JSON.parse(JSON.stringify(value));
     }
-    catch {
-      this.value = "";
+    else {
+      return value;
     }
   }
 }
 
-export class TAny implements IDataType<any> {
-  static key = "any";
+class TArrayType<T> extends TDataType<Array<T>> {
+  static key = "array";
 
-  value: any = null;
-  get(): any {
+  value: Array<T> = this.default();
+
+  get(): Array<T> { 
     return this.value;
-  }
+  };
+
   set(value: any) {
-    try {
-      if (value instanceof Object) {
-        this.value = JSON.parse(JSON.stringify(value));
+    let result = this.default();
+    if (value) {
+      if (Array.isArray(value)) {
+        result.push(...value.map(item => {
+          try {
+            return this.mapItem(item);
+          }
+          catch {
+            return this.defaultItem();
+          }
+        }));
       }
       else {
-        this.value = value;
+        try {
+          result.push(this.mapItem(value));
+        }
+        catch { }
       }
     }
-    catch {
-      this.value = { };
+    this.value = result;
+  };
+
+  protected default(): Array<T> {
+    return [];
+  }
+
+  protected defaultItem(): T {
+    return;
+  }
+
+  protected mapItem(value: any) {
+    return value;
+  }
+}
+
+export class TBooleanArray extends TArrayType<boolean> {
+  static key = "boolean-array";
+
+  protected defaultItem(): boolean {
+    return false;
+  }
+
+  protected mapItem(value: any): boolean {
+    return !!value;
+  }
+}
+
+export class TNumberArray extends TArrayType<number> {
+  static key = "number-array";
+
+  protected defaultItem(): number {
+    return 0;
+  }
+
+  protected mapItem(value: any): number {
+    if (typeof(value) === "number") {
+      return value;
+    }
+    else {
+      return parseFloat(value);
+    }
+  }
+}
+
+export class TStringArray extends TArrayType<string> {
+  static key = "string-array";
+
+  protected defaultItem(): string {
+    return "";
+  }
+
+  protected mapItem(value: any): string {
+    return "" + value;
+  }
+}
+
+export class TObjectArray extends TArrayType<any> {
+  static key = "object-array";
+
+  protected defaultItem(): any {
+    return { };
+  }
+
+  protected mapItem(value: any): any {
+    if (value instanceof Object) {
+      return JSON.parse(JSON.stringify(value));
+    }
+    else {
+      return JSON.parse(value);
+    }
+  }
+}
+
+export class TAnyArray extends TArrayType<any> {
+  static key = "any-array";
+
+  protected defaultItem(): any {
+    return { };
+  }
+
+  protected mapItem(value: any): any {
+    if (value instanceof Object) {
+      return JSON.parse(JSON.stringify(value));
+    }
+    else {
+      return JSON.parse(value);
     }
   }
 }

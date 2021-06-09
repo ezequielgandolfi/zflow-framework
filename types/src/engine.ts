@@ -35,6 +35,10 @@ export interface IFlow {
   unlistenComponentCompleted(sourceId: string);
 }
 
+export interface IFunctions {
+  transformProperties(props: any): any;
+}
+
 export interface IStorage {
   set(id: string, value: any);
   get(id: string): any;
@@ -43,5 +47,6 @@ export interface IStorage {
 export interface IEngine {
   database: IDatabase;
   flow: IFlow;
+  functions: IFunctions;
   storage: IStorage;
 }

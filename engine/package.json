@@ -14,8 +14,9 @@
   "author": "Ezequiel Gandolfi",
   "license": "Apache-2.0",
   "dependencies": {
-    "@zflow/components": "0.0.30",
+    "@zflow/components": "0.0.31",
     "@zflow/script": "0.0.7",
+    "@zflow/types": "0.0.35",
     "express": "~4.16.1",
     "mongodb": "^3.6.7"
   },

@@ -5,7 +5,7 @@ export interface IDataType<T> {
 }
 
 export function isZFlowDataType(object: any): object is IDataType<any> {
-  return (object instanceof TDataType) || (object instanceof TArrayType);
+  return (!!object) && (object['get'] instanceof Function) && (object['set'] instanceof Function);
 }
 
 class TDataType<T> implements IDataType<T> {

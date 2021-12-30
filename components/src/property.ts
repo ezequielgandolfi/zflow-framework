@@ -6,6 +6,12 @@ export const AddReadOnly = (BaseClass) => {
   }
 }
 
+export const AddIsArray = (BaseClass) => {
+  return class extends BaseClass {
+    static isArray = true;
+  }
+}
+
 export abstract class AbstractProperty {
   static key: string;
   static description: string;

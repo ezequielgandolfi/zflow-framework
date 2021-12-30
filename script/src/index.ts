@@ -88,6 +88,44 @@ class ScriptFuncions {
     return result.join(SPECIAL_CHARS.ARGS_SEPARATOR);
   }
 
+  protected $EQ(args: any[]): boolean {
+    if (args?.length > 1) {
+      let previous = undefined;
+      return !args.find(item => {
+        let result = false;
+        if (previous !== undefined) {
+          result = (previous != item)
+        }
+        previous = item;
+        return result;
+      });
+    }
+    return true;
+  }
+
+  protected $NE(args: any[]): boolean {
+    if (args?.length > 1) {
+      return !this.$EQ(args);
+    }
+    return true;
+  }
+
+  protected $GT(args: any[]): boolean {
+    return
+  }
+
+  protected $GE(args: any[]): boolean {
+    return
+  }
+
+  protected $LT(args: any[]): boolean {
+    return
+  }
+
+  protected $LE(args: any[]): boolean {
+    return
+  }
+
 }
 
 export class ZFlowScript {

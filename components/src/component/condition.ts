@@ -11,7 +11,7 @@ export class ConditionAll extends ConditionComponent {
   static description = "All conditions must be valid";
   static shortDescription = "All";
   static properties = [
-    Property.Conditions
+    Property.AddIsArray(Property.Conditions)
   ];
 
   conditions = new ZFlowTypes.DataType.TBooleanArray();
@@ -31,7 +31,7 @@ export class ConditionAny extends ConditionComponent {
   static description = "Any condition must be valid";
   static shortDescription = "Any";
   static properties = [
-    Property.Conditions
+    Property.AddIsArray(Property.Conditions)
   ];
 
   conditions = new ZFlowTypes.DataType.TBooleanArray();

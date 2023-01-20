@@ -6,6 +6,17 @@
     "name": "Ezequiel Gandolfi"
   },
   "scripts": {
-    "build": ""
+    "build": "",
+    "onboard": "npm run onboard:install",
+    "onboard:install": "npm run onboard:install:components & npm run onboard:install:engine & npm run onboard:install:studio-js & npm run onboard:install:studio-server & npm run onboard:install:script & npm run onboard:install:types",
+    "onboard:install:components": "cd ./components && npm install",
+    "onboard:install:engine": "cd ./engine && npm install",
+    "onboard:install:studio-js": "cd ./studio-js && npm install",
+    "onboard:install:studio-server": "cd ./studio-server && npm install",
+    "onboard:install:script": "cd ./script && npm install",
+    "onboard:install:types": "cd ./types && npm install",
+    "start:studio": "npm run start:studio:server & npm run start:studio:frontend",
+    "start:studio:server": "cd ./studio-server && npm run start",
+    "start:studio:frontend": "cd ./studio-js && npm run start"
   }
 }

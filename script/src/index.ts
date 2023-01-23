@@ -24,9 +24,9 @@ enum SPECIAL_CHARS  {
 }
 
 class ScriptFuncions {
-  private _engine: ZFlowTypes.Engine.IEngine;
+  private _engine: ZFlowTypes.Engine.Engine;
 
-  constructor(engine: ZFlowTypes.Engine.IEngine) {
+  constructor(engine: ZFlowTypes.Engine.Engine) {
     this._engine = engine;
   }
 
@@ -130,10 +130,10 @@ class ScriptFuncions {
 
 export class ZFlowScript {
 
-  private _engine: ZFlowTypes.Engine.IEngine;
+  private _engine: ZFlowTypes.Engine.Engine;
   private _scriptFunctions: ScriptFuncions;
 
-  constructor(engine?: ZFlowTypes.Engine.IEngine) {
+  constructor(engine?: ZFlowTypes.Engine.Engine) {
     this._engine = engine;
     this._scriptFunctions = new ScriptFuncions(this._engine);
   }

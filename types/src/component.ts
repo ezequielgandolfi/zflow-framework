@@ -1,5 +1,5 @@
 import { EventEmitter } from "events";
-import { IEngine } from "./engine";
+import { Engine } from "./engine";
 
 interface ComponentData {
   component: string;
@@ -38,9 +38,9 @@ export interface Output {
 /**
  * Accepts component data or output handles
  */
-export type Any = Execution | Output;
+export type AnyComponent = Execution | Output;
 
-export type ComponentEventType = "complete" | "resume";
+export type ComponentEventType = 'complete' | 'resume';
 
 export interface ComponentEvent {
   on(event: ComponentEventType, callback: (...args: any[]) => void): EventEmitter;
@@ -49,9 +49,9 @@ export interface ComponentEvent {
   removeAll();
 }
 
-export type ComponentInputPort = "none" | "single" | "multiple";
+export type ComponentInputPort = 'none' | 'single' | 'multiple';
 
-export type ComponentOutputPort = "ok" | "error" | "repeat" | "end" | "true" | "false";
+export type ComponentOutputPort = 'ok' | 'error' | 'repeat' | 'end' | 'true' | 'false';
 
 export interface ComponentInput {
   inject: (props: any) => void;
@@ -66,12 +66,7 @@ export interface ComponentOutput {
   false?: () => void;
 }
 
-export enum ComponentStatus {
-  PRISTINE = "pristine",
-  RUNNING = "running",
-  FINISHED = "finished",
-  WAITING = "waiting"
-}
+export type ComponentStatus = 'pristine' | 'running' | 'finished' | 'waiting';
 
 /**
  * Interface for component instance
@@ -80,9 +75,9 @@ export enum ComponentStatus {
 export abstract class Instance {
 
   static inputPort: ComponentInputPort;
-  static outputPorts: Array<ComponentOutputPort>;
+  static outputPorts: ComponentOutputPort[];
 
-  abstract get $engine(): IEngine;
+  abstract get $engine(): Engine;
   abstract get $data(): Execution;
   
   $status: string;
@@ -90,7 +85,7 @@ export abstract class Instance {
   $input: ComponentInput;
   $output: ComponentOutput;
 
-  abstract setup(engine: IEngine, data: Execution);
+  abstract setup(engine: Engine, data: Execution);
 
   abstract execute();
   abstract suspend();

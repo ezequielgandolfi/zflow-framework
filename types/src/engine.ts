@@ -1,24 +1,23 @@
-import * as events from "events";
-import * as Component from "./component";
+import * as events from 'events';
+import * as Component from './component';
 
-export interface IUpdateListenersOptions {
+export interface UpdateListenersOptions {
   /**
    * Sinal watchers for component execution complete
    */
   completedComponentId?: string;
 }
 
-export interface IDatabase {
+export interface Database {
 }
 
-export enum ListenerEvent {
-  COMPONENT_COMPLETED = 'component_completed',
-  STREAM_COMPLETED = "stream_completed"
-}
+export type ListenerEventType = 'component_completed' | 'stream_completed';
 
-export interface IFlow {
-  getFlow(): Array<Component.Any>;
-  setFlow(flow: Array<Component.Any>);
+export interface Flow {
+  sessionStorage: Storage;
+
+  getFlow(): Array<Component.AnyComponent>;
+  setFlow(flow: Array<Component.AnyComponent>);
   getNext(from: string, output: string): Array<Component.Execution>;
   execute(component: Component.Instance);
   resume(component: Component.Instance);
@@ -28,25 +27,25 @@ export interface IFlow {
   freeComponent(id: string);
   freeChildComponents(id: string, output?: string);
 
-  updateListeners(options?:IUpdateListenersOptions);
+  updateListeners(options?: UpdateListenersOptions);
   listenStreamCompleted(from: string, output: string): events.EventEmitter;
   unlistenStreamCompleted(from: string, output: string);
   listenComponentCompleted(sourceId: string): events.EventEmitter;
   unlistenComponentCompleted(sourceId: string);
 }
 
-export interface IFunctions {
+export interface Functions {
   transformProperties(props: any): any;
 }
 
-export interface IStorage {
+export interface Storage {
   set(id: string, value: any);
   get(id: string): any;
 }
 
-export interface IEngine {
-  database: IDatabase;
-  flow: IFlow;
-  functions: IFunctions;
-  storage: IStorage;
+export interface Engine {
+  database: Database;
+  flow: Flow;
+  functions: Functions;
+  storage: Storage;
 }

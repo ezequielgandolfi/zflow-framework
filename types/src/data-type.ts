@@ -1,14 +1,14 @@
-export interface IDataType<T> {
+export interface DataType<T> {
   value: T;
   get(): T;
-  set(value: any): void;
+  set(value: unknown): void;
 }
 
-export function isZFlowDataType(object: any): object is IDataType<any> {
+export function isZFlowDataType(object: unknown): object is DataType<unknown> {
   return (!!object) && (object['get'] instanceof Function) && (object['set'] instanceof Function);
 }
 
-class TDataType<T> implements IDataType<T> {
+class AbstractDataType<T> implements DataType<T> {
   static key = "";
   value: T = this.default();
 
@@ -44,7 +44,7 @@ class TDataType<T> implements IDataType<T> {
   }
 }
 
-export class TObject extends TDataType<any> {
+export class Data extends AbstractDataType<any> {
   static key = "object";
 
   protected default(): any {
@@ -61,7 +61,7 @@ export class TObject extends TDataType<any> {
   }
 }
 
-export class TNumber extends TDataType<number> {
+export class Number extends AbstractDataType<number> {
   static key = "number";
 
   protected default(): number {
@@ -78,7 +78,7 @@ export class TNumber extends TDataType<number> {
   }
 }
 
-export class TString extends TDataType<string> {
+export class String extends AbstractDataType<string> {
   static key = "string";
 
   protected default(): string {
@@ -90,7 +90,7 @@ export class TString extends TDataType<string> {
   }
 }
 
-export class TBoolean extends TDataType<boolean> {
+export class Boolean extends AbstractDataType<boolean> {
   static key = "boolean";
 
   protected default(): boolean {
@@ -102,7 +102,7 @@ export class TBoolean extends TDataType<boolean> {
   }
 }
 
-export class TAny extends TDataType<any> {
+export class Any extends AbstractDataType<any> {
   static key = "any";
 
   protected default(): any {
@@ -119,12 +119,12 @@ export class TAny extends TDataType<any> {
   }
 }
 
-class TArrayType<T> extends TDataType<Array<T>> {
+class ArrayType<T> extends AbstractDataType<T[]> {
   static key = "array";
 
-  value: Array<T> = this.default();
+  value: T[] = this.default();
 
-  get(): Array<T> { 
+  get(): T[] { 
     return this.value;
   };
 
@@ -151,7 +151,7 @@ class TArrayType<T> extends TDataType<Array<T>> {
     this.value = result;
   };
 
-  protected default(): Array<T> {
+  protected default(): T[] {
     return [];
   }
 
@@ -164,7 +164,7 @@ class TArrayType<T> extends TDataType<Array<T>> {
   }
 }
 
-export class TBooleanArray extends TArrayType<boolean> {
+export class BooleanArray extends ArrayType<boolean> {
   static key = "boolean-array";
 
   protected defaultItem(): boolean {
@@ -176,7 +176,7 @@ export class TBooleanArray extends TArrayType<boolean> {
   }
 }
 
-export class TNumberArray extends TArrayType<number> {
+export class NumberArray extends ArrayType<number> {
   static key = "number-array";
 
   protected defaultItem(): number {
@@ -193,7 +193,7 @@ export class TNumberArray extends TArrayType<number> {
   }
 }
 
-export class TStringArray extends TArrayType<string> {
+export class StringArray extends ArrayType<string> {
   static key = "string-array";
 
   protected defaultItem(): string {
@@ -205,7 +205,7 @@ export class TStringArray extends TArrayType<string> {
   }
 }
 
-export class TObjectArray extends TArrayType<any> {
+export class DataArray extends ArrayType<any> {
   static key = "object-array";
 
   protected defaultItem(): any {
@@ -222,7 +222,7 @@ export class TObjectArray extends TArrayType<any> {
   }
 }
 
-export class TAnyArray extends TArrayType<any> {
+export class AnyArray extends ArrayType<any> {
   static key = "any-array";
 
   protected defaultItem(): any {

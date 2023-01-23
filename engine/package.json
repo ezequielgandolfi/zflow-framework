@@ -16,7 +16,7 @@
   "dependencies": {
     "@zflow/components": "0.0.32",
     "@zflow/script": "0.0.8",
-    "@zflow/types": "0.0.37",
+    "@zflow/types": "0.0.38",
     "express": "~4.16.1",
     "mongodb": "^3.6.7"
   },

@@ -1,5 +1,5 @@
-import { EventEmitter } from "events";
-import { Engine } from "./engine";
+import { EventEmitter } from 'events';
+import { Engine } from './engine';
 
 interface ComponentData {
   component: string;
@@ -80,7 +80,7 @@ export abstract class Instance {
   abstract get $engine(): Engine;
   abstract get $data(): Execution;
   
-  $status: string;
+  $status: ComponentStatus;
   $event: ComponentEvent;
   $input: ComponentInput;
   $output: ComponentOutput;

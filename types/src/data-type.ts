@@ -9,7 +9,7 @@ export function isZFlowDataType(object: unknown): object is DataType<unknown> {
 }
 
 class AbstractDataType<T> implements DataType<T> {
-  static key = "";
+  static key = '';
   value: T = this.default();
 
   get(): T {
@@ -45,7 +45,7 @@ class AbstractDataType<T> implements DataType<T> {
 }
 
 export class Data extends AbstractDataType<any> {
-  static key = "object";
+  static key = 'object';
 
   protected default(): any {
     return { };
@@ -62,14 +62,14 @@ export class Data extends AbstractDataType<any> {
 }
 
 export class Number extends AbstractDataType<number> {
-  static key = "number";
+  static key = 'number';
 
   protected default(): number {
     return 0;
   }
 
   protected mapItem(value: any): number {
-    if (typeof(value) === "number") {
+    if (typeof(value) === 'number') {
       return value;
     }
     else {
@@ -79,19 +79,19 @@ export class Number extends AbstractDataType<number> {
 }
 
 export class String extends AbstractDataType<string> {
-  static key = "string";
+  static key = 'string';
 
   protected default(): string {
-    return "";
+    return '';
   }
 
   protected mapItem(value: any): string {
-    return "" + value;
+    return '' + value;
   }
 }
 
 export class Boolean extends AbstractDataType<boolean> {
-  static key = "boolean";
+  static key = 'boolean';
 
   protected default(): boolean {
     return false;
@@ -103,7 +103,7 @@ export class Boolean extends AbstractDataType<boolean> {
 }
 
 export class Any extends AbstractDataType<any> {
-  static key = "any";
+  static key = 'any';
 
   protected default(): any {
     return { };
@@ -120,7 +120,7 @@ export class Any extends AbstractDataType<any> {
 }
 
 class ArrayType<T> extends AbstractDataType<T[]> {
-  static key = "array";
+  static key = 'array';
 
   value: T[] = this.default();
 
@@ -165,7 +165,7 @@ class ArrayType<T> extends AbstractDataType<T[]> {
 }
 
 export class BooleanArray extends ArrayType<boolean> {
-  static key = "boolean-array";
+  static key = 'boolean-array';
 
   protected defaultItem(): boolean {
     return false;
@@ -177,14 +177,14 @@ export class BooleanArray extends ArrayType<boolean> {
 }
 
 export class NumberArray extends ArrayType<number> {
-  static key = "number-array";
+  static key = 'number-array';
 
   protected defaultItem(): number {
     return 0;
   }
 
   protected mapItem(value: any): number {
-    if (typeof(value) === "number") {
+    if (typeof(value) === 'number') {
       return value;
     }
     else {
@@ -194,19 +194,19 @@ export class NumberArray extends ArrayType<number> {
 }
 
 export class StringArray extends ArrayType<string> {
-  static key = "string-array";
+  static key = 'string-array';
 
   protected defaultItem(): string {
-    return "";
+    return '';
   }
 
   protected mapItem(value: any): string {
-    return "" + value;
+    return '' + value;
   }
 }
 
 export class DataArray extends ArrayType<any> {
-  static key = "object-array";
+  static key = 'object-array';
 
   protected defaultItem(): any {
     return { };
@@ -223,7 +223,7 @@ export class DataArray extends ArrayType<any> {
 }
 
 export class AnyArray extends ArrayType<any> {
-  static key = "any-array";
+  static key = 'any-array';
 
   protected defaultItem(): any {
     return { };

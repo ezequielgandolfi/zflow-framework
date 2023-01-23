@@ -1,7 +1,7 @@
-import * as events from "events";
-import * as ZFlowComponents from "@zflow/components";
-import * as ZFlowTypes from "@zflow/types";
-import { ZFlowScript } from "@zflow/script";
+import * as events from 'events';
+import * as ZFlowComponents from '@zflow/components';
+import * as ZFlowTypes from '@zflow/types';
+import { ZFlowScript } from '@zflow/script';
 
 class ArrayUtils {
   static removeDuplicates(array) {
@@ -9,22 +9,25 @@ class ArrayUtils {
   }
 }
 
-class DatabaseEngine implements ZFlowTypes.Engine.IDatabase {
-  private _engine: ZFlowTypes.Engine.IEngine;
+class DatabaseEngine implements ZFlowTypes.Engine.Database {
+  private _engine: ZFlowTypes.Engine.Engine;
 
-  constructor(engine: ZFlowTypes.Engine.IEngine) {
+  constructor(engine: ZFlowTypes.Engine.Engine) {
     this._engine = engine;
   }
 }
 
-class FlowEngine implements ZFlowTypes.Engine.IFlow {
-  private _engine: ZFlowTypes.Engine.IEngine;
-  private _flow: Array<ZFlowTypes.Component.Any>;
+class FlowEngine implements ZFlowTypes.Engine.Flow {
+  private _engine: ZFlowTypes.Engine.Engine;
+  private _flow: Array<ZFlowTypes.Component.AnyComponent>;
   private _storedComponents: Array<ZFlowTypes.Component.Instance> = [];
   private _listeners = [];
 
-  constructor(engine: ZFlowTypes.Engine.IEngine) {
+  sessionStorage: ZFlowTypes.Engine.Storage;
+
+  constructor(engine: ZFlowTypes.Engine.Engine) {
     this._engine = engine;
+    this.sessionStorage = new StorageEngine(this._engine);
   }
 
   //#region Internal function
@@ -33,7 +36,7 @@ class FlowEngine implements ZFlowTypes.Engine.IFlow {
     return !!next.find(n => {
       const component = this.getStoredComponent(n.id);
       if (component) {
-        if (component.$status !== ZFlowTypes.Component.ComponentStatus.FINISHED) {
+        if (component.$status !== 'finished') {
           return true;
         }
         else {
@@ -65,10 +68,10 @@ class FlowEngine implements ZFlowTypes.Engine.IFlow {
   //#endregion
 
   //#region Flow
-  getFlow(): Array<ZFlowTypes.Component.Any> {
+  getFlow(): Array<ZFlowTypes.Component.AnyComponent> {
     return this._flow;
   }
-  setFlow(flow: Array<ZFlowTypes.Component.Any>) {
+  setFlow(flow: Array<ZFlowTypes.Component.AnyComponent>) {
     this._flow = flow;
   }
 
@@ -79,12 +82,12 @@ class FlowEngine implements ZFlowTypes.Engine.IFlow {
   }
 
   execute(component: ZFlowTypes.Component.Instance) {
-    component.$event.once("complete", () => { this._onExecutionComplete(component) });
+    component.$event.once('complete', () => { this._onExecutionComplete(component) });
     process.nextTick(() => component.execute());
   }
 
   resume(component: ZFlowTypes.Component.Instance) {
-    component.$event.once("complete", () => { this._onExecutionComplete(component) });
+    component.$event.once('complete', () => { this._onExecutionComplete(component) });
     process.nextTick(() => component.resume());
   }
   //#endregion
@@ -100,7 +103,7 @@ class FlowEngine implements ZFlowTypes.Engine.IFlow {
 
   freeComponent(id: string) {
     const component: ZFlowTypes.Component.Instance = this._storedComponents[id];
-    if (component?.$status === ZFlowTypes.Component.ComponentStatus.FINISHED) {
+    if (component?.$status === 'finished') {
       component.$event.removeAll();
       delete this._storedComponents[id];
       const next = this._flow.filter((item:ZFlowTypes.Component.Output) => item.source === id);
@@ -118,32 +121,36 @@ class FlowEngine implements ZFlowTypes.Engine.IFlow {
   //#endregion
 
   //#region Listeners
-  updateListeners(options?: ZFlowTypes.Engine.IUpdateListenersOptions) {
+  updateListeners(options?: ZFlowTypes.Engine.UpdateListenersOptions) {
     // COMPONENT COMPLETED
+    const componentCompletedEvent: ZFlowTypes.Engine.ListenerEventType = 'component_completed';
     if (options?.completedComponentId) {
-      const componentListeners = this._listeners.filter(w => w.type === ZFlowTypes.Engine.ListenerEvent.COMPONENT_COMPLETED);
+      const componentListeners = this._listeners.filter(w => w.type === componentCompletedEvent);
       componentListeners.forEach(w => {
-        process.nextTick(() => w.event.emit(ZFlowTypes.Engine.ListenerEvent.COMPONENT_COMPLETED, { id: w.sourceId }));
+        process.nextTick(() => w.event.emit(componentCompletedEvent, { id: w.sourceId }));
       })
     }
     // STREAM COMPLETED
-    const streamListeners = this._listeners.filter(w => w.type === ZFlowTypes.Engine.ListenerEvent.STREAM_COMPLETED).filter(w => !this._hasPendingExec(w.from, w.output));
+    const streamCompletedEvent: ZFlowTypes.Engine.ListenerEventType = 'stream_completed';
+    const streamListeners = this._listeners.filter(w => w.type === streamCompletedEvent).filter(w => !this._hasPendingExec(w.from, w.output));
     streamListeners.forEach(w => {
       this.unlistenStreamCompleted(w.from, w.output);
-      process.nextTick(() => w.event.emit(ZFlowTypes.Engine.ListenerEvent.STREAM_COMPLETED, { from: w.from, output: w.output }));
+      process.nextTick(() => w.event.emit(streamCompletedEvent, { from: w.from, output: w.output }));
     });
   }
 
   listenStreamCompleted(from: string, output: string) {
-    const listener = { type: ZFlowTypes.Engine.ListenerEvent.STREAM_COMPLETED, from, output, event: new events.EventEmitter() };
+    const streamCompletedEvent: ZFlowTypes.Engine.ListenerEventType = 'stream_completed';
+    const listener = { type: streamCompletedEvent, from, output, event: new events.EventEmitter() };
     this._listeners.push(listener);
     return listener.event;
   }
 
   unlistenStreamCompleted(from: string, output: string) {
+    const streamCompletedEvent: ZFlowTypes.Engine.ListenerEventType = 'stream_completed';
     let index: number;
     do {
-      index = this._listeners.findIndex(item => (item.type === ZFlowTypes.Engine.ListenerEvent.STREAM_COMPLETED) && (item.from === from) && (item.output === output));  
+      index = this._listeners.findIndex(item => (item.type === streamCompletedEvent) && (item.from === from) && (item.output === output));  
       if (index >= 0) {
         this._listeners.splice(index, 1);
       }
@@ -151,15 +158,17 @@ class FlowEngine implements ZFlowTypes.Engine.IFlow {
   }
 
   listenComponentCompleted(sourceId: string): events.EventEmitter {
-    const listener = { type: ZFlowTypes.Engine.ListenerEvent.COMPONENT_COMPLETED, sourceId, event: new events.EventEmitter() };
+    const componentCompletedEvent: ZFlowTypes.Engine.ListenerEventType = 'component_completed';
+    const listener = { type: componentCompletedEvent, sourceId, event: new events.EventEmitter() };
     this._listeners.push(listener);
     return listener.event;
   };
 
   unlistenComponentCompleted(sourceId: string) {
+    const componentCompletedEvent: ZFlowTypes.Engine.ListenerEventType = 'component_completed';
     let index: number;
     do {
-      index = this._listeners.findIndex(item => (item.type === ZFlowTypes.Engine.ListenerEvent.COMPONENT_COMPLETED) && (item.sourceId === sourceId));  
+      index = this._listeners.findIndex(item => (item.type === componentCompletedEvent) && (item.sourceId === sourceId));  
       if (index >= 0) {
         this._listeners.splice(index, 1);
       }
@@ -168,11 +177,11 @@ class FlowEngine implements ZFlowTypes.Engine.IFlow {
   //#endregion
 }
 
-class FunctionsEngine implements ZFlowTypes.Engine.IFunctions {
-  private _engine: ZFlowTypes.Engine.IEngine;
+class FunctionsEngine implements ZFlowTypes.Engine.Functions {
+  private _engine: ZFlowTypes.Engine.Engine;
   private _zflowScript: ZFlowScript;
 
-  constructor(engine: ZFlowTypes.Engine.IEngine) {
+  constructor(engine: ZFlowTypes.Engine.Engine) {
     this._engine = engine;
     this._zflowScript = new ZFlowScript(this._engine);
   }
@@ -182,7 +191,7 @@ class FunctionsEngine implements ZFlowTypes.Engine.IFunctions {
     Object.keys(props).forEach(k => {
       try {
         let value = props[k];
-        if (typeof(value) === "string") {
+        if (typeof(value) === 'string') {
           result[k] = this._zflowScript.parse(value);
         }
         else {
@@ -195,12 +204,12 @@ class FunctionsEngine implements ZFlowTypes.Engine.IFunctions {
   }
 }
 
-class StorageEngine implements ZFlowTypes.Engine.IStorage {
+class StorageEngine implements ZFlowTypes.Engine.Storage {
 
-  private _engine: ZFlowTypes.Engine.IEngine;
+  private _engine: ZFlowTypes.Engine.Engine;
   private _variables = {  };
 
-  constructor(engine: ZFlowTypes.Engine.IEngine) {
+  constructor(engine: ZFlowTypes.Engine.Engine) {
     this._engine = engine;
   }
 
@@ -214,7 +223,7 @@ class StorageEngine implements ZFlowTypes.Engine.IStorage {
 }
 
 
-export class FlowEngineCore implements ZFlowTypes.Engine.IEngine {
+export class FlowEngineCore implements ZFlowTypes.Engine.Engine {
 
   database = new DatabaseEngine(this);
   flow = new FlowEngine(this);

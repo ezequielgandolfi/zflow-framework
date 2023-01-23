@@ -15,8 +15,8 @@ export class VariableGet extends VariableComponent {
     Property.AddReadOnly(Property.Value)
   ];
 
-  id = new ZFlowTypes.DataType.TString();
-  value = new ZFlowTypes.DataType.TAny();
+  id = new ZFlowTypes.DataType.String();
+  value = new ZFlowTypes.DataType.Any();
 
   execute() {
     this.value.set(this.$engine.storage.get(this.id.get()));
@@ -33,8 +33,8 @@ export class VariableSet extends VariableComponent {
     Property.Value
   ];
 
-  id = new ZFlowTypes.DataType.TString();
-  value = new ZFlowTypes.DataType.TAny();
+  id = new ZFlowTypes.DataType.String();
+  value = new ZFlowTypes.DataType.Any();
 
   execute() {
     this.$engine.storage.set(this.id.get(), this.value.get());

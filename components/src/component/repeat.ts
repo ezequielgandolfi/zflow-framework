@@ -16,9 +16,9 @@ export class RepeatFor extends RepeatComponent {
     Property.AddReadOnly(Property.CurrentNumber)
   ];
 
-  from = new ZFlowTypes.DataType.TNumber();
-  to = new ZFlowTypes.DataType.TNumber();
-  current = new ZFlowTypes.DataType.TNumber();
+  from = new ZFlowTypes.DataType.Number();
+  to = new ZFlowTypes.DataType.Number();
+  current = new ZFlowTypes.DataType.Number();
 
   resume() {
     this.execute();
@@ -33,7 +33,8 @@ export class RepeatFor extends RepeatComponent {
     }
     if (this.current.get() <= this.to.get()) {
       const watcher = this.$engine.flow.listenStreamCompleted(this.$data.id, "repeat");
-      watcher.on(ZFlowTypes.Engine.ListenerEvent.STREAM_COMPLETED, () => { 
+      const event: ZFlowTypes.Engine.ListenerEventType = 'stream_completed';
+      watcher.on(event, () => { 
         this.$engine.flow.freeChildComponents(this.$data.id, "repeat");
         this.$event.dispatch("resume", { id: this.$data.id });
       });

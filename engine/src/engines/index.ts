@@ -1,9 +1,9 @@
-import * as threads from "worker_threads";
-import * as path from "path";
+import * as threads from 'worker_threads';
+import * as path from 'path';
 
 // const
 export class FlowEngine {
-  _engineThread = path.join(__dirname, "flow-engine.js");
+  _engineThread = path.join(__dirname, 'flow-engine.js');
 
   flows = {};
 
@@ -27,16 +27,16 @@ export class FlowEngine {
 
   startThread(flow,initData) {
     const worker = new threads.Worker(this._engineThread, { workerData: { flow, initData } });
-    worker.on("online", () => {
-      console.log(">ONLINE");
+    worker.on('online', () => {
+      console.log('>ONLINE');
     });
-    worker.on("error", err => {
-      console.log(">ERROR", err);
+    worker.on('error', err => {
+      console.log('>ERROR', err);
     });
-    worker.on("exit", exitCode => {
-      console.log(">EXIT:", exitCode);
+    worker.on('exit', exitCode => {
+      console.log('>EXIT:', exitCode);
     });
-    worker.on("message", value => console.log(">MESSAGE:", value));
-    worker.on("messageerror", args => console.log(">MSGERROR:", args));
+    worker.on('message', value => console.log('>MESSAGE:', value));
+    worker.on('messageerror', args => console.log('>MSGERROR:', args));
   }
 }

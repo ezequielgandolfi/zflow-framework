@@ -1,6 +1,6 @@
-import express from "express";
-import * as Engines from "../engines";
-import * as Logger from "../logger";
+import express from 'express';
+import * as Engines from '../engines';
+import * as Logger from '../logger';
 
 class GenericWorker {
   description = 'Generic Worker';
@@ -51,7 +51,7 @@ class WebWorker extends GenericWorker {
   }
 
   setupFlowEndpoints() {
-    this.exec.filter(exec => exec.type === "flow").forEach(exec => {
+    this.exec.filter(exec => exec.type === 'flow').forEach(exec => {
       this._engine.addFlow(exec);
       this._express.get(exec.config.path, (req, res) => {
         let data = '';

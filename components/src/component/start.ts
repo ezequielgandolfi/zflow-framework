@@ -16,9 +16,9 @@ export class StartDefault extends StartComponent {
     Property.AddReadOnly(Property.Payload)
   ];
 
-  queryParam = new ZFlowTypes.DataType.TObject();
-  pathParam = new ZFlowTypes.DataType.TObject();
-  payload = new ZFlowTypes.DataType.TObject();
+  queryParam = new ZFlowTypes.DataType.Data();
+  pathParam = new ZFlowTypes.DataType.Data();
+  payload = new ZFlowTypes.DataType.Data();
 
   execute() {
     this.$output.ok();

@@ -14,7 +14,7 @@ export class FunctionLog extends FunctionComponent {
     Property.Text
   ];
 
-  text = new ZFlowTypes.DataType.TString();
+  text = new ZFlowTypes.DataType.String();
 
   execute() {
     console.log(this.text.get());

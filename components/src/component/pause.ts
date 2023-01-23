@@ -14,9 +14,11 @@ export class PauseDelay extends PauseComponent {
     Property.Milliseconds
   ];
 
-  milliseconds = new ZFlowTypes.DataType.TNumber();
+  milliseconds = new ZFlowTypes.DataType.Number();
 
   execute() {
-    this.$output.ok();
+    setTimeout(() => {
+      this.$output.ok();
+    }, this.milliseconds.get());
   }
 }

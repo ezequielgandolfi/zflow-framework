@@ -1,6 +1,6 @@
 {
   "name": "@zflow/engine",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "ZFlow Framework Engine",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -14,9 +14,9 @@
   "author": "Ezequiel Gandolfi",
   "license": "Apache-2.0",
   "dependencies": {
-    "@zflow/components": "0.0.31",
-    "@zflow/script": "0.0.7",
-    "@zflow/types": "0.0.35",
+    "@zflow/components": "0.0.32",
+    "@zflow/script": "0.0.8",
+    "@zflow/types": "0.0.37",
     "express": "~4.16.1",
     "mongodb": "^3.6.7"
   },

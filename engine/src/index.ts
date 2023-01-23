@@ -1,8 +1,8 @@
-import * as Logger from "./logger";
-import * as Workers from "./workers";
+import * as Logger from './logger';
+import * as Workers from './workers';
 
 // TEST DATA
-import * as TEST from "./test";
+import * as TEST from './test';
 const test01 = TEST.REPEAT;
 const test02 = TEST.JOIN_ALL;
 const test03 = TEST.JOIN_FIRST;
@@ -11,44 +11,44 @@ const test04 = TEST.VARIABLE;
 const data = {
   workers: [
     {
-      type: "web",
+      type: 'web',
       config: {
         port: 3002
       },
       exec: [
         {
-          id: "REPEAT",
-          type: "flow",
+          id: 'REPEAT',
+          type: 'flow',
           config: {
-            method: "GET",
-            path: "/test/:repeat"
+            method: 'GET',
+            path: '/test/:repeat'
           },
           data: test01
         },
         {
-          id: "JOIN_ALL",
-          type: "flow",
+          id: 'JOIN_ALL',
+          type: 'flow',
           config: {
-            method: "GET",
-            path: "/all"
+            method: 'GET',
+            path: '/all'
           },
           data: test02
         },
         {
-          id: "JOIN_FIRST",
-          type: "flow",
+          id: 'JOIN_FIRST',
+          type: 'flow',
           config: {
-            method: "GET",
-            path: "/first"
+            method: 'GET',
+            path: '/first'
           },
           data: test03
         },
         {
-          id: "VARIABLE",
-          type: "flow",
+          id: 'VARIABLE',
+          type: 'flow',
           config: {
-            method: "GET",
-            path: "/var"
+            method: 'GET',
+            path: '/var'
           },
           data: test04
         }
@@ -61,7 +61,7 @@ const data = {
 // WORKERS
 
 const runningWorkers = [];
-Logger.info("Starting workers...");
+Logger.info('Starting workers...');
 
 data.workers.forEach(w => {
   // try {
@@ -80,13 +80,13 @@ data.workers.forEach(w => {
   // }
 });
 
-Logger.info("Workers started");
+Logger.info('Workers started');
 
 // ??
 
 // STOP
 
-process.on("SIGTERM", (code) => {
+process.on('SIGTERM', (code) => {
   runningWorkers.forEach(worker => {
     try {
       const description = worker.description;

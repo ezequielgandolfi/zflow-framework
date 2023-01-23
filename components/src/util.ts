@@ -2,7 +2,7 @@ const VALUE_OBJECT_PREFIX = '$(';
 const VALUE_OBJECT_SUFIX = ')';
 const VALUE_OBJECT_PROP_SPLIT = '.';
 
-interface IProperty {
+interface Property {
   fixed?: string;
   component?: {
     id: string;
@@ -11,8 +11,8 @@ interface IProperty {
   }
 }
 
-export function value2property(value: string): IProperty {
-  const property: IProperty = { fixed: null, component: null };
+export function value2property(value: string): Property {
+  const property: Property = { fixed: null, component: null };
   value = value || '';
   if (value.startsWith(VALUE_OBJECT_PREFIX) && value.endsWith(VALUE_OBJECT_SUFIX)) {
     const valueFrom = value.substring(VALUE_OBJECT_PREFIX.length, value.length - VALUE_OBJECT_PREFIX.length + 1);
@@ -29,7 +29,7 @@ export function value2property(value: string): IProperty {
   return property;
 }
 
-export function property2value(property: IProperty): string {
+export function property2value(property: Property): string {
   if (!property.component) {
     return property.fixed;
   }

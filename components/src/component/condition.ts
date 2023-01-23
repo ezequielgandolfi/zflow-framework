@@ -14,7 +14,7 @@ export class ConditionAll extends ConditionComponent {
     Property.AddIsArray(Property.Conditions)
   ];
 
-  conditions = new ZFlowTypes.DataType.TBooleanArray();
+  conditions = new ZFlowTypes.DataType.BooleanArray();
 
   execute() {
     if (this.conditions.get().find(condition => !condition)) {
@@ -34,7 +34,7 @@ export class ConditionAny extends ConditionComponent {
     Property.AddIsArray(Property.Conditions)
   ];
 
-  conditions = new ZFlowTypes.DataType.TBooleanArray();
+  conditions = new ZFlowTypes.DataType.BooleanArray();
 
   execute() {
     if ((this.conditions.get().length === 0) || (this.conditions.get().find(condition => condition))) {

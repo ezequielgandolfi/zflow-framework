@@ -13,13 +13,13 @@ export class Abstract extends ZFlowTypes.Component.Instance {
   static outputPorts: Array<ZFlowTypes.Component.ComponentOutputPort> = [];
   
   private _data: ZFlowTypes.Component.Execution;
-  private _engine: ZFlowTypes.Engine.IEngine;  
+  private _engine: ZFlowTypes.Engine.Engine;  
   protected _change = new EventEmitter();
 
   get $data() { return this._data }; 
   get $engine() { return this._engine };
 
-  $status = ZFlowTypes.Component.ComponentStatus.PRISTINE;
+  $status: ZFlowTypes.Component.ComponentStatus = 'pristine';
 
   $event: ZFlowTypes.Component.ComponentEvent = {
     on: this._on.bind(this),
@@ -70,22 +70,22 @@ export class Abstract extends ZFlowTypes.Component.Instance {
     return this._dispatch("complete", { type: output });
   }
 
-  setup(engine: ZFlowTypes.Engine.IEngine, data: ZFlowTypes.Component.Execution) {
+  setup(engine: ZFlowTypes.Engine.Engine, data: ZFlowTypes.Component.Execution) {
     this._engine = engine;
     this._data = data;
   }
 
   execute() {
-    this.$status = ZFlowTypes.Component.ComponentStatus.RUNNING;
+    this.$status = 'running';
   }
   suspend() {
-    this.$status = ZFlowTypes.Component.ComponentStatus.WAITING;
+    this.$status = 'waiting';
   }
   resume() {
-    this.$status = ZFlowTypes.Component.ComponentStatus.RUNNING;
+    this.$status = 'running';
   }
   finish() {
-    this.$status = ZFlowTypes.Component.ComponentStatus.FINISHED;
+    this.$status = 'finished';
   }
 
 }

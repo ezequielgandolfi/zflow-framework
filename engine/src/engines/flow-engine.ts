@@ -1,7 +1,7 @@
-import * as threads from "worker_threads";
-import { FlowEngineCore } from "./flow-engine-core";
-import * as ZFlowComponents from "@zflow/components";
-import * as ZFlowTypes from "@zflow/types";
+import * as threads from 'worker_threads';
+import { FlowEngineCore } from './flow-engine-core';
+import * as ZFlowComponents from '@zflow/components';
+import * as ZFlowTypes from '@zflow/types';
 
 const { flow, initData } = threads.workerData;
 
@@ -28,11 +28,11 @@ function execComponent(component) {
 
     engineCore.flow.storeComponent(component.id, thisComponent);
 
-    thisComponent.$event.on("complete", event => { 
+    thisComponent.$event.on('complete', event => { 
       next(component.id, event.type, event.data);
     });
 
-    thisComponent.$event.on("resume", event => { 
+    thisComponent.$event.on('resume', event => { 
       engineCore.flow.resume(thisComponent);
     });
   }
@@ -47,7 +47,7 @@ function next(id, handle, data) {
 
 
 //
-const startComponent = flow.find(item => item.type.startsWith("start."));
+const startComponent = flow.find(item => item.type.startsWith('start.'));
 if (startComponent) {
   Object.assign(startComponent.data.properties, initData);
   execComponent(startComponent);

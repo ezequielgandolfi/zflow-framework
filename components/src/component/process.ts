@@ -42,7 +42,7 @@ export class ProcessWaitFirst extends JoinComponent {
   ];
 
   execute() {
-    if (this.$status === ZFlowTypes.Component.ComponentStatus.PRISTINE) {
+    if (this.$status === 'pristine') {
       this.$output.ok();
     }
   }
@@ -60,7 +60,7 @@ export class ProcessWaitAll extends JoinComponent {
 
   execute() {
     // only take action on first execution
-    if (this.$status === ZFlowTypes.Component.ComponentStatus.PRISTINE) {
+    if (this.$status === 'pristine') {
       if (!this.hasPendingInputs(this.$data.id)) {
         this.$output.ok();
       }
@@ -81,14 +81,15 @@ export class ProcessWaitAll extends JoinComponent {
     return !!inputs.find(input => {
       const comp = this.$engine.flow.getStoredComponent(input);
       if (comp) {
-        return (comp.$status !== ZFlowTypes.Component.ComponentStatus.FINISHED);
+        return (comp.$status !== 'finished');
       }
       return this.hasPendingInputs(input);
     });
   }
 
   private waitForInputs() {
-    this.$engine.flow.listenComponentCompleted(this.$data.id).on(ZFlowTypes.Engine.ListenerEvent.COMPONENT_COMPLETED, () => {
+    const event: ZFlowTypes.Engine.ListenerEventType = 'component_completed';
+    this.$engine.flow.listenComponentCompleted(this.$data.id).on(event, () => {
       if (!this.hasPendingInputs(this.$data.id)) {
         this.$engine.flow.unlistenComponentCompleted(this.$data.id);
         this.$output.ok();

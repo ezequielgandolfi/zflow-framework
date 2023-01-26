@@ -8,7 +8,7 @@ class VariableComponent extends ComponentType.Ok {
 
 export class VariableGet extends VariableComponent {
   static key = "variable.get";
-  static description = "Get a value";
+  static description = "Get a global value";
   static shortDescription = "Get";
   static properties = [
     Property.Id,
@@ -26,7 +26,7 @@ export class VariableGet extends VariableComponent {
 
 export class VariableSet extends VariableComponent {
   static key = "variable.set";
-  static description = "Set a value";
+  static description = "Set a global value";
   static shortDescription = "Set";
   static properties = [
     Property.Id,
@@ -38,6 +38,42 @@ export class VariableSet extends VariableComponent {
 
   execute() {
     this.$engine.storage.set(this.id.get(), this.value.get());
+    this.$output.ok();
+  }
+}
+
+export class LocalVariableGet extends VariableComponent {
+  static key = "variable.local.get";
+  static description = "Get a local value";
+  static shortDescription = "Local Get";
+  static properties = [
+    Property.Id,
+    Property.AddReadOnly(Property.Value)
+  ];
+
+  id = new ZFlowTypes.DataType.String();
+  value = new ZFlowTypes.DataType.Any();
+
+  execute() {
+    this.value.set(this.$engine.flow.sessionStorage.get(this.id.get()));
+    this.$output.ok();
+  }
+}
+
+export class LocalVariableSet extends VariableComponent {
+  static key = "variable.local.set";
+  static description = "Set a local value";
+  static shortDescription = "Local Set";
+  static properties = [
+    Property.Id,
+    Property.Value
+  ];
+
+  id = new ZFlowTypes.DataType.String();
+  value = new ZFlowTypes.DataType.Any();
+
+  execute() {
+    this.$engine.flow.sessionStorage.set(this.id.get(), this.value.get());
     this.$output.ok();
   }
 }

@@ -1,15 +1,15 @@
-import * as ZFlowTypes from "@zflow/types";
-import EventEmitter from "events";
-import { AbstractProperty } from "./property";
+import * as ZFlowTypes from '@zflow/types';
+import EventEmitter from 'events';
+import { AbstractProperty } from './property';
 
 export class Abstract extends ZFlowTypes.Component.Instance {
 
-  static key = "";
-  static description = "";
-  static shortDescription = "";
-  static icon = "";
+  static key = '';
+  static description = '';
+  static shortDescription = '';
+  static icon = '';
   static properties: AbstractProperty[] = [];
-  static inputPort: ZFlowTypes.Component.ComponentInputPort = "single";
+  static inputPort: ZFlowTypes.Component.ComponentInputPort = 'single';
   static outputPorts: Array<ZFlowTypes.Component.ComponentOutputPort> = [];
   
   private _data: ZFlowTypes.Component.Execution;
@@ -67,7 +67,7 @@ export class Abstract extends ZFlowTypes.Component.Instance {
   }
 
   protected _signalOutput(output: ZFlowTypes.Component.ComponentOutputPort) {
-    return this._dispatch("complete", { type: output });
+    return this._dispatch('complete', { type: output });
   }
 
   setup(engine: ZFlowTypes.Engine.Engine, data: ZFlowTypes.Component.Execution) {
@@ -91,19 +91,19 @@ export class Abstract extends ZFlowTypes.Component.Instance {
 }
 
 export class Ok extends Abstract {
-  static outputPorts: Array<ZFlowTypes.Component.ComponentOutputPort> = ["ok"];
+  static outputPorts: Array<ZFlowTypes.Component.ComponentOutputPort> = ['ok'];
   $output: ZFlowTypes.Component.ComponentOutput = {
     ok: this.ok.bind(this)
   };
 
   protected ok() {
     this.finish();
-    this._signalOutput("ok");
+    this._signalOutput('ok');
   }
 }
 
 export class Start extends Ok {
-  static inputPort: ZFlowTypes.Component.ComponentInputPort = "none";
+  static inputPort: ZFlowTypes.Component.ComponentInputPort = 'none';
 }
 
 export class Stop extends Abstract {
@@ -113,12 +113,12 @@ export class Stop extends Abstract {
 
   protected error() {
     this.finish();
-    this._signalOutput("error");
+    this._signalOutput('error');
   }
 }
 
 export class OkError extends Ok {
-  static outputPorts: Array<ZFlowTypes.Component.ComponentOutputPort> = ["ok", "error"];
+  static outputPorts: Array<ZFlowTypes.Component.ComponentOutputPort> = ['ok', 'error'];
   $output: ZFlowTypes.Component.ComponentOutput = {
     ok: this.ok.bind(this),
     error: this.error.bind(this)
@@ -126,12 +126,12 @@ export class OkError extends Ok {
 
   protected error() {
     this.finish();
-    this._signalOutput("error");
+    this._signalOutput('error');
   }
 }
 
 export class Repeat extends Abstract {
-  static outputPorts: Array<ZFlowTypes.Component.ComponentOutputPort> = ["repeat", "end"];
+  static outputPorts: Array<ZFlowTypes.Component.ComponentOutputPort> = ['repeat', 'end'];
   $output: ZFlowTypes.Component.ComponentOutput = {
     repeat: this.repeat.bind(this),
     end: this.end.bind(this)
@@ -139,16 +139,16 @@ export class Repeat extends Abstract {
 
   protected repeat() {
     this.suspend();
-    this._signalOutput("repeat");
+    this._signalOutput('repeat');
   }
   protected end() {
     this.finish();
-    this._signalOutput("end");
+    this._signalOutput('end');
   }
 }
 
 export class Condition extends Abstract {
-  static outputPorts: Array<ZFlowTypes.Component.ComponentOutputPort> = ["true","false"];
+  static outputPorts: Array<ZFlowTypes.Component.ComponentOutputPort> = ['true','false'];
   $output: ZFlowTypes.Component.ComponentOutput = {
     true: this.true.bind(this),
     false: this.false.bind(this)
@@ -156,24 +156,24 @@ export class Condition extends Abstract {
 
   protected true() {
     this.suspend();
-    this._signalOutput("true");
+    this._signalOutput('true');
   }
   protected false() {
     this.finish();
-    this._signalOutput("false");
+    this._signalOutput('false');
   }
 }
 
 export class Join extends Abstract {
-  static inputPort: ZFlowTypes.Component.ComponentInputPort = "multiple";
+  static inputPort: ZFlowTypes.Component.ComponentInputPort = 'multiple';
 
-  static outputPorts: Array<ZFlowTypes.Component.ComponentOutputPort> = ["ok"];
+  static outputPorts: Array<ZFlowTypes.Component.ComponentOutputPort> = ['ok'];
   $output: ZFlowTypes.Component.ComponentOutput = {
     ok: this.ok.bind(this)
   };
 
   protected ok() {
     this.finish();
-    this._signalOutput("ok");
+    this._signalOutput('ok');
   }
 }

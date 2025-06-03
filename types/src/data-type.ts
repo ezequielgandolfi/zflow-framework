@@ -42,6 +42,15 @@ class AbstractDataType<T> implements DataType<T> {
   protected mapItem(value: any): T {
     return null;
   }
+
+  protected isEqual(value: any): boolean {
+    if (typeof value === 'object') {
+      if ('get' in value) {
+        return JSON.stringify(this.get()) === JSON.stringify(value.get());
+      }
+    }
+    return false;
+  }
 }
 
 export class Data extends AbstractDataType<any> {

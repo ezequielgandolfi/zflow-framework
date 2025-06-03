@@ -49,9 +49,9 @@ export interface ComponentEvent {
   removeAll();
 }
 
-export type ComponentInputPort = 'none' | 'single' | 'multiple';
+export type ComponentInputPort = 'none' | 'single' | 'multiple' | never;
 
-export type ComponentOutputPort = 'ok' | 'error' | 'repeat' | 'end' | 'true' | 'false';
+export type ComponentOutputPort = 'ok' | 'error' | 'repeat' | 'end' | 'true' | 'false' | never;
 
 export interface ComponentInput {
   inject: (props: any) => void;

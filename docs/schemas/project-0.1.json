@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Project",
+  "type": "object",
+  "required": ["engineVersion", "name"],
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "engineVersion": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "runners": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["runnerId", "description", "configs"],
+        "properties": {
+          "runnerId": { "type": "string" },
+          "description": { "type": "string" },
+          "configs": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": ["key", "flowId"],
+              "properties": {
+                "key": { "type": "string" },
+                "flowId": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "flows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "items"],
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "items": {
+            "type": "array",
+            "items": {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "required": ["id", "componentId", "inputProperties"],
+                  "properties": {
+                    "id": { "type": "string" },
+                    "componentId": { "type": "string" },
+                    "inputProperties": {
+                      "type": "object",
+                      "additionalProperties": { "type": "string" }
+                    },
+                    "extras": {
+                      "type": "object",
+                      "properties": {
+                        "label": { "type": "string" },
+                        "position": {
+                          "type": "object",
+                          "required": ["x", "y"],
+                          "properties": {
+                            "x": { "type": "number" },
+                            "y": { "type": "number" }
+                          }
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "required": ["source", "sourceHandle", "target", "targetHandle"],
+                  "properties": {
+                    "source": { "type": "string" },
+                    "sourceHandle": { "type": "string" },
+                    "target": { "type": "string" },
+                    "targetHandle": { "type": "string" }
+                  },
+                  "additionalProperties": false
+                }
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

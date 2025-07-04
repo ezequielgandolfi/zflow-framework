@@ -55,7 +55,30 @@
                     "componentId": { "type": "string" },
                     "inputProperties": {
                       "type": "object",
-                      "additionalProperties": { "type": "string" }
+                      "additionalProperties": {
+                        "anyOf": [
+                          { "type": "string" },
+                          {
+                            "type": "object",
+                            "required": ["type", "id", "property"],
+                            "properties": {
+                              "type": { "const": "source" },
+                              "id": { "type": "string" },
+                              "property": { "type": "string" }
+                            },
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "required": ["type", "value"],
+                            "properties": {
+                              "type": { "const": "script" },
+                              "value": { "type": "string" }
+                            },
+                            "additionalProperties": false
+                          }
+                        ]
+                      }
                     },
                     "extras": {
                       "type": "object",
